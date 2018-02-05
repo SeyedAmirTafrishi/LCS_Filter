@@ -11,8 +11,8 @@ ICX = 320;%2
 ICY = 240;%1
 f = 1;
 % VeS=2;%Standard Edge Velocity
-BLS=25; %Standard Boundery layer
-L=3; %The el of rebel edge alignment
+BLS = 25; %Standard Boundery layer
+L = 3; %The el of rebel edge alignment
 options = odeset('RelTol',1e-4,'AbsTol',[1e-5 1e-5]);
 NormRows = sqrt(sum(Edge.*Edge,2));
 EdgeNorm = bsxfun(@rdivide,abs(Edge),NormRows);
@@ -57,7 +57,7 @@ else
     else
     %Edge couple counter
     e=1;
-    while e<=numel(En(:,1))%previous steps edges
+    while e <= numel(En(:,1))%previous steps edges
       ME1=0;
       ME2=0;
       beta=En(e,5);

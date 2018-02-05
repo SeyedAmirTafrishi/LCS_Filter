@@ -22,8 +22,8 @@ if psi(i,4) == 1
   %WILL BE FILLED
 end
 th = 0:pi/50:2*pi;%for loop for creating circle
-xunit = (psi(i,3)+CB) * cos(th) + psi(i,2);%equation of circle :D
-yunit = (psi(i,3)+CB) * sin(th) + psi(i,1);
+xunit = (psi(i,3) + CB) * cos(th) + psi(i,2);%equation of circle :D
+yunit = (psi(i,3) + CB) * sin(th) + psi(i,1);
 hold on
 subplot(1,2,1)
 ploti = plot(xunit, yunit,'y');%Plot the boys :v
@@ -41,42 +41,42 @@ f = 1; %the counter of new column edge groups
 k = 0; %shifter triger for new column edge groups
 i = 1;% simple counter
 %-------in Lambda
-    for z = 1:1:(numel(lambda(:,1))) %Lambda Counter
-%------------- %Matrix Shifter
-if k == 1
-  f = f + 2;%shift two for x and y
-  k = 0;
-end
-hold on
-%--------------------- The Lambda edge comparator
-j = 1;
-g = 1;
-if lambda == 0
-else
-  while j <= (numel(c9)/2)
-    if (((((lambda(z,1)-c9(j,1))^2) + ((lambda(z,2)-c9(j,2))^2))^(0.5)) <= lambda(z,3)) %The condition to check the boundery property
-      subplot(1,2,1)
-      plot([lambda(z,2), c9(j,2)],[lambda(z,1), c9(j,1)], 'g'); %it plots the related lines when condition satisfied
-      DV(g,f) = c9(j,1);%include the edges to the relevant group
-      DV(g,f+1) = c9(j,2);
-      c9(j,:) = [];
-      k = 1;%Activation for new column couple
-      g = g+1;
-    else
-      j = j+1;
+for z = 1:1:(numel(lambda(:,1))) %Lambda Counter
+    %------------- %Matrix Shifter
+    if k == 1
+      f = f + 2;%shift two for x and y
+      k = 0;
     end
-  end
-end
+    hold on
+    %--------------------- The Lambda edge comparator
+    j = 1;
+    g = 1;
+    if lambda == 0
+    else
+      while j <= (numel(c9)/2)
+        if (((((lambda(z,1)-c9(j,1))^2) + ((lambda(z,2)-c9(j,2))^2))^(0.5)) <= lambda(z,3)) %The condition to check the boundery property
+          subplot(1,2,1)
+          plot([lambda(z,2), c9(j,2)],[lambda(z,1), c9(j,1)], 'g'); %it plots the related lines when condition satisfied
+          DV(g,f) = c9(j,1);%include the edges to the relevant group
+          DV(g,f+1) = c9(j,2);
+          c9(j,:) = [];
+          k = 1;%Activation for new column couple
+          g = g+1;
+        else
+          j = j+1;
+        end
+      end
+    end
 %--------------------------------------
-    end % foraaa\
+end % foraaa\
 %-----------------Boxing part :D
 %%
 %Out of Lambda Members
 for j = 1:1:(numel(c9)/2) %Counter for edges
-f = f+2;
-%plot(c9(j,2),c9(j,1),'r'); %it plots the related lines when condition satisfied
-DV(j,f) = c9(j,1);%include the edges to the relevant group
-DV(j,f+1) = c9(j,2);
+    f = f+2;
+    %plot(c9(j,2),c9(j,1),'r'); %it plots the related lines when condition satisfied
+    DV(j,f) = c9(j,1);%include the edges to the relevant group
+    DV(j,f+1) = c9(j,2);
 end
 hold on
 Edge = DV;

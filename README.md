@@ -2,11 +2,12 @@
 ## Introduction
 This project is the code for the paper: "Line-Circle: A Geometric Filter for Single Camera Edge-Based Object Detection".
 
-## How-to
-To use the code, type `run 'main_offline.m'` in the MATLAB command line.
+## How to run
+To use the code, type `run 'main_offline.m'` in the MATLAB command line for off-line analysis.
+Run 'main_rt.m' for real-time analysis (requires USB Webcams package).
 
-## Dependency
-
+## Credit
+This project depends on *fast9*, which is developed by Edward Rosten, Reid Porter and Tom Drummond.
 
 ## Contributors
 - Seyed Amir Tafrishi

@@ -29,7 +29,7 @@ Vv = 0.05;
 deltay = 8;
 deltaz = 8;
 %----image series
-drs = './Approaching_Boxi'; % in current directory
+drs = './testsets'; % in current directory
 dr1 = dir([drs '/*.png']); % get only jpg
 f1 = {dr1.name};% get only filenames to cell
 
@@ -47,7 +47,7 @@ figure(c)
 %subplot(length(f1)/4,length(f1)/5,c)
 %Make image greyscale
 if length(size(i)) == 3
-  im =  double(i(:,:,2));
+  im = double(i(:,:,2));
 else
   im = double(i);
 end
@@ -90,7 +90,7 @@ xlim([1 640])
 ylim([1 480])
 hold on
 th = 0:pi/50:2*pi;%for loop for creating circle
-CB=1;
+CB = 1;
 hold on
   if C == 0
   else
