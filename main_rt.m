@@ -1,12 +1,12 @@
 clc
-clear cam lambda psi En Er C alpha Trs Trcr Cr
+clear m cam lambda psi En Er C alpha Trs Trcr Cr
 %--------------------------- Parameters
 CAM_WIDTH = 640;
 CAM_HEIGHT = 480;
 
 %--------------------------- Open Camera
-cam = webcam('USB Camera'); %camera name  USB2.0 Camera USB Video Device
-%cam = webcam('Logitech HD Pro Webcam C920');
+%cam = webcam('USB Camera'); %camera name  USB2.0 Camera USB Video Device
+cam = webcam('Logitech HD Pro Webcam C920');
 cam.Resolution = sprintf('%dx%d', CAM_WIDTH, CAM_HEIGHT);
 %preview(cam)
 
