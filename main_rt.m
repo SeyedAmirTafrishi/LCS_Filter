@@ -5,15 +5,15 @@ CAM_WIDTH = 640;
 CAM_HEIGHT = 480;
 
 %--------------------------- Open Camera
-%cam = webcam('USB Camera'); %camera name  USB2.0 Camera USB Video Device
+% cam = webcam('USB Camera'); %camera name  USB2.0 Camera USB Video Device
 cam = webcam('Logitech HD Pro Webcam C920');
 cam.Resolution = sprintf('%dx%d', CAM_WIDTH, CAM_HEIGHT);
-%preview(cam)
+% preview(cam)
 
-%Main intial conditions
+% Main intial conditions
 %--------------------------- Algorithm Constants
 lambda = 0;
-psi = 0;%first is x next is y? O_
+psi = 0; % first is x next is y? O_
 En = 0;
 Er = 0;
 C = 0;
@@ -37,9 +37,9 @@ m = mobiledev;
 %---------
 while(1)
 tic
-img = snapshot(cam);%begin snap
+img = snapshot(cam);% begin snap
 i = img;
-%Make image greyscale
+% Make image greyscale
 if length(size(i)) == 3
     im = double(i(:,:,2));
 else
@@ -57,12 +57,13 @@ hold on
 imshow(im / max(im(:)));
 hold on
 subplot(1,2,1)
-plot(c9(:,1),c9(:,2),'r.'); %edges
+plot(c9(:,1),c9(:,2),'r.'); % edges
 hold on
 c9 = [c9(:,2),c9(:,1)];
 Edge = c9;
+
 %%
-%Transision V
+% Transision V
 hold on
 Edge = Line(lambda,psi,Edge);
 frame = toc;
@@ -81,16 +82,16 @@ plot(En(:,2),En(:,1),'bs')
 xlim([1 CAM_WIDTH])
 ylim([1 CAM_HEIGHT])
 hold on
-th = 0:pi/50:2*pi;%for loop for creating circle
+th = 0:pi/50:2*pi;% for loop for creating circle
 CB = 1;
 hold on
 if C == 0
 else
   for i = 1:1:(numel(C(:,1)))
-    xunit = (C(i,3) + CB) * cos(th) + C(i,2);%equation of circle :D
+    xunit = (C(i,3) + CB) * cos(th) + C(i,2);% equation of circle :D
     yunit = (C(i,3) + CB) * sin(th) + C(i,1);
     subplot(1,2,2)
-    plot(xunit, yunit,'g');%Plot the boys :v
+    plot(xunit, yunit,'g');% Plot the boys :v
     xlim([1 CAM_WIDTH])
     ylim([1 CAM_HEIGHT])
   end
@@ -100,10 +101,10 @@ CB = 1;
 if Cr == 0
 else
   for i = 1:1:(numel(Cr(:,1)))
-    xunit = (Cr(i,3)+CB) * cos(th) + Cr(i,2);%equation of circle :D
+    xunit = (Cr(i,3)+CB) * cos(th) + Cr(i,2);% equation of circle :D
     yunit = (Cr(i,3)+CB) * sin(th) + Cr(i,1);
     subplot(1,2,2)
-    plot(xunit, yunit, 'r');%Plot the boys :v
+    plot(xunit, yunit, 'r');% Plot the boys :v
     xlim([1 CAM_WIDTH])
     ylim([1 CAM_HEIGHT])
   end

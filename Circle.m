@@ -18,16 +18,16 @@ NormRows = sqrt(sum(Edge.*Edge,2));
 EdgeNorm = bsxfun(@rdivide,abs(Edge),NormRows);
 t1 = frame;%second devided by frame per sec in real activation
 alooo = 0;
-%%
+%% normal edge
 %----------En
-k=1; %counter of En
+k = 1; %counter of En
 if En == 0 %CHANGE!
     for i = 1:2:(numel(Edge(1,:))) %column
         for j = 1:1:(numel(Edge(:,1)))%Row
             if ~(Edge(j,i) == 0 && Edge(j,i+1) == 0)
               En(k,1) = Edge(j,i); %Y
               En(k,2) = Edge(j,i+1); %X
-              En(k,3) = BLS; %BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
+              En(k,3) = BLS; % BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
               En(k,4) = round((Trcr+Trs)/2);
               m = (Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
               if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>=0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>=0)
@@ -438,46 +438,46 @@ else
          elseif alpha(el1,7)==2
              MAINMATCH=MAINMATCH+1;
          ml= ((Edge(j,ME2)-alpha(el1,1))/-(Edge(j,ME2+1)-alpha(el1,2)));
-          if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) < deltaT) && ~(Elkiller==1)
+         if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) < deltaT) && ~(Elkiller==1)
          %MOHEM....!!!! far - near finder :\
          Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
          Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
          Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
          if (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>=0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>=0)
-         angle=(180/pi)*atan(ml);
+            angle = (180/pi)*atan(ml);
          elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0)
-         angle=(180/pi)*atan(ml);
+            angle = (180/pi)*atan(ml);
          elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-         angle=(180/pi)*atan(ml)+180;
+            angle = (180/pi)*atan(ml)+180;
          elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-         angle=(180/pi)*atan(ml)+180;
+            angle = (180/pi)*atan(ml)+180;
          elseif (Edge(j,ME2+1)-alpha(el1,2))==0
-         angle=-((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))*90;
+            angle = -((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))*90;
          elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0
-         angle=0;
+            angle = 0;
          elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0
-         angle=180;
+            angle = 180;
          end
          %---------------------------- DL calculator!
          mk1=(alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
          if (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>=0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>=0)
-         angle0=(180/pi)*atan(mk1);
+            angle0 = (180/pi)*atan(mk1);
          elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0)
-         angle0=(180/pi)*atan(mk1);
+            angle0 = (180/pi)*atan(mk1);
          elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-         angle0=(180/pi)*atan(mk1)+180;
+            angle0 = (180/pi)*atan(mk1)+180;
          elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-         angle0=(180/pi)*atan(mk1)+180;
+            angle0 = (180/pi)*atan(mk1)+180;
          elseif (alpha(el1,4)-alpha(el1,2))==0
-         angle0=-((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))*90;
+            angle0 = -((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))*90;
          elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0
-         angle0=0;
+            angle0 = 0;
          elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0
-         angle0=180;
+            angle0 = 180;
          end
          %angle
          %angle0
-         Er(numel(Er(:,1)),3)=angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
+         Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
          %----------------------------------------------DL Calculator End
          Er(numel(Er(:,1)),5)= angle;%angle
          Er(numel(Er(:,1)),6)=(((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(t1); %2 last point velocity
@@ -539,21 +539,21 @@ else
     end %? HERE?
     %alpha
 end
- %%
+ %% rebel edge
  %-------------- Er Estimator
  %REBELIONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNSSSSSSS! :))
  if (Er == 0) % no way for youngesters :V
  else
-     r=1;
-     while r<=numel(Er(:,1))
-         MatchR=0;
-         if ~(Er(r,4)==-1) %not a currently calculated rebel edge L
-         betar=Er(r,5);
-         R=(((Er(r,1)-Er(r,7))^2)+(Er(r,2)-Er(r,8))^2)^(0.5);%The R
-         x_0=R;
-         x_1=En(r,6);%check velocity
+     r = 1;
+     while r <= numel(Er(:,1))
+         MatchR = 0;
+         if ~(Er(r,4) == -1) %not a currently calculated rebel edge L
+         betar = Er(r,5);
+         R = (((Er(r,1)-Er(r,7))^2)+(Er(r,2)-Er(r,8))^2)^(0.5);%The R
+         x_0 = R;
+         x_1 = En(r,6);%check velocity
          [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-         NEr(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
+         NEr(1,1) =  -(Y1(end,1)-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
          NEr(1,2) =  (Y1(end,1)-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
          NBL=BLS; % WILL CHANGE
          mr=(NEr(1,1)-Er(r,7))/-(Er(r,2)-Er(r,8));
@@ -702,7 +702,7 @@ u=1;
      end
  u=u+1;
  end
-%%
+%% match circle with rebel edges (estimating the rebel circle)
 %------------Ciculing Er This must be first :))
 PIN=20; %In percentage
 BetaDev=50;
@@ -711,8 +711,8 @@ TErM=Er;
 action=0;
 if (Cr==0)
 else
-     ci=1;
-  while ci<=(numel(Cr(:,1))) % proper C finderd
+    ci=1;
+	while ci<=(numel(Cr(:,1))) % proper C finderd
           beta=Cr(ci,5);
           R=(((Cr(ci,1)-Cr(ci,7))^2)+(Cr(ci,2)-Cr(ci,8))^2)^(0.5);%The R
           x_0=R;
@@ -889,7 +889,7 @@ end
      u=u+1;
   end
 end
-%%
+%% normal circles
 %-----------Circuling En
 PIN=40; %In percentage
 BetaDev=20;
@@ -1042,7 +1042,7 @@ else
   end
 end
 
-%%
+%% updating psi and lambda
 %----------Psi and lambda
 u=1;
 psi=0;
@@ -1051,13 +1051,13 @@ psi=0;
 %      C(u,:)=[];
 %  end
 if C==0
-  C=0;
+    C = 0;
 else
  %   a=lambda;
-    lambda=0;
-  while u<=(numel(C(:,1)))
-  L1=0;
-  L2=0;
+    lambda = 0;
+    while u<=(numel(C(:,1)))
+    L1 = 0;
+    L2 = 0;
      if C(u,4) > Trmax
        C(u,4)=Trmax-2;
        psi(numel(psi(:,1))+1,1)=C(u,1);
@@ -1075,20 +1075,20 @@ else
      end
      if C(u,4) < Trcr
        C(u,:)=[];
-       u=u-1;
+       u = u - 1;
        L2=1;
      end
      if (L1==1 || L2==1) && (u==0) %either or both active and intial 0 or -1 make it 1
-         u=1;
+         u = 1;
      elseif (L1==1) && (L2==1) %both active make it one
-         u=u+1;
+         u = u + 1;
      end
      if C(u,4) > Trcr
-       lambda(numel(lambda(:,1))+1,1)=C(u,1);
-       lambda(numel(lambda(:,1)),2)=C(u,2);
-       lambda(numel(lambda(:,1)),3)=C(u,3);
+       lambda(numel(lambda(:,1))+1,1) = C(u,1);
+       lambda(numel(lambda(:,1)),2) = C(u,2);
+       lambda(numel(lambda(:,1)),3) = C(u,3);
      end
-     u=u+1;
+     u = u + 1;
   end
 end
 
@@ -1096,15 +1096,16 @@ r = 1;
 if Cr == 0
     Cr = 0;
 else
-while r <= (numel(Cr(:,1)))
-    if Cr(r,4) < Trcr
-      Cr(r,:) = [];
-      r = r-1;
-      if r < 1
-        r = 1;
-      end
+    while r <= (numel(Cr(:,1)))
+        if Cr(r,4) < Trcr
+          Cr(r,:) = [];
+          r = r-1;
+          if r < 1
+            r = 1;
+          end
+        end
+        r = r + 1;
     end
-r = r + 1;
 end
-end
+
 end
