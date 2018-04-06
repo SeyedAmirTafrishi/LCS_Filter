@@ -18,6 +18,7 @@ NormRows = sqrt(sum(Edge.*Edge,2));
 EdgeNorm = bsxfun(@rdivide,abs(Edge),NormRows);
 t1 = frame;%second devided by frame per sec in real activation
 alooo = 0;
+
 %% normal edge
 %----------En
 k = 1; %counter of En
@@ -31,19 +32,19 @@ if En == 0 %CHANGE!
               En(k,4) = round((Trcr+Trs)/2);
               m = (Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
               if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>=0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>=0)
-                angle = (180/pi)*atan(m);
+                  angle = (180/pi)*atan(m);
               elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))<0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>0)
-                angle = (180/pi)*atan(m);
+                  angle = (180/pi)*atan(m);
               elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))<0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0)
-                angle = (180/pi)*atan(m)+180;
+                  angle = (180/pi)*atan(m)+180;
               elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0)
-                angle = (180/pi)*atan(m)+180;
+                  angle = (180/pi)*atan(m)+180;
               elseif (Edge(j,i+1)-ICX)==0
-                angle = -((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))*90;
+                  angle = -((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))*90;
               elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>0
-                angle = 0;
+                  angle = 0;
               elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0
-                angle = 180;
+                  angle = 180;
               end
               En(k,5) = angle;
               En(k,6) = Vv;
@@ -53,492 +54,496 @@ if En == 0 %CHANGE!
         end
     end
 else
-    if lambda==0
+    if lambda == 0
+        % pass
     else
-    %Edge couple counter
-    e=1;
-    while e <= numel(En(:,1))%previous steps edges
-      ME1=0;
-      ME2=0;
-      beta=En(e,5);
-      R=(((En(e,1)-ICY)^2)+(En(e,2)-ICX)^2)^(0.5);%The R
-      x_0=R;
-      x_1=(En(e,6)+Vv)/2; % CHanged! :D
-      [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-      NEn(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*beta)+(En(e,1)-ICY);%estimation of En x
-      NEn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
-      hold on
-      subplot(1,2,1)
-      plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'ys')
-      %hold on
-      %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
-      NVe=Y1(end,2);%Estimated edge velocity
-      m=tan((pi/180)*(beta+90));
-      deltaT=sqrt(deltay^2+deltaz^2);
-      z=1;
-  while z<=(numel(lambda(:,1)))%Search P_P The Lambda Classification Cases 1 2 3 5
-   if (((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2))^(0.5)) <= lambda(z,3))  %this is Lambda Check in En ok?
-   i=1; %Check the Edge to find related group
-    while (i<=(numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
-      j=1;
-        while (j<=(numel(Edge(:,1))))%Column counter
-        if ~(Edge(j,i)==0 && Edge(j,i+1)==0) && (((((lambda(z,1)-Edge(j,i))^2) + ((lambda(z,2)-Edge(j,i+1))^2))^(0.5)) <= lambda(z,3))
-        %MainEdge(1,1)=Edge(j,i);%no need for this?
-        %MainEdge(1,2)=Edge(j,i+1);
-        %plot(MainEdge(1,2),MainEdge(1,1),'rs')
-        ME1=j;
-        ME2=i;
-        i=(numel(Edge(1,:)))+1;
-        j=(numel(Edge(:,1)))+1;
-        z=(numel(lambda(:,1)))+1;
-        end
-       j=j+1;
-       end
-       i=i+2;
-    end
-   end
-   z=z+1;
-  end
-        if (ME2==0 && ME1==0) %lonely not a single match? :\
-        En(e,1)=NEn(1,1);
-        En(e,2)=NEn(1,2);
-        En(e,4)=En(e,4)-1;
-        else
-            %if (Edge(j,ME2)==0 && Edge(j,ME2+1)==0)
+        %Edge couple counter
+        e = 1;
+        while e <= numel(En(:,1))%previous steps edges
+            ME1 = 0;
+            ME2 = 0;
+            beta = En(e,5);
+            R = (((En(e,1)-ICY)^2)+(En(e,2)-ICX)^2)^(0.5);%The R
+            x_0 = R;
+            x_1 = (En(e,6)+Vv)/2; % CHanged! :D
+            [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
+            NEn(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*beta)+(En(e,1)-ICY);%estimation of En x
+            NEn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
+            hold on
+            subplot(1,2,1)
+            plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'ys')
+            %hold on
+            %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
+            NVe = Y1(end,2);%Estimated edge velocity
+            m = tan((pi/180)*(beta+90));
+            deltaT = sqrt(deltay^2+deltaz^2);
+            z = 1;
+            while z<= (numel(lambda(:,1)))%Search P_P The Lambda Classification Cases 1 2 3 5
+                if (((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2))^(0.5)) <= lambda(z,3))  %this is Lambda Check in En ok?
+                    i=1; %Check the Edge to find related group
+                    while (i <= (numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
+                        j=1;
+                        while (j <= (numel(Edge(:,1))))%Column counter
+                            if ~(Edge(j,i)==0 && Edge(j,i+1)==0) && (((((lambda(z,1)-Edge(j,i))^2) + ((lambda(z,2)-Edge(j,i+1))^2))^(0.5)) <= lambda(z,3))
+                                %MainEdge(1,1)=Edge(j,i);%no need for this?
+                                %MainEdge(1,2)=Edge(j,i+1);
+                                %plot(MainEdge(1,2),MainEdge(1,1),'rs')
+                                ME1=j;
+                                ME2=i;
+                                i=(numel(Edge(1,:)))+1;
+                                j=(numel(Edge(:,1)))+1;
+                                z=(numel(lambda(:,1)))+1;
+                            end
+                            j=j+1;
+                        end
+                        i=i+2;
+                    end
+                end
+                z=z+1;
+            end
+            if (ME2==0 && ME1==0) %lonely not a single match? :\
+                En(e,1)=NEn(1,1);
+                En(e,2)=NEn(1,2);
+                En(e,4)=En(e,4)-1;
+            else
+                %if (Edge(j,ME2)==0 && Edge(j,ME2+1)==0)
                 %NBL=BLS
-            %else
-  NBL1=(((abs(Vv-NVe)/det(corr(EdgeNorm(:,ME2:ME2+1))))+En(e,3))/2); %Estmated
-  NBL=(NBL1+En(e,3))/2;
-            %end
-  j=1;
-  Edgetrans(1,1)=0;%The nearest Edge to En finder
-  Edgetrans(1,2)=0;
-  d=-1;%-1 means deactive
-  side=0;
-  while (j<=(numel(Edge(:,1)))) %loop check for classifications ME1, Edge,
-   if (((((NEn(1,1)-(Edge(j,ME2)-ICY))^2) + ((NEn(1,2)-(Edge(j,ME2+1)-ICX))^2))^(0.5)) <= NBL) && ~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT)% Circle with NBL size AND deltay delta x error and zero remover,  yEdge=Edge(j,ME2) first parameter
-    if ((NEn(1,1)/abs(NEn(1,1))) == ((Edge(j,ME2)-ICY)/abs((Edge(j,ME2)-ICY)))  && ~(NEn(1,2)/abs(NEn(1,2))) == ((Edge(j,ME2+1)-ICX)/abs((Edge(j,ME2+1)-ICX)))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) <= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) %Sign check and magnitude check which is far, lambda_2
-   En(e,1)=((((En(e,4)-Trcr)*(NEn(1,1)+ICY))+Edge(j,ME2))/((En(e,4)-Trcr)+1));
-   En(e,2)=((((En(e,4)-Trcr)*(NEn(1,2)+ICX))+Edge(j,ME2+1))/((En(e,4)-Trcr)+1)); %Estimation of En, X direction
-   En(e,3)=NBL;
-%    subplot(1,2,1)
-%    hold on
-%    plot(En(e,2),En(e,1),'r*')
-     if (((Edgetrans(1,1)-ICY)^2+(Edgetrans(1,2)-ICX)^2)^(0.5) > (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) && (~(Edgetrans(1,1)==0 && Edgetrans(1,2)==0))%Edge Remmover and modifier
-    d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
-    a=Edgetrans(1,1);
-    b=Edgetrans(1,2);
-    Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
-    Edgetrans(1,2)=Edge(j,ME2+1);%?
-    Edge(j,ME2)=a;
-    Edge(j,ME2+1)=b;
-    side=1;
-    elseif (Edgetrans(1,1)==0 && Edgetrans(1,2)==0)
-    d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
-    Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
-    Edgetrans(1,2)=Edge(j,ME2+1);
-    Edge(j,ME2)=0;
-    Edge(j,ME2+1)=0;
-    En(e,4)=En(e,4)+1; % CHECK THIS? right?
-    side=1;%front
-     end
-    elseif ((NEn(1,1)/abs(NEn(1,1))) == ((Edge(j,ME2)-ICY)/abs((Edge(j,ME2)-ICY)))  && (NEn(1,2)/abs(NEn(1,2))) == ((Edge(j,ME2+1)-ICX)/abs((Edge(j,ME2+1)-ICX)))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) >= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5)))%lambda*_3
-   En(e,1)=((((En(e,4)-Trcr)*(NEn(1,1)+ICY))+Edge(j,ME2))/((En(e,4)-Trcr)+1));
-   En(e,2)=((((En(e,4)-Trcr)*(NEn(1,2)+ICX))+Edge(j,ME2+1))/((En(e,4)-Trcr)+1)); %Estimation of En, X direction
-   En(e,3)=NBL;
-%    subplot(1,2,1)
-%    hold on
-%    plot(En(e,2),En(e,1),'r*')
-    if (((Edgetrans(1,1)-ICY)^2+(Edgetrans(1,2)-ICX)^2)^(0.5) < (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) && (~(Edgetrans(1,1)==0 && Edgetrans(1,2)==0)) && (~(d==-1))%Edge Remmover and modifier d is for when there is more than near edge in the boundery to find most fit
-    a=Edgetrans(1,1);
-    b=Edgetrans(1,2);
-    Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
-    Edgetrans(1,2)=Edge(j,ME2+1);
-    Edge(j,ME2)=a;
-    Edge(j,ME2+1)=b;
-    side=-1;%back
-    elseif (Edgetrans(1,1)==0 && Edgetrans(1,2)==0) && (d==-1)
-    d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
-    Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
-    Edgetrans(1,2)=Edge(j,ME2+1);
-    Edge(j,ME2)=0;
-    Edge(j,ME2+1)=0;
-    En(e,4)=En(e,4)-1;
-    side=-1;%back
-    end
-   end
-   end
-     j=j+1;
-  end %While of Edge
-  if side==1 %Velocity update of lambda3 and lambda2
-  En(e,6)=abs((En(e,6)+((((((NEn(1,1)+ICY)-Edgetrans(1,1))^2+(NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(t1))));
-  elseif side==-1
-  En(e,6)=abs((En(e,6)-((((((NEn(1,1)+ICY)-Edgetrans(1,1))^2+(NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(t1))));
-  end
-  %-------------Delta En L
-      if d==-1
-      else
-      if (NEn(1,1)==Inf) || (NEn(1,2)==Inf) || (En(e,1)==Inf) || (En(e,2)==Inf) || (En(e,6)==Inf)
-      else
-      if delta(2,1)==0
-      delta(2,1)=(((NEn(1,1)+ICY-En(e,1))^2+(NEn(1,2)+ICX-En(e,2))^2)^(.5));
-      delta(2,2)=abs(En(e,6)-Vv);
-      delta(2,3)=abs(NBL-NBL1);
-      delta(2,4)=delta(2,4)+1;
-      else
-      delta(2,4)=delta(2,4)+1;
-      delta(2,1)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*((((NEn(1,1)+ICY)-En(e,1))^2+((NEn(1,2)+ICX)-En(e,2))^2)^(.5)));
-      delta(2,2)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(En(e,6))-Vv));
-      delta(2,3)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(NBL-NBL1)));
-      end
-      end
-      end
-  %-----------------Delta En L
-%---------- REBEL EDGES!
-   MAINMATCH=0;
-   j=1;
-   match=0;
-   while (j<=(numel(Edge(:,1)))) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5
-    if (((abs(((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2)))^(0.5)) <= NBL) && (~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) && (d==-1)%% boundery another % Rebel classification
-     if ( En(e,4) >= Trs ) % for case d=-1 no match, Er
-     En(e,1)=NEn(1,1)+ICY;%estimation of En x
-     En(e,2)=NEn(1,2)+ICX;%estimation of En y%No En trust change
-     En(e,4)=En(e,4)-1; %disipate it by time
-     En(e,3)=NBL;
-%      hold on
-%      subplot(1,2,1)
-%      plot(En(e,2)+ICX,En(e,1)+ICY,'ms')
-     elseif ( En(e,4) < Trs ) && ( En(e,4) >= Trcr)
-     En(e,4)=En(e,4)-1;
-     En(e,1)=NEn(1,1)+ICY;%estimation of En x, DO WE ADD????
-     En(e,2)=NEn(1,2)+ICX;%estimation of En y%No En trust change
-     En(e,3)=NBL;
-%      hold on
-%      subplot(1,2,1)
-%      plot(En(e,2)+ICX,En(e,1)+ICY,'ms')
-     %----    L construction :D
-     el1=1;
-     Elkiller=0;
-      while el1 <=(numel(alpha(:,1))) % Alpha matcher column counter
-        %------- Edge Remover from Alpha
-        if (Elkiller == 1) && ~(Elkillery1 == 0 && Elkillerx1 == 0 && Elkillery2 == 0 && Elkillerx2 == 0 && Elkillery3 == 0 && Elkillerx3 == 0)
-         if (((alpha(el1,1) ==  Elkillery1) && (alpha(el1,2) == Elkillerx1)) || ((alpha(el1,1) ==  Elkillery2) && (alpha(el1,2) == Elkillerx2)) || ((alpha(el1,1) ==  Elkillery3) && (alpha(el1,2) == Elkillerx3)))
-         alpha(el1,1)=0;
-         alpha(el1,2)=0;
-         alpha(el1,7)=alpha(el1,7)-1;%rebel siz
-         end
-         if (((alpha(el1,3) ==  Elkillery1) && (alpha(el1,4) == Elkillerx1)) || ((alpha(el1,3) ==  Elkillery2) && (alpha(el1,4) == Elkillerx2)) || ((alpha(el1,3) ==  Elkillery3) && (alpha(el1,4) == Elkillerx3)))
-         alpha(el1,3)=0;
-         alpha(el1,4)=0;
-         alpha(el1,7)=alpha(el1,7)-1;%rebel siz
-         end
-         if (((alpha(el1,5) ==  Elkillery1) && (alpha(el1,6) == Elkillerx1)) || ((alpha(el1,5) ==  Elkillery2) && (alpha(el1,6) == Elkillerx2)) || ((alpha(el1,5) ==  Elkillery3) && (alpha(el1,6) == Elkillerx3)))
-         alpha(el1,5)=0;
-         alpha(el1,6)=0;
-         alpha(el1,7)=alpha(el1,7)-1;%rebel siz
-         end
-        end
-        %------ Equal omitter :D
-        if (alpha(el1,1) == alpha(el1,3) && alpha(el1,2)==alpha(el1,4)) && ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,3)==0 && alpha(el1,4) ==0)
-        alpha(el1,3)=0;
-        alpha(el1,4)=0;
-        alpha(el1,7)=alpha(el1,7)-1;
-        elseif (alpha(el1,1) == alpha(el1,5) && alpha(el1,2)==alpha(el1,6))&& ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
-        alpha(el1,5)=0;
-        alpha(el1,6)=0;
-        alpha(el1,7)=alpha(el1,7)-1;
-        elseif (alpha(el1,3) == alpha(el1,5) && alpha(el1,4)==alpha(el1,6)) && ~(alpha(el1,3)==0 && alpha(el1,4) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
-        alpha(el1,1)=alpha(el1,5);
-        alpha(el1,2)=alpha(el1,6);
-        alpha(el1,3)=0;
-        alpha(el1,4)=0;
-        alpha(el1,5)=0;
-        alpha(el1,6)=0;
-        alpha(el1,7)=alpha(el1,7)-1;
-        end
-        %-----
-        %------- Edge Detector in alpha
-        %if (En(e,1) == alpha(el1,el2)) && (En(e,2) == alpha(el1,el2+1)) %BL SAME AS OTHER En
-        if (Elkiller == 1) || (Elkiller == 0)
-         if alpha(el1,7)==1
-              MAINMATCH=MAINMATCH+1;
-         if (((((alpha(el1,1)-Edge(j,ME2))^2) + ((alpha(el1,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,1)~=0 && alpha(el1,2)~=0)%Edge and alpha in bound  for L=1;  %make it in a way O is clear
-         alpha(el1,3)=Edge(j,ME2); % KEEP O in first
-         alpha(el1,4)=Edge(j,ME2+1);
-         alpha(el1,7)=alpha(el1,7)+1;
-         match=match+1;
-         elseif (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,3)~=0 && alpha(el1,4)~=0) && alpha(el1,7)==1
-         alpha(el1,1)=alpha(el1,3);
-         alpha(el1,2)=alpha(el1,4);
-         alpha(el1,3)=Edge(j,ME2);
-         alpha(el1,4)=Edge(j,ME2+1);
-         alpha(el1,7)=alpha(el1,7)+1;
-         match=match+1;
-         elseif (((((alpha(el1,5)-Edge(j,ME2))^2) + ((alpha(el1,6)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,5)~=0 && alpha(el1,6)~=0) && alpha(el1,7)==1
-         alpha(el1,1)=alpha(el1,5);
-         alpha(el1,2)=alpha(el1,6);
-         alpha(el1,3)=Edge(j,ME2);
-         alpha(el1,4)=Edge(j,ME2+1);
-         match=match+1;
-         alpha(el1,7)=alpha(el1,7)+1;
-         end
-         elseif alpha(el1,7)==2
-             MAINMATCH=MAINMATCH+1;
-         ml= ((Edge(j,ME2)-alpha(el1,1))/-(Edge(j,ME2+1)-alpha(el1,2)));
-          if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) < deltaT) && ~(Elkiller==1)
-         %MOHEM....!!!! far - near finder :\
-         Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
-         Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
-         Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
-         if (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>=0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>=0)
-         angle=(180/pi)*atan(ml);
-         elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0)
-         angle=(180/pi)*atan(ml);
-         elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-         angle=(180/pi)*atan(ml)+180;
-         elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-         angle=(180/pi)*atan(ml)+180;
-         elseif (Edge(j,ME2+1)-alpha(el1,2))==0
-         angle=-((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))*90;
-         elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0
-         angle=0;
-         elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0
-         angle=180;
-         end
-         %---------------------------- DL calculator!
-         mk1=(alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
-         if (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>=0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>=0)
-         angle0=(180/pi)*atan(mk1);
-         elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0)
-         angle0=(180/pi)*atan(mk1);
-         elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-         angle0=(180/pi)*atan(mk1)+180;
-         elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-         angle0=(180/pi)*atan(mk1)+180;
-         elseif (alpha(el1,4)-alpha(el1,2))==0
-         angle0=-((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))*90;
-         elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0
-         angle0=0;
-         elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0
-         angle0=180;
-         end
-         %angle
-         %angle0
-         Er(numel(Er(:,1)),3)=angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
-         %----------------------------------------------DL Calculator End
-         Er(numel(Er(:,1)),5)= angle;%angle
-         Er(numel(Er(:,1)),6)=(((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(t1); %2 last point velocity
-         Er(numel(Er(:,1)),7)=alpha(el1,1);%origin
-         Er(numel(Er(:,1)),8)=alpha(el1,2);
-         %Prepare the killer of edges!
-         Elkiller=1; %all match
-         Elkillery1=alpha(el1,1);%O of Y
-         Elkillerx1=alpha(el1,2);% O of X
-         Elkillery2=alpha(el1,3);
-         Elkillerx2=alpha(el1,4);
-         Elkillery3=Edge(j,ME2);
-         Elkillerx3=Edge(j,ME2+1);%Last Edge
-         alpha(el1,:)=[];
-         el1=1;
-         match=match+1;
-%          subplot(1,2,1)
-%          hold on
-%          plot([Er(:,2) Er(:,8)],[Er(:,1) Er(:,7)],'m')
+                %else
+                NBL1=(((abs(Vv-NVe)/det(corr(EdgeNorm(:,ME2:ME2+1))))+En(e,3))/2); %Estmated
+                NBL=(NBL1+En(e,3))/2;
+                %end
+                j=1;
+                Edgetrans(1,1)=0;%The nearest Edge to En finder
+                Edgetrans(1,2)=0;
+                d=-1;%-1 means deactive
+                side=0;
+                while (j<=(numel(Edge(:,1)))) %loop check for classifications ME1, Edge,
+                    if (((((NEn(1,1)-(Edge(j,ME2)-ICY))^2) + ((NEn(1,2)-(Edge(j,ME2+1)-ICX))^2))^(0.5)) <= NBL) && ~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT)% Circle with NBL size AND deltay delta x error and zero remover,  yEdge=Edge(j,ME2) first parameter
+                        if ((NEn(1,1)/abs(NEn(1,1))) == ((Edge(j,ME2)-ICY)/abs((Edge(j,ME2)-ICY)))  && ~(NEn(1,2)/abs(NEn(1,2))) == ((Edge(j,ME2+1)-ICX)/abs((Edge(j,ME2+1)-ICX)))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) <= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) %Sign check and magnitude check which is far, lambda_2
+                            En(e,1)=((((En(e,4)-Trcr)*(NEn(1,1)+ICY))+Edge(j,ME2))/((En(e,4)-Trcr)+1));
+                            En(e,2)=((((En(e,4)-Trcr)*(NEn(1,2)+ICX))+Edge(j,ME2+1))/((En(e,4)-Trcr)+1)); %Estimation of En, X direction
+                            En(e,3)=NBL;
+                            %    subplot(1,2,1)
+                            %    hold on
+                            %    plot(En(e,2),En(e,1),'r*')
+                            if (((Edgetrans(1,1)-ICY)^2+(Edgetrans(1,2)-ICX)^2)^(0.5) > (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) && (~(Edgetrans(1,1)==0 && Edgetrans(1,2)==0))%Edge Remmover and modifier
+                                d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
+                                a=Edgetrans(1,1);
+                                b=Edgetrans(1,2);
+                                Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
+                                Edgetrans(1,2)=Edge(j,ME2+1);%?
+                                Edge(j,ME2)=a;
+                                Edge(j,ME2+1)=b;
+                                side=1;
+                            elseif (Edgetrans(1,1)==0 && Edgetrans(1,2)==0)
+                                d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
+                                Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
+                                Edgetrans(1,2)=Edge(j,ME2+1);
+                                Edge(j,ME2)=0;
+                                Edge(j,ME2+1)=0;
+                                En(e,4)=En(e,4)+1; % CHECK THIS? right?
+                                side=1;%front
+                            end
+                        elseif ((NEn(1,1)/abs(NEn(1,1))) == ((Edge(j,ME2)-ICY)/abs((Edge(j,ME2)-ICY)))  && (NEn(1,2)/abs(NEn(1,2))) == ((Edge(j,ME2+1)-ICX)/abs((Edge(j,ME2+1)-ICX)))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) >= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5)))%lambda*_3
+                            En(e,1)=((((En(e,4)-Trcr)*(NEn(1,1)+ICY))+Edge(j,ME2))/((En(e,4)-Trcr)+1));
+                            En(e,2)=((((En(e,4)-Trcr)*(NEn(1,2)+ICX))+Edge(j,ME2+1))/((En(e,4)-Trcr)+1)); %Estimation of En, X direction
+                            En(e,3)=NBL;
+                            %    subplot(1,2,1)
+                            %    hold on
+                            %    plot(En(e,2),En(e,1),'r*')
+                            if (((Edgetrans(1,1)-ICY)^2+(Edgetrans(1,2)-ICX)^2)^(0.5) < (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) && (~(Edgetrans(1,1)==0 && Edgetrans(1,2)==0)) && (~(d==-1))%Edge Remmover and modifier d is for when there is more than near edge in the boundery to find most fit
+                                a=Edgetrans(1,1);
+                                b=Edgetrans(1,2);
+                                Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
+                                Edgetrans(1,2)=Edge(j,ME2+1);
+                                Edge(j,ME2)=a;
+                                Edge(j,ME2+1)=b;
+                                side=-1;%back
+                            elseif (Edgetrans(1,1)==0 && Edgetrans(1,2)==0) && (d==-1)
+                                d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
+                                Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
+                                Edgetrans(1,2)=Edge(j,ME2+1);
+                                Edge(j,ME2)=0;
+                                Edge(j,ME2+1)=0;
+                                En(e,4)=En(e,4)-1;
+                                side=-1;%back
+                            end
+                        end
+                    end
+                    j=j+1;
+                end %While of Edge
+                if side==1 %Velocity update of lambda3 and lambda2
+                    En(e,6)=abs((En(e,6)+((((((NEn(1,1)+ICY)-Edgetrans(1,1))^2+(NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(t1))));
+                elseif side==-1
+                    En(e,6)=abs((En(e,6)-((((((NEn(1,1)+ICY)-Edgetrans(1,1))^2+(NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(t1))));
+                end
+                %-------------Delta En L
+                if d==-1
+                    % pass
+                else
+                    if (NEn(1,1)==Inf) || (NEn(1,2)==Inf) || (En(e,1)==Inf) || (En(e,2)==Inf) || (En(e,6)==Inf)
+                        % pass
+                    else
+                        if delta(2,1)==0
+                            delta(2,1)=(((NEn(1,1)+ICY-En(e,1))^2+(NEn(1,2)+ICX-En(e,2))^2)^(.5));
+                            delta(2,2)=abs(En(e,6)-Vv);
+                            delta(2,3)=abs(NBL-NBL1);
+                            delta(2,4)=delta(2,4)+1;
+                        else
+                            delta(2,4)=delta(2,4)+1;
+                            delta(2,1)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*((((NEn(1,1)+ICY)-En(e,1))^2+((NEn(1,2)+ICX)-En(e,2))^2)^(.5)));
+                            delta(2,2)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(En(e,6))-Vv));
+                            delta(2,3)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(NBL-NBL1)));
+                        end
+                    end
+                end
+                %-----------------Delta En L
+                %---------- REBEL EDGES!
+                MAINMATCH = 0;
+                j = 1;
+                match = 0;
+                while ( j <= (numel(Edge(:,1))) ) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5
+                    if (((abs(((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2)))^(0.5)) <= NBL) && (~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) && (d==-1)%% boundery another % Rebel classification
+                        if ( En(e,4) >= Trs ) % for case d=-1 no match, Er
+                            En(e,1)=NEn(1,1)+ICY;%estimation of En x
+                            En(e,2)=NEn(1,2)+ICX;%estimation of En y%No En trust change
+                            En(e,4)=En(e,4)-1; %disipate it by time
+                            En(e,3)=NBL;
+                            %      hold on
+                            %      subplot(1,2,1)
+                            %      plot(En(e,2)+ICX,En(e,1)+ICY,'ms')
+                        elseif ( En(e,4) < Trs ) && ( En(e,4) >= Trcr)
+                            En(e,4)=En(e,4)-1;
+                            En(e,1)=NEn(1,1)+ICY;%estimation of En x, DO WE ADD????
+                            En(e,2)=NEn(1,2)+ICX;%estimation of En y%No En trust change
+                            En(e,3)=NBL;
+                            %      hold on
+                            %      subplot(1,2,1)
+                            %      plot(En(e,2)+ICX,En(e,1)+ICY,'ms')
+                            %----    L construction :D
+                            el1=1;
+                            Elkiller=0;
+                            while el1 <=(numel(alpha(:,1))) % Alpha matcher column counter
+                                %------- Edge Remover from Alpha
+                                if (Elkiller == 1) && ~(Elkillery1 == 0 && Elkillerx1 == 0 && Elkillery2 == 0 && Elkillerx2 == 0 && Elkillery3 == 0 && Elkillerx3 == 0)
+                                    if (((alpha(el1,1) ==  Elkillery1) && (alpha(el1,2) == Elkillerx1)) || ((alpha(el1,1) ==  Elkillery2) && (alpha(el1,2) == Elkillerx2)) || ((alpha(el1,1) ==  Elkillery3) && (alpha(el1,2) == Elkillerx3)))
+                                        alpha(el1,1)=0;
+                                        alpha(el1,2)=0;
+                                        alpha(el1,7)=alpha(el1,7)-1;%rebel siz
+                                    end
+                                    if (((alpha(el1,3) ==  Elkillery1) && (alpha(el1,4) == Elkillerx1)) || ((alpha(el1,3) ==  Elkillery2) && (alpha(el1,4) == Elkillerx2)) || ((alpha(el1,3) ==  Elkillery3) && (alpha(el1,4) == Elkillerx3)))
+                                        alpha(el1,3)=0;
+                                        alpha(el1,4)=0;
+                                        alpha(el1,7)=alpha(el1,7)-1;%rebel siz
+                                    end
+                                    if (((alpha(el1,5) ==  Elkillery1) && (alpha(el1,6) == Elkillerx1)) || ((alpha(el1,5) ==  Elkillery2) && (alpha(el1,6) == Elkillerx2)) || ((alpha(el1,5) ==  Elkillery3) && (alpha(el1,6) == Elkillerx3)))
+                                        alpha(el1,5)=0;
+                                        alpha(el1,6)=0;
+                                        alpha(el1,7)=alpha(el1,7)-1;%rebel siz
+                                    end
+                                end
+                                %------ Equal omitter :D
+                                if (alpha(el1,1) == alpha(el1,3) && alpha(el1,2)==alpha(el1,4)) && ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,3)==0 && alpha(el1,4) ==0)
+                                    alpha(el1,3)=0;
+                                    alpha(el1,4)=0;
+                                    alpha(el1,7)=alpha(el1,7)-1;
+                                elseif (alpha(el1,1) == alpha(el1,5) && alpha(el1,2)==alpha(el1,6))&& ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
+                                    alpha(el1,5)=0;
+                                    alpha(el1,6)=0;
+                                    alpha(el1,7)=alpha(el1,7)-1;
+                                elseif (alpha(el1,3) == alpha(el1,5) && alpha(el1,4)==alpha(el1,6)) && ~(alpha(el1,3)==0 && alpha(el1,4) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
+                                    alpha(el1,1)=alpha(el1,5);
+                                    alpha(el1,2)=alpha(el1,6);
+                                    alpha(el1,3)=0;
+                                    alpha(el1,4)=0;
+                                    alpha(el1,5)=0;
+                                    alpha(el1,6)=0;
+                                    alpha(el1,7)=alpha(el1,7)-1;
+                                end
+                                %-----
+                                %------- Edge Detector in alpha
+                                %if (En(e,1) == alpha(el1,el2)) && (En(e,2) == alpha(el1,el2+1)) %BL SAME AS OTHER En
+                                if (Elkiller == 1) || (Elkiller == 0)
+                                    if alpha(el1,7)==1
+                                        MAINMATCH = MAINMATCH + 1;
+                                        if (((((alpha(el1,1)-Edge(j,ME2))^2) + ((alpha(el1,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,1)~=0 && alpha(el1,2)~=0)%Edge and alpha in bound  for L=1;  %make it in a way O is clear
+                                            alpha(el1,3)=Edge(j,ME2); % KEEP O in first
+                                            alpha(el1,4)=Edge(j,ME2+1);
+                                            alpha(el1,7)=alpha(el1,7)+1;
+                                            match=match+1;
+                                        elseif (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,3)~=0 && alpha(el1,4)~=0) && alpha(el1,7)==1
+                                            alpha(el1,1)=alpha(el1,3);
+                                            alpha(el1,2)=alpha(el1,4);
+                                            alpha(el1,3)=Edge(j,ME2);
+                                            alpha(el1,4)=Edge(j,ME2+1);
+                                            alpha(el1,7)=alpha(el1,7)+1;
+                                            match=match+1;
+                                        elseif (((((alpha(el1,5)-Edge(j,ME2))^2) + ((alpha(el1,6)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,5)~=0 && alpha(el1,6)~=0) && alpha(el1,7)==1
+                                            alpha(el1,1)=alpha(el1,5);
+                                            alpha(el1,2)=alpha(el1,6);
+                                            alpha(el1,3)=Edge(j,ME2);
+                                            alpha(el1,4)=Edge(j,ME2+1);
+                                            match=match+1;
+                                            alpha(el1,7)=alpha(el1,7)+1;
+                                        end
+                                    elseif alpha(el1,7)==2
+                                        MAINMATCH=MAINMATCH+1;
+                                        ml= ((Edge(j,ME2)-alpha(el1,1))/-(Edge(j,ME2+1)-alpha(el1,2)));
+                                        if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) < deltaT) && ~(Elkiller==1)
+                                            %MOHEM....!!!! far - near finder :\
+                                            Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
+                                            Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
+                                            Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
+                                            if (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>=0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>=0)
+                                                angle=(180/pi)*atan(ml);
+                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0)
+                                                angle=(180/pi)*atan(ml);
+                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
+                                                angle=(180/pi)*atan(ml)+180;
+                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
+                                                angle=(180/pi)*atan(ml)+180;
+                                            elseif (Edge(j,ME2+1)-alpha(el1,2))==0
+                                                angle=-((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))*90;
+                                            elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0
+                                                angle=0;
+                                            elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0
+                                                angle=180;
+                                            end
+                                            %---------------------------- DL calculator!
+                                            mk1=(alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
+                                            if (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>=0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>=0)
+                                                angle0=(180/pi)*atan(mk1);
+                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0)
+                                                angle0=(180/pi)*atan(mk1);
+                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
+                                                angle0=(180/pi)*atan(mk1)+180;
+                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
+                                                angle0=(180/pi)*atan(mk1)+180;
+                                            elseif (alpha(el1,4)-alpha(el1,2))==0
+                                                angle0=-((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))*90;
+                                            elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0
+                                                angle0=0;
+                                            elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0
+                                                angle0=180;
+                                            end
+                                            %angle
+                                            %angle0
+                                            Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
+                                            %----------------------------------------------DL Calculator End
+                                            Er(numel(Er(:,1)),5) = angle;%angle
+                                            Er(numel(Er(:,1)),6) = (((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(t1); %2 last point velocity
+                                            Er(numel(Er(:,1)),7) = alpha(el1,1);%origin
+                                            Er(numel(Er(:,1)),8) = alpha(el1,2);
+                                            %Prepare the killer of edges!
+                                            Elkiller=1; %all match
+                                            Elkillery1=alpha(el1,1);%O of Y
+                                            Elkillerx1=alpha(el1,2);% O of X
+                                            Elkillery2=alpha(el1,3);
+                                            Elkillerx2=alpha(el1,4);
+                                            Elkillery3=Edge(j,ME2);
+                                            Elkillerx3=Edge(j,ME2+1);%Last Edge
+                                            alpha(el1,:)=[];
+                                            el1=1;
+                                            match=match+1;
+                                            %          subplot(1,2,1)
+                                            %          hold on
+                                            %          plot([Er(:,2) Er(:,8)],[Er(:,1) Er(:,7)],'m')
 
-         %maybe add another part to matrix as frame counter !! to remove
-         %old lines that didnt match in long!
-%          else %good bye :D line el1
-%          Elkiller=2; %No match
-%          Elkillery1=alpha(el1,el2);
-%          Elkillerx1=alpha(el1,el2+1);
-%          alpha(el1,:)=[];
-%         el2=(numel(alpha(1,:)))+1; %breaker
-        %el2=(numel(alpha(1,:)))+1; %breaker
-          end
-         end
-        end
+                                            %maybe add another part to matrix as frame counter !! to remove
+                                            %old lines that didnt match in long!
+                                            %          else %good bye :D line el1
+                                            %          Elkiller=2; %No match
+                                            %          Elkillery1=alpha(el1,el2);
+                                            %          Elkillerx1=alpha(el1,el2+1);
+                                            %          alpha(el1,:)=[];
+                                            %         el2=(numel(alpha(1,:)))+1; %breaker
+                                            %el2=(numel(alpha(1,:)))+1; %breaker
+                                        end
+                                    end
+                                end
 
-        %end BL SAME AS OTHER En
-       el1=el1+1;
-      end
-      Edge(j,ME2)=0;
-      Edge(j,ME2+1)=0;
-      elseif (En(e,4) <= Trcr-1) %Good bye En
-      En(e,:)=[];
-      e=e-1;
-      if e<1
-      e=1;
-      end
-           %----    L construction :D
-     el1=1;
-     Elkiller=0;
-      while el1 <=(numel(alpha(:,1))) % Alpha matcher column counter
-        %------- Edge Remover from Alpha
-        if (Elkiller == 1) && ~(Elkillery1 == 0 && Elkillerx1 == 0 && Elkillery2 == 0 && Elkillerx2 == 0 && Elkillery3 == 0 && Elkillerx3 == 0)
-         if (((alpha(el1,1) ==  Elkillery1) && (alpha(el1,2) == Elkillerx1)) || ((alpha(el1,1) ==  Elkillery2) && (alpha(el1,2) == Elkillerx2)) || ((alpha(el1,1) ==  Elkillery3) && (alpha(el1,2) == Elkillerx3)))
-         alpha(el1,1)=0;
-         alpha(el1,2)=0;
-         alpha(el1,7)=alpha(el1,7)-1;%rebel siz
-         end
-         if (((alpha(el1,3) ==  Elkillery1) && (alpha(el1,4) == Elkillerx1)) || ((alpha(el1,3) ==  Elkillery2) && (alpha(el1,4) == Elkillerx2)) || ((alpha(el1,3) ==  Elkillery3) && (alpha(el1,4) == Elkillerx3)))
-         alpha(el1,3)=0;
-         alpha(el1,4)=0;
-         alpha(el1,7)=alpha(el1,7)-1;%rebel siz
-         end
-         if (((alpha(el1,5) ==  Elkillery1) && (alpha(el1,6) == Elkillerx1)) || ((alpha(el1,5) ==  Elkillery2) && (alpha(el1,6) == Elkillerx2)) || ((alpha(el1,5) ==  Elkillery3) && (alpha(el1,6) == Elkillerx3)))
-         alpha(el1,5)=0;
-         alpha(el1,6)=0;
-         alpha(el1,7)=alpha(el1,7)-1;%rebel siz
-         end
-        end
-        %------ Equal omitter :D
-        if (alpha(el1,1) == alpha(el1,3) && alpha(el1,2)==alpha(el1,4)) && ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,3)==0 && alpha(el1,4) ==0)
-        alpha(el1,3)=0;
-        alpha(el1,4)=0;
-        alpha(el1,7)=alpha(el1,7)-1;
-        elseif (alpha(el1,1) == alpha(el1,5) && alpha(el1,2)==alpha(el1,6))&& ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
-        alpha(el1,5)=0;
-        alpha(el1,6)=0;
-        alpha(el1,7)=alpha(el1,7)-1;
-        elseif (alpha(el1,3) == alpha(el1,5) && alpha(el1,4)==alpha(el1,6)) && ~(alpha(el1,3)==0 && alpha(el1,4) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
-        alpha(el1,1)=alpha(el1,5);
-        alpha(el1,2)=alpha(el1,6);
-        alpha(el1,3)=0;
-        alpha(el1,4)=0;
-        alpha(el1,5)=0;
-        alpha(el1,6)=0;
-        alpha(el1,7)=alpha(el1,7)-1;
-        end
-        %-----
-        %------- Edge Detector in alpha
-        %if (En(e,1) == alpha(el1,el2)) && (En(e,2) == alpha(el1,el2+1)) %BL SAME AS OTHER En
-        if (Elkiller == 1) || (Elkiller == 0)
-         if alpha(el1,7)==1
-              MAINMATCH=MAINMATCH+1;
-         if (((((alpha(el1,1)-Edge(j,ME2))^2) + ((alpha(el1,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,1)~=0 && alpha(el1,2)~=0)%Edge and alpha in bound  for L=1;  %make it in a way O is clear
-         alpha(el1,3)=Edge(j,ME2); % KEEP O in first
-         alpha(el1,4)=Edge(j,ME2+1);
-         alpha(el1,7)=alpha(el1,7)+1;
-         match=match+1;
-         elseif (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,3)~=0 && alpha(el1,4)~=0) && alpha(el1,7)==1
-         alpha(el1,1)=alpha(el1,3);
-         alpha(el1,2)=alpha(el1,4);
-         alpha(el1,3)=Edge(j,ME2);
-         alpha(el1,4)=Edge(j,ME2+1);
-         alpha(el1,7)=alpha(el1,7)+1;
-         match=match+1;
-         elseif (((((alpha(el1,5)-Edge(j,ME2))^2) + ((alpha(el1,6)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,5)~=0 && alpha(el1,6)~=0) && alpha(el1,7)==1
-         alpha(el1,1)=alpha(el1,5);
-         alpha(el1,2)=alpha(el1,6);
-         alpha(el1,3)=Edge(j,ME2);
-         alpha(el1,4)=Edge(j,ME2+1);
-         match=match+1;
-         alpha(el1,7)=alpha(el1,7)+1;
-         end
-         elseif alpha(el1,7)==2
-             MAINMATCH=MAINMATCH+1;
-         ml= ((Edge(j,ME2)-alpha(el1,1))/-(Edge(j,ME2+1)-alpha(el1,2)));
-         if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) < deltaT) && ~(Elkiller==1)
-         %MOHEM....!!!! far - near finder :\
-         Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
-         Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
-         Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
-         if (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>=0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>=0)
-            angle = (180/pi)*atan(ml);
-         elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0)
-            angle = (180/pi)*atan(ml);
-         elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-            angle = (180/pi)*atan(ml)+180;
-         elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-            angle = (180/pi)*atan(ml)+180;
-         elseif (Edge(j,ME2+1)-alpha(el1,2))==0
-            angle = -((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))*90;
-         elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0
-            angle = 0;
-         elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0
-            angle = 180;
-         end
-         %---------------------------- DL calculator!
-         mk1=(alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
-         if (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>=0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>=0)
-            angle0 = (180/pi)*atan(mk1);
-         elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0)
-            angle0 = (180/pi)*atan(mk1);
-         elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-            angle0 = (180/pi)*atan(mk1)+180;
-         elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-            angle0 = (180/pi)*atan(mk1)+180;
-         elseif (alpha(el1,4)-alpha(el1,2))==0
-            angle0 = -((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))*90;
-         elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0
-            angle0 = 0;
-         elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0
-            angle0 = 180;
-         end
-         %angle
-         %angle0
-         Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
-         %----------------------------------------------DL Calculator End
-         Er(numel(Er(:,1)),5)= angle;%angle
-         Er(numel(Er(:,1)),6)=(((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(t1); %2 last point velocity
-         Er(numel(Er(:,1)),7)=alpha(el1,1);%origin
-         Er(numel(Er(:,1)),8)=alpha(el1,2);
-         %Prepare the killer of edges!
-         Elkiller=1; %all match
-         Elkillery1=alpha(el1,1);%O of Y
-         Elkillerx1=alpha(el1,2);% O of X
-         Elkillery2=alpha(el1,3);
-         Elkillerx2=alpha(el1,4);
-         Elkillery3=Edge(j,ME2);
-         Elkillerx3=Edge(j,ME2+1);%Last Edge
-         alpha(el1,:)=[];
-         el1=1;
-         match=match+1;
-%          subplot(1,2,1)
-%          hold on
-%          plot([Er(:,2) Er(:,8)],[Er(:,1) Er(:,7)],'m')
+                                %end BL SAME AS OTHER En
+                                el1=el1+1;
+                            end
+                            Edge(j,ME2)=0;
+                            Edge(j,ME2+1)=0;
+                        elseif (En(e,4) <= Trcr-1) %Good bye En
+                            En(e,:)=[];
+                            e=e-1;
+                            if e<1
+                                e=1;
+                            end
+                            %----    L construction :D
+                            el1=1;
+                            Elkiller=0;
+                            while el1 <=(numel(alpha(:,1))) % Alpha matcher column counter
+                                %------- Edge Remover from Alpha
+                                if (Elkiller == 1) && ~(Elkillery1 == 0 && Elkillerx1 == 0 && Elkillery2 == 0 && Elkillerx2 == 0 && Elkillery3 == 0 && Elkillerx3 == 0)
+                                    if (((alpha(el1,1) ==  Elkillery1) && (alpha(el1,2) == Elkillerx1)) || ((alpha(el1,1) ==  Elkillery2) && (alpha(el1,2) == Elkillerx2)) || ((alpha(el1,1) ==  Elkillery3) && (alpha(el1,2) == Elkillerx3)))
+                                        alpha(el1,1)=0;
+                                        alpha(el1,2)=0;
+                                        alpha(el1,7)=alpha(el1,7)-1;%rebel siz
+                                    end
+                                    if (((alpha(el1,3) ==  Elkillery1) && (alpha(el1,4) == Elkillerx1)) || ((alpha(el1,3) ==  Elkillery2) && (alpha(el1,4) == Elkillerx2)) || ((alpha(el1,3) ==  Elkillery3) && (alpha(el1,4) == Elkillerx3)))
+                                        alpha(el1,3)=0;
+                                        alpha(el1,4)=0;
+                                        alpha(el1,7)=alpha(el1,7)-1;%rebel siz
+                                    end
+                                    if (((alpha(el1,5) ==  Elkillery1) && (alpha(el1,6) == Elkillerx1)) || ((alpha(el1,5) ==  Elkillery2) && (alpha(el1,6) == Elkillerx2)) || ((alpha(el1,5) ==  Elkillery3) && (alpha(el1,6) == Elkillerx3)))
+                                        alpha(el1,5)=0;
+                                        alpha(el1,6)=0;
+                                        alpha(el1,7)=alpha(el1,7)-1;%rebel siz
+                                    end
+                                end
+                                %------ Equal omitter :D
+                                if (alpha(el1,1) == alpha(el1,3) && alpha(el1,2)==alpha(el1,4)) && ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,3)==0 && alpha(el1,4) ==0)
+                                    alpha(el1,3)=0;
+                                    alpha(el1,4)=0;
+                                    alpha(el1,7)=alpha(el1,7)-1;
+                                elseif (alpha(el1,1) == alpha(el1,5) && alpha(el1,2)==alpha(el1,6))&& ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
+                                    alpha(el1,5)=0;
+                                    alpha(el1,6)=0;
+                                    alpha(el1,7)=alpha(el1,7)-1;
+                                elseif (alpha(el1,3) == alpha(el1,5) && alpha(el1,4)==alpha(el1,6)) && ~(alpha(el1,3)==0 && alpha(el1,4) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
+                                    alpha(el1,1)=alpha(el1,5);
+                                    alpha(el1,2)=alpha(el1,6);
+                                    alpha(el1,3)=0;
+                                    alpha(el1,4)=0;
+                                    alpha(el1,5)=0;
+                                    alpha(el1,6)=0;
+                                    alpha(el1,7)=alpha(el1,7)-1;
+                                end
+                                %-----
+                                %------- Edge Detector in alpha
+                                %if (En(e,1) == alpha(el1,el2)) && (En(e,2) == alpha(el1,el2+1)) %BL SAME AS OTHER En
+                                if (Elkiller == 1) || (Elkiller == 0)
+                                    if alpha(el1,7)==1
+                                        MAINMATCH=MAINMATCH+1;
+                                        if (((((alpha(el1,1)-Edge(j,ME2))^2) + ((alpha(el1,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,1)~=0 && alpha(el1,2)~=0)%Edge and alpha in bound  for L=1;  %make it in a way O is clear
+                                            alpha(el1,3)=Edge(j,ME2); % KEEP O in first
+                                            alpha(el1,4)=Edge(j,ME2+1);
+                                            alpha(el1,7)=alpha(el1,7)+1;
+                                            match=match+1;
+                                        elseif (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,3)~=0 && alpha(el1,4)~=0) && alpha(el1,7)==1
+                                            alpha(el1,1)=alpha(el1,3);
+                                            alpha(el1,2)=alpha(el1,4);
+                                            alpha(el1,3)=Edge(j,ME2);
+                                            alpha(el1,4)=Edge(j,ME2+1);
+                                            alpha(el1,7)=alpha(el1,7)+1;
+                                            match=match+1;
+                                        elseif (((((alpha(el1,5)-Edge(j,ME2))^2) + ((alpha(el1,6)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (alpha(el1,5)~=0 && alpha(el1,6)~=0) && alpha(el1,7)==1
+                                            alpha(el1,1)=alpha(el1,5);
+                                            alpha(el1,2)=alpha(el1,6);
+                                            alpha(el1,3)=Edge(j,ME2);
+                                            alpha(el1,4)=Edge(j,ME2+1);
+                                            match=match+1;
+                                            alpha(el1,7)=alpha(el1,7)+1;
+                                        end
+                                    elseif alpha(el1,7)==2
+                                        MAINMATCH=MAINMATCH+1;
+                                        ml= ((Edge(j,ME2)-alpha(el1,1))/-(Edge(j,ME2+1)-alpha(el1,2)));
+                                        if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) < deltaT) && ~(Elkiller==1)
+                                            %MOHEM....!!!! far - near finder :\
+                                            Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
+                                            Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
+                                            Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
+                                            if (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>=0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>=0)
+                                                angle = (180/pi)*atan(ml);
+                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0)
+                                                angle = (180/pi)*atan(ml);
+                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
+                                                angle = (180/pi)*atan(ml)+180;
+                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
+                                                angle = (180/pi)*atan(ml)+180;
+                                            elseif (Edge(j,ME2+1)-alpha(el1,2))==0
+                                                angle = -((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))*90;
+                                            elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0
+                                                angle = 0;
+                                            elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0
+                                                angle = 180;
+                                            end
+                                            %---------------------------- DL calculator!
+                                            mk1=(alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
+                                            if (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>=0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>=0)
+                                                angle0 = (180/pi)*atan(mk1);
+                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0)
+                                                angle0 = (180/pi)*atan(mk1);
+                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
+                                                angle0 = (180/pi)*atan(mk1)+180;
+                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
+                                                angle0 = (180/pi)*atan(mk1)+180;
+                                            elseif (alpha(el1,4)-alpha(el1,2))==0
+                                                angle0 = -((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))*90;
+                                            elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0
+                                                angle0 = 0;
+                                            elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0
+                                                angle0 = 180;
+                                            end
+                                            %angle
+                                            %angle0
+                                            Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
+                                            %----------------------------------------------DL Calculator End
+                                            Er(numel(Er(:,1)),5)= angle;%angle
+                                            Er(numel(Er(:,1)),6)=(((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(t1); %2 last point velocity
+                                            Er(numel(Er(:,1)),7)=alpha(el1,1);%origin
+                                            Er(numel(Er(:,1)),8)=alpha(el1,2);
+                                            %Prepare the killer of edges!
+                                            Elkiller=1; %all match
+                                            Elkillery1=alpha(el1,1);%O of Y
+                                            Elkillerx1=alpha(el1,2);% O of X
+                                            Elkillery2=alpha(el1,3);
+                                            Elkillerx2=alpha(el1,4);
+                                            Elkillery3=Edge(j,ME2);
+                                            Elkillerx3=Edge(j,ME2+1);%Last Edge
+                                            alpha(el1,:)=[];
+                                            el1=1;
+                                            match=match+1;
+                                            %          subplot(1,2,1)
+                                            %          hold on
+                                            %          plot([Er(:,2) Er(:,8)],[Er(:,1) Er(:,7)],'m')
 
-         %maybe add another part to matrix as frame counter !! to remove
-         %old lines that didnt match in long!
-%          else %good bye :D line el1
-%          Elkiller=2; %No match
-%          Elkillery1=alpha(el1,el2);
-%          Elkillerx1=alpha(el1,el2+1);
-%          alpha(el1,:)=[];
-%         el2=(numel(alpha(1,:)))+1; %breaker
-        %el2=(numel(alpha(1,:)))+1; %breaker
-          end
-         end
-        end
+                                            %maybe add another part to matrix as frame counter !! to remove
+                                            %old lines that didnt match in long!
+                                            %          else %good bye :D line el1
+                                            %          Elkiller=2; %No match
+                                            %          Elkillery1=alpha(el1,el2);
+                                            %          Elkillerx1=alpha(el1,el2+1);
+                                            %          alpha(el1,:)=[];
+                                            %         el2=(numel(alpha(1,:)))+1; %breaker
+                                            %el2=(numel(alpha(1,:)))+1; %breaker
+                                        end
+                                    end
+                                end
 
-        %end BL SAME AS OTHER En
-       el1=el1+1;
-      end
-      Edge(j,ME2)=0;
-      Edge(j,ME2+1)=0;
-     end
-    end
-   j=j+1;
-   end %While of Edge
-   if  match==0% new comer? :D G o i n t o f i r s t :D
-       j=1;
-   while (j<=(numel(Edge(:,1)))) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5
-   if (((((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && ((~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) && (d==-1)) %% boundery another % Rebel classification
-   alpha((numel(alpha(:,1)))+1,1)=Edge(j,ME2);
-   alpha((numel(alpha(:,1))),2)=Edge(j,ME2+1);
-   alpha((numel(alpha(:,1))),7)=1;
-   Edge(j,ME2)=0;
-   Edge(j,ME2+1)=0;
-   end
-   j=j+1;
-   end
-   end
-        end
-        e=e+1;
-    end%end of Story for En
+                                %end BL SAME AS OTHER En
+                                el1=el1+1;
+                            end
+                            Edge(j,ME2)=0;
+                            Edge(j,ME2+1)=0;
+                        end
+                    end
+                    j=j+1;
+                end %While of Edge
+                if  match==0% new comer? :D G o i n t o f i r s t :D
+                j=1;
+                while (j<=(numel(Edge(:,1)))) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5
+                if (((((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && ((~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) && (d==-1)) %% boundery another % Rebel classification
+                alpha((numel(alpha(:,1)))+1,1)=Edge(j,ME2);
+                alpha((numel(alpha(:,1))),2)=Edge(j,ME2+1);
+                alpha((numel(alpha(:,1))),7)=1;
+                Edge(j,ME2)=0;
+                Edge(j,ME2+1)=0;
+                end
+                j=j+1;
+                end
+                end
+            end
+            e=e+1;
+        end%end of Story for En
     end %? HERE?
     %alpha
 end
+
  %% rebel edge
  %-------------- Er Estimator
  %REBELIONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNSSSSSSS! :))
@@ -702,6 +707,7 @@ u=1;
      end
  u=u+1;
  end
+
 %% match circle with rebel edges (estimating the rebel circle)
 %------------Ciculing Er This must be first :))
 PIN=20; %In percentage
@@ -889,6 +895,7 @@ end
      u=u+1;
   end
 end
+
 %% normal circles
 %-----------Circuling En
 PIN=40; %In percentage
