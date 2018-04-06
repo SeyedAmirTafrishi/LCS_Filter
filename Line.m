@@ -11,21 +11,21 @@ CB = 0;
 % Note: Psi here considered Nx4 not Nx5 maybe in future quadrangular would add that require 1 more
 % Edge Remover by Psi Note: Psi here considered Nx4 Psi(X,Y,Radius,Type)
 if psi == 0
-    % skip as nothing to remove;
+	% skip as nothing to remove;
 else
     for i = 1:numel(psi(:,1)) % Counter for edges
         if psi(i,4) == 1      % Check whether the Psi is Circle or Square
-          j = 1;
-          while j <= numel(c9(:,1)) % Counter for edges
-            if (((((psi(i,1) - c9(j,1))^2) + ((psi(i,2)-c9(j,2))^2))^(0.5)) <= psi(i,3))
-              % The condition to check the boundery property
-              c9(j,:) = []; % Remove the Edge that has to be ignored
-              j = j - 1;
+            j = 1;
+            while j <= numel(c9(:,1)) % Counter for edges
+                if (((((psi(i,1) - c9(j,1))^2) + ((psi(i,2)-c9(j,2))^2))^(0.5)) <= psi(i,3))
+                    % The condition to check the boundery property
+                    c9(j,:) = []; % Remove the Edge that has to be ignored
+                    j = j - 1;
+                end
+                j = j + 1;
             end
-            j = j + 1;
-          end
         % elseif psi(:,4) == 2  %WILL BE FILLED for SQUARE
-          % WILL BE FILLED
+            % WILL BE FILLED
         end
         
         % can be delete
@@ -37,7 +37,6 @@ else
         ploti = plot(xunit, yunit,'y'); % Plot the boys :v
         xlim([1 640])
         ylim([1 480])
-        %
     end
 end
 
@@ -60,29 +59,30 @@ k = 0;  % shifter triger for new column edge groups;
 for z = 1:numel(lambda(:,1)) % Lambda Counter
     %------------- % Matrix Shifter
     if k == 1
-      f = f + 2;   % shift two for x and y
-      k = 0;
+        f = f + 2;   % shift two for x and y
+        k = 0;
     end
     hold on
     %--------------------- The Lambda edge comparator
     j = 1;
     g = 1;
     if lambda == 0
+        % pass
     else
-      while j <= numel(c9(:,1))
-        % The condition to check the boundery property
-        if (((((lambda(z,1) - c9(j,1))^2) + ((lambda(z,2) - c9(j,2))^2))^(0.5)) <= lambda(z,3))
-          subplot(1,2,1)
-          plot([lambda(z,2), c9(j,2)], [lambda(z,1), c9(j,1)], 'g'); % it plots the related lines when condition satisfied
-          DV(g,f) = c9(j,1); % include the edges to the relevant group
-          DV(g,f + 1) = c9(j,2);
-          c9(j,:) = [];
-          k = 1; % Activation for new column couple
-          g = g + 1;
-        else
-          j = j + 1;
+        while j <= numel(c9(:,1))
+            % The condition to check the boundery property
+            if (((((lambda(z,1) - c9(j,1))^2) + ((lambda(z,2) - c9(j,2))^2))^(0.5)) <= lambda(z,3))
+                subplot(1,2,1)
+                plot([lambda(z,2), c9(j,2)], [lambda(z,1), c9(j,1)], 'g'); % it plots the related lines when condition satisfied
+                DV(g,f) = c9(j,1); % include the edges to the relevant group
+                DV(g,f + 1) = c9(j,2);
+                c9(j,:) = [];
+                k = 1; % Activation for new column couple
+                g = g + 1;
+            else
+                j = j + 1;
+            end
         end
-      end
     end
 end % end of for
 %-----------------Boxing part :D
