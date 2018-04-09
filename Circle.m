@@ -9,22 +9,21 @@ global t1 frame
 %IC=255/2;%Image Center
 ICX = 320;%2
 ICY = 240;%1
-f = 1;
-% VeS=2;%Standard Edge Velocity
-BLS = 25; %Standard Boundery layer
-L = 3; %The el of rebel edge alignment
+% VeS=2;    % Standard Edge Velocity
+BLS = 25;   % Standard Boundery layer (only for initialization)
+L = 3;      % The el of rebel edge alignment (frames of detection) [issue] L needs to be properly used
 options = odeset('RelTol',1e-4,'AbsTol',[1e-5 1e-5]);
-NormRows = sqrt(sum(Edge.*Edge,2));
-EdgeNorm = bsxfun(@rdivide,abs(Edge),NormRows);
-t1 = frame;%second devided by frame per sec in real activation
-alooo = 0;
+NormRows = sqrt(sum(Edge.*Edge, 2));    % to normalize lambda 
+EdgeNorm = bsxfun(@rdivide,abs(Edge), NormRows);
+t1 = 1 / frame; % second devided by frame per sec in real activation
+alooo = 0;      % flag for initization phase, to avoid adding edge multiple times
 
 %% normal edge
 %----------En
 k = 1; %counter of En
 if En == 0 %CHANGE!
-    for i = 1:2:(numel(Edge(1,:))) %column
-        for j = 1:1:(numel(Edge(:,1)))%Row
+    for i = 1:2:(numel(Edge(1,:)))      % column
+        for j = 1:1:(numel(Edge(:,1)))  % Row
             if ~(Edge(j,i) == 0 && Edge(j,i+1) == 0)
               En(k,1) = Edge(j,i); %Y
               En(k,2) = Edge(j,i+1); %X
@@ -48,7 +47,7 @@ if En == 0 %CHANGE!
               end
               En(k,5) = angle;
               En(k,6) = Vv;
-              k = k+1;
+              k = k + 1;
               alooo = 1;
             end
         end
@@ -67,8 +66,8 @@ else
             x_0 = R;
             x_1 = (En(e,6)+Vv)/2; % CHanged! :D
             [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEn(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*beta)+(En(e,1)-ICY);%estimation of En x
-            NEn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
+            NEn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*beta)+(En(e,1)-ICY);%estimation of En x
+            NEn(1,2) = (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
             hold on
             subplot(1,2,1)
             plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'ys')
@@ -80,26 +79,26 @@ else
             z = 1;
             while z<= (numel(lambda(:,1)))%Search P_P The Lambda Classification Cases 1 2 3 5
                 if (((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2))^(0.5)) <= lambda(z,3))  %this is Lambda Check in En ok?
-                    i=1; %Check the Edge to find related group
+                    i = 1; %Check the Edge to find related group
                     while (i <= (numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
-                        j=1;
+                        j = 1;
                         while (j <= (numel(Edge(:,1))))%Column counter
                             if ~(Edge(j,i)==0 && Edge(j,i+1)==0) && (((((lambda(z,1)-Edge(j,i))^2) + ((lambda(z,2)-Edge(j,i+1))^2))^(0.5)) <= lambda(z,3))
                                 %MainEdge(1,1)=Edge(j,i);%no need for this?
                                 %MainEdge(1,2)=Edge(j,i+1);
                                 %plot(MainEdge(1,2),MainEdge(1,1),'rs')
-                                ME1=j;
-                                ME2=i;
-                                i=(numel(Edge(1,:)))+1;
-                                j=(numel(Edge(:,1)))+1;
-                                z=(numel(lambda(:,1)))+1;
+                                ME1 = j;
+                                ME2 = i;
+                                i = (numel(Edge(1,:)))+1;
+                                j =(numel(Edge(:,1)))+1;
+                                z = (numel(lambda(:,1)))+1;
                             end
-                            j=j+1;
+                            j = j + 1;
                         end
-                        i=i+2;
+                        i = i + 2;
                     end
                 end
-                z=z+1;
+                z = z + 1;
             end
             if (ME2==0 && ME1==0) %lonely not a single match? :\
                 En(e,1)=NEn(1,1);
@@ -205,25 +204,25 @@ else
                 while ( j <= (numel(Edge(:,1))) ) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5
                     if (((abs(((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2)))^(0.5)) <= NBL) && (~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) && (d==-1)%% boundery another % Rebel classification
                         if ( En(e,4) >= Trs ) % for case d=-1 no match, Er
-                            En(e,1)=NEn(1,1)+ICY;%estimation of En x
-                            En(e,2)=NEn(1,2)+ICX;%estimation of En y%No En trust change
-                            En(e,4)=En(e,4)-1; %disipate it by time
-                            En(e,3)=NBL;
-                            %      hold on
-                            %      subplot(1,2,1)
-                            %      plot(En(e,2)+ICX,En(e,1)+ICY,'ms')
+                            En(e,1) = NEn(1,1) + ICY;%estimation of En x
+                            En(e,2) = NEn(1,2) + ICX;%estimation of En y%No En trust change
+                            En(e,4) = En(e,4) - 1; %disipate it by time
+                            En(e,3) = NBL;
+                            % hold on
+                            % subplot(1,2,1)
+                            % plot(En(e,2)+ICX,En(e,1)+ICY,'ms')
                         elseif ( En(e,4) < Trs ) && ( En(e,4) >= Trcr)
-                            En(e,4)=En(e,4)-1;
-                            En(e,1)=NEn(1,1)+ICY;%estimation of En x, DO WE ADD????
-                            En(e,2)=NEn(1,2)+ICX;%estimation of En y%No En trust change
-                            En(e,3)=NBL;
-                            %      hold on
-                            %      subplot(1,2,1)
-                            %      plot(En(e,2)+ICX,En(e,1)+ICY,'ms')
+                            En(e,4) = En(e,4) - 1;
+                            En(e,1) = NEn(1,1) + ICY; %estimation of En x, DO WE ADD????
+                            En(e,2) = NEn(1,2) + ICX; %estimation of En y%No En trust change
+                            En(e,3) = NBL;
+                            % hold on
+                            % subplot(1,2,1)
+                            % plot(En(e,2)+ICX,En(e,1)+ICY,'ms')
                             %----    L construction :D
                             el1=1;
                             Elkiller=0;
-                            while el1 <=(numel(alpha(:,1))) % Alpha matcher column counter
+                            while el1 <= (numel(alpha(:,1))) % Alpha matcher column counter
                                 %------- Edge Remover from Alpha
                                 if (Elkiller == 1) && ~(Elkillery1 == 0 && Elkillerx1 == 0 && Elkillery2 == 0 && Elkillerx2 == 0 && Elkillery3 == 0 && Elkillerx3 == 0)
                                     if (((alpha(el1,1) ==  Elkillery1) && (alpha(el1,2) == Elkillerx1)) || ((alpha(el1,1) ==  Elkillery2) && (alpha(el1,2) == Elkillerx2)) || ((alpha(el1,1) ==  Elkillery3) && (alpha(el1,2) == Elkillerx3)))
@@ -400,7 +399,7 @@ else
                                     alpha(el1,3)=0;
                                     alpha(el1,4)=0;
                                     alpha(el1,7)=alpha(el1,7)-1;
-                                elseif (alpha(el1,1) == alpha(el1,5) && alpha(el1,2)==alpha(el1,6))&& ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
+                                elseif (alpha(el1,1) == alpha(el1,5) && alpha(el1,2)==alpha(el1,6)) && ~(alpha(el1,1)==0 && alpha(el1,2) ==0) && ~(alpha(el1,5)==0 && alpha(el1,6) ==0)
                                     alpha(el1,5)=0;
                                     alpha(el1,6)=0;
                                     alpha(el1,7)=alpha(el1,7)-1;
@@ -524,7 +523,7 @@ else
                     end
                     j=j+1;
                 end %While of Edge
-                if  match==0% new comer? :D G o i n t o f i r s t :D
+                if  match==0% new comer? :D Go into first :D
                     j=1;
                     while (j<=(numel(Edge(:,1)))) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5
                         if (((((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && ((~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) && (d==-1)) %% boundery another % Rebel classification
@@ -559,13 +558,13 @@ else
             x_0 = R;
             x_1 = En(r,6);%check velocity
             [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEr(1,1) =  -(Y1(end,1)-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
-            NEr(1,2) =  (Y1(end,1)-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
-            NBL=BLS; % WILL CHANGE
-            mr=(NEr(1,1)-Er(r,7))/-(Er(r,2)-Er(r,8));
-            NVe=Y1(end,2);%Estimated edge velocity
-            deltaTr=sqrt(deltay^2+deltaz^2);
-            i=1; %Check the Edge to find related group
+            NEr(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
+            NEr(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
+            NBL = BLS; % WILL CHANGE
+            mr = (NEr(1,1)-Er(r,7))/-(Er(r,2)-Er(r,8));
+            NVe = Y1(end,2);% Estimated edge velocity
+            deltaTr = sqrt(deltay^2+deltaz^2);
+            i = 1;          % Check the Edge to find related group
             while (i<=(numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
                 j=1;
                 while (j<=(numel(Edge(:,1))))%Column counter
@@ -625,7 +624,7 @@ else
                 end
                 i=i+2;
             end
-            if MatchR==0 % No match for Er :\
+            if MatchR == 0 % No match for Er :\
                 % pass
                 if (Er(r,4) >= Trcr ) % update what? last point?
                     Er(r,1)=NEr(1,1);
@@ -648,42 +647,42 @@ else
 end
 
 %-------------------------------------------------------------------------------------
-% LEFT EDGEs with En
-if alooo==1
+% LEFT EDGEs with En (lambda 1 and lambda 4 section)
+if alooo == 1
      % pass
 else
-    if (En ==0) %no PERMISSION FOR INITIATION !!!!!! :D
+    if (En == 0) %no PERMISSION FOR INITIATION !!!!!! :D
         % pass
     else
-        k=(numel(Edge(:,1)))+1;
-        i=1; %Check the Edge to find related group
-        while (i<=(numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
-            j=1;
-            while (j<=(numel(Edge(:,1))))%Column counter
-                if  ~(Edge(j,i)==0 && Edge(j,i+1)==0)
-                    En(k,1)=Edge(j,i); %Y
-                    En(k,2)=Edge(j,i+1); %X
-                    En(k,3)=BLS; %BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
-                    En(k,4)=round((Trcr+Trs)/2);
-                    m=(Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
-                    if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>=0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>=0)
-                        angle=(180/pi)*atan(m);
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))<0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>0)
-                        angle=(180/pi)*atan(m);
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))<0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0)
-                        angle=(180/pi)*atan(m)+180;
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0)
-                        angle=(180/pi)*atan(m)+180;
+        k = (numel(Edge(:,1))) + 1; % [issue] Edge might be En 
+        i = 1; %Check the Edge to find related group
+        while (i <= (numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
+            j = 1;
+            while (j <= (numel(Edge(:,1))))%Column counter
+                if  ~(Edge(j,i) == 0 && Edge(j,i+1) == 0)
+                    En(k,1) = Edge(j,i); %Y
+                    En(k,2) = Edge(j,i+1); %X
+                    En(k,3) = BLS; %BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
+                    En(k,4) = round((Trcr+Trs)/2);
+                    m = (Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
+                    if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) >= 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) >= 0)
+                        angle = (180/pi)*atan(m);
+                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) < 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) > 0)
+                        angle = (180/pi)*atan(m);
+                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) < 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0)
+                        angle = (180/pi)*atan(m)+180;
+                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) > 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0)
+                        angle = (180/pi)*atan(m)+180;
                     elseif (Edge(j,i+1)-ICX)==0
-                        angle=-((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))*90;
-                    elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>0
-                        angle=0;
-                    elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0
-                        angle=180;
+                        angle = -((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))*90;
+                    elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) > 0
+                        angle = 0;
+                    elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0
+                        angle = 180;
                     end
                     En(k,5)=angle;
                     En(k,6)=Vv;
-                    k=k+1;
+                    k = k + 1;
                 end
                 Edge(j,i)=0;
                 Edge(j,i+1)=0;
@@ -696,8 +695,8 @@ end
 
 %-----------------------------------------------------------------------------
 % En infinity ones remover
-u=1;
-while u<=(numel(En(:,1)))
+u = 1;
+while u <= (numel(En(:,1)))
     if En(u,4) > Trmax
         En(u,4)=TrMax;
     end
@@ -755,7 +754,7 @@ else
                     else
                         AngleEXTEr=EXTEr(1,5)+EXTEr(1,3);
                     end
-                    if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-40*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+40*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
+                    if (AngleTEr >= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-40*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+40*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
                         M(Mk,1:8)=TEr(i,:);%Our Circule Mother! :D
                         Mk=Mk+1;
                         TEr(i,:)=[];
@@ -910,11 +909,11 @@ end
 
 %% normal circles
 %-----------Circuling En
-PIN=40; %In percentage
-BetaDev=20;
-TEn=En;
-TEnM=En;
-if (C==0)
+PIN = 40; %In percentage
+BetaDev = 20;
+TEn = En;
+TEnM = En;
+if (C == 0)
     % pass
 else
     ci=1;
