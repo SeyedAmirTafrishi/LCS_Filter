@@ -38,6 +38,8 @@ drs = './example_pictures'; % in current directory
 dr1 = dir([drs '/*.png']);  % get all png files in the folder
 f1 = {dr1.name};            % get filenames to cell
 
+mkdir('./results')          % dir for saving results
+
 % loop for each image
 for c = 1:length(f1)        
     tic
@@ -139,6 +141,7 @@ for c = 1:length(f1)
     fig_filename = ['./results/fig', num2str(c),'.fig'];
     saveas(gca, fig_filename);
     % %--------------------
+    
     toc
 end
 
