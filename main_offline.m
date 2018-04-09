@@ -16,10 +16,12 @@ C  = 0;
 Cr = 0;
 delta = [0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
 
-%----------------------------
+%% algoritm parameters
 alpha = [0 0 0 0 0 0 0];
-global deltay deltaz Trs Trcr Trmax Av
-global frame Vv
+global Trs Trcr Trmax 
+global frame Av Vv deltay deltaz 
+
+frame = 1; %Every Sec one frame! Works
 
 % trust parameters
 Trs   = 3;
@@ -44,12 +46,12 @@ mkdir('./results')          % dir for saving results
 for c = 1:length(f1)        
     tic
 
-    %image series
+    % read one image
     i = imread([drs '/' f1{c}]);
 
     %BL=100; %boundery layer Cylindrical-tin
 
-    %Make image greyscale
+    % convert image into greyscale
     figure(c)
     if length(size(i)) == 3
         im = double(i(:,:,2));
@@ -57,6 +59,7 @@ for c = 1:length(f1)
         im = double(i);
     end
 
+    % run fast9 edge detection
     c9 = fast9(im, 25, 1);
     
     axis image
@@ -81,7 +84,6 @@ for c = 1:length(f1)
     Edge = c9;
     %--------Algo begins HERE ......!!!!!
     Edge = Line(lambda,psi,Edge);
-    frame = 1; %Every Sec one frame! Works
     [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
     Size(c,2) = numel(En(:,1));
     Size(c,3) = numel(Er(:,1));
@@ -99,6 +101,7 @@ for c = 1:length(f1)
     CB = 1;
     hold on
     if C == 0
+        % pass
     else
         for i = 1:1:(numel(C(:,1)))
             xunit = (C(i,3) + CB) * cos(th) + C(i,2);%equation of circle :D
@@ -111,6 +114,7 @@ for c = 1:length(f1)
     end
     CB = 1;
     if Cr == 0
+        % pass
     else
         for i = 1:1:(numel(Cr(:,1)))
             xunit = (Cr(i,3) + CB) * cos(th) + Cr(i,2);%equation of circle :D
