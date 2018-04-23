@@ -11,47 +11,18 @@ ICX = 320;%2
 ICY = 240;%1
 % VeS=2;    % Standard Edge Velocity
 BLS = 25;   % Standard Boundery layer (only for initialization)
-L = 3;      % The el of rebel edge alignment (frames of detection) [issue] L needs to be properly used
+L = 3;      % The el of rebel edge alignment (frames of detection), Step of accuracy to have rebel edges [issue] L needs to be properly used
 options = odeset('RelTol',1e-4,'AbsTol',[1e-5 1e-5]);
 NormRows = sqrt(sum(Edge.*Edge, 2));    % to normalize lambda 
 EdgeNorm = bsxfun(@rdivide,abs(Edge), NormRows);
 t1 = 1 / frame; % second devided by frame per sec in real activation
-alooo = 0;      % flag for initization phase, to avoid adding edge multiple times
+alooo = 0;      % REMOVE
 
 %% normal edge
 %----------En
-k = 1; %counter of En
+k = 1; %counter of En %%REMOVE
 if En == 0 %CHANGE!
-    for i = 1:2:(numel(Edge(1,:)))      % column
-        for j = 1:1:(numel(Edge(:,1)))  % Row
-            if ~(Edge(j,i) == 0 && Edge(j,i+1) == 0)
-              En(k,1) = Edge(j,i); %Y
-              En(k,2) = Edge(j,i+1); %X
-              En(k,3) = BLS; % BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
-              En(k,4) = round((Trcr+Trs)/2);
-              m = (Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
-              if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>=0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>=0)
-                  angle = (180/pi)*atan(m);
-              elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))<0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>0)
-                  angle = (180/pi)*atan(m);
-              elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))<0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0)
-                  angle = (180/pi)*atan(m)+180;
-              elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0)
-                  angle = (180/pi)*atan(m)+180;
-              elseif (Edge(j,i+1)-ICX)==0
-                  angle = -((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))*90;
-              elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>0
-                  angle = 0;
-              elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0
-                  angle = 180;
-              end
-              En(k,5) = angle;
-              En(k,6) = Vv;
-              k = k + 1;
-              alooo = 1;
-            end
-        end
-    end
+    %REMOVE
 else
     if lambda == 0
         % pass
@@ -67,7 +38,7 @@ else
             x_1 = (En(e,6)+Vv)/2; % CHanged! :D
             [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
             NEn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*beta)+(En(e,1)-ICY);%estimation of En x
-            NEn(1,2) = (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
+            NEn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
             hold on
             subplot(1,2,1)
             plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'ys')
@@ -90,7 +61,7 @@ else
                                 ME1 = j;
                                 ME2 = i;
                                 i = (numel(Edge(1,:)))+1;
-                                j =(numel(Edge(:,1)))+1;
+                                j = (numel(Edge(:,1)))+1;
                                 z = (numel(lambda(:,1)))+1;
                             end
                             j = j + 1;
@@ -559,7 +530,7 @@ else
             x_1 = En(r,6);%check velocity
             [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
             NEr(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
-            NEr(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
+            NEr(1,2) =  (Y1(end,1)-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
             NBL = BLS; % WILL CHANGE
             mr = (NEr(1,1)-Er(r,7))/-(Er(r,2)-Er(r,8));
             NVe = Y1(end,2);% Estimated edge velocity
@@ -647,56 +618,48 @@ else
 end
 
 %-------------------------------------------------------------------------------------
-% LEFT EDGEs with En (lambda 1 and lambda 4 section)
-if alooo == 1
-     % pass
-else
-    if (En == 0) %no PERMISSION FOR INITIATION !!!!!! :D
-        % pass
-    else
-        k = (numel(Edge(:,1))) + 1; % [issue] Edge might be En 
-        i = 1; %Check the Edge to find related group
-        while (i <= (numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
-            j = 1;
-            while (j <= (numel(Edge(:,1))))%Column counter
-                if  ~(Edge(j,i) == 0 && Edge(j,i+1) == 0)
-                    En(k,1) = Edge(j,i); %Y
-                    En(k,2) = Edge(j,i+1); %X
-                    En(k,3) = BLS; %BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
-                    En(k,4) = round((Trcr+Trs)/2);
-                    m = (Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
-                    if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) >= 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) >= 0)
-                        angle = (180/pi)*atan(m);
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) < 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) > 0)
-                        angle = (180/pi)*atan(m);
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) < 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0)
-                        angle = (180/pi)*atan(m)+180;
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) > 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0)
-                        angle = (180/pi)*atan(m)+180;
-                    elseif (Edge(j,i+1)-ICX)==0
-                        angle = -((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))*90;
-                    elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) > 0
-                        angle = 0;
-                    elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0
-                        angle = 180;
-                    end
-                    En(k,5)=angle;
-                    En(k,6)=Vv;
-                    k = k + 1;
-                end
-                Edge(j,i)=0;
-                Edge(j,i+1)=0;
-                j=j+1;
+%% LEFT EDGEs with En + Initiation of En (lambda 1 and lambda 4 section)
+k = (numel(En(:,1))) + 1; % The size of latest En matrix (REMOVE)
+i = 1; %Check the Edge to find related group
+while (i <= (numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
+    j = 1;
+    while (j <= (numel(Edge(:,1))))%Column counter
+        if  ~(Edge(j,i) == 0 && Edge(j,i+1) == 0)
+            En(k,1) = Edge(j,i); %Y
+            En(k,2) = Edge(j,i+1); %X
+            En(k,3) = BLS; %BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
+            En(k,4) = round((Trcr+Trs)/2);
+            m = (Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
+            if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) >= 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) >= 0)
+                angle = (180/pi)*atan(m);
+            elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) < 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) > 0)
+                angle = (180/pi)*atan(m);
+            elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) < 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0)
+                angle = (180/pi)*atan(m)+180;
+            elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY))) > 0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0)
+                angle = (180/pi)*atan(m)+180;
+            elseif (Edge(j,i+1)-ICX)==0
+                angle = -((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))*90;
+            elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) > 0
+                angle = 0;
+            elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX))) < 0
+                angle = 180;
             end
-            i=i+2;
+            En(k,5)=angle;
+            En(k,6)=Vv;
+            k = k + 1;
         end
+        Edge(j,i)=0;
+        Edge(j,i+1)=0;
+        j=j+1;
     end
+    i=i+2;
 end
 
 %-----------------------------------------------------------------------------
-% En infinity ones remover
-u = 1;
-while u <= (numel(En(:,1)))
+%% En infinity ones remover
+u=1;
+while u<=(numel(En(:,1)))
     if En(u,4) > Trmax
         En(u,4)=TrMax;
     end
@@ -1128,6 +1091,5 @@ else
         r = r + 1;
     end
 end
-
-
+size(En)
 end % end of function
