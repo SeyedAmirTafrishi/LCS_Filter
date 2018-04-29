@@ -5,6 +5,7 @@ clear delta
 close all
 
 %set(0,'DefaultTextInterpreter','Latex');
+addpath('./helpers/')
 
 %% intial conditions
 % algorithm constants
@@ -60,7 +61,7 @@ for c = 1:length(f1)
     end
 
     % run fast9 edge detection
-    c9 = fast9(im, 25, 1);
+    c9 = fast9(im, 30, 1);
     
     axis image
     colormap(gray)
@@ -142,8 +143,8 @@ for c = 1:length(f1)
     set(gcf,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 
     %---------- Save Plot
-    fig_filename = ['./results/fig', num2str(c),'.fig'];
-    saveas(gca, fig_filename);
+%   fig_filename = ['./results/fig', num2str(c),'.fig'];
+%   saveas(gca, fig_filename);
     % %--------------------
     
     toc
