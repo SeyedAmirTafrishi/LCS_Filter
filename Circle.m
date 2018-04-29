@@ -263,38 +263,10 @@ else
                                             Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
                                             Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
                                             Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
-                                            if (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>=0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>=0)
-                                                angle=(180/pi)*atan(ml);
-                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0)
-                                                angle=(180/pi)*atan(ml);
-                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-                                                angle=(180/pi)*atan(ml)+180;
-                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-                                                angle=(180/pi)*atan(ml)+180;
-                                            elseif (Edge(j,ME2+1)-alpha(el1,2))==0
-                                                angle=-((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))*90;
-                                            elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0
-                                                angle=0;
-                                            elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0
-                                                angle=180;
-                                            end
+                                            angle = calculate_vector_angle(Edge(j,ME2),Edge(j,ME2+1),alpha(el1,1),alpha(el1,2)); %[MODIFIED]
                                             %---------------------------- DL calculator!
-                                            mk1=(alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
-                                            if (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>=0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>=0)
-                                                angle0=(180/pi)*atan(mk1);
-                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0)
-                                                angle0=(180/pi)*atan(mk1);
-                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-                                                angle0=(180/pi)*atan(mk1)+180;
-                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-                                                angle0=(180/pi)*atan(mk1)+180;
-                                            elseif (alpha(el1,4)-alpha(el1,2))==0
-                                                angle0=-((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))*90;
-                                            elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0
-                                                angle0=0;
-                                            elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0
-                                                angle0=180;
-                                            end
+                                            mk1 = (alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
+                                            angle0 = calculate_vector_angle(alpha(el1,3), alpha(el1,4), alpha(el1,1), alpha(el1,2)); %[MODIFIED]
                                             %angle
                                             %angle0
                                             Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
