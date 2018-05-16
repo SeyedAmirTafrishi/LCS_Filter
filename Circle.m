@@ -263,10 +263,10 @@ else
                                             Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
                                             Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
                                             Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
-                                            angle = calculate_vector_angle(Edge(j,ME2),Edge(j,ME2+1),alpha(el1,1),alpha(el1,2)); %[MODIFIED]
+                                            angle = calculate_vector_angle(Edge(j,ME2+1),Edge(j,ME2),alpha(el1,2),alpha(el1,1)); %[MODIFIED]
                                             %---------------------------- DL calculator!
                                             mk1 = (alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
-                                            angle0 = calculate_vector_angle(alpha(el1,3), alpha(el1,4), alpha(el1,1), alpha(el1,2)); %[MODIFIED]
+                                            angle0 = calculate_vector_angle(alpha(el1,4), alpha(el1,3), alpha(el1,2), alpha(el1,1)); %[MODIFIED]
                                             %angle
                                             %angle0
                                             Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
