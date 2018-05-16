@@ -1,4 +1,4 @@
-function [ angle ] = calculate_vector_angle( x1, y1, x2, y2 )
+function [ angle ] = calculate_vector_angle( x2, y2, x1, y1 )
 %calculate_vector_angle
 %   Calculate the angle between two pixels
 
@@ -20,7 +20,7 @@ function [ angle ] = calculate_vector_angle( x1, y1, x2, y2 )
         angle=180;
     end
 
-    angle2 = atan2(y1 - y2, x1 - x2) * (180/pi);
+    angle2 = atan2(y2 - y1, -(x2 - x1)) * (180/pi);
 
     angle
     angle2
