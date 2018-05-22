@@ -60,8 +60,7 @@ for c = 1:length(f1)
         im = double(i);
     end
 
-    % run fast9 edge detection
-    c9 = fast9(im, 30, 1);
+    c9 = fast9(im, 30, 1);      % run fast9 edge detection
     
     axis image
     colormap(gray)
@@ -69,13 +68,13 @@ for c = 1:length(f1)
     subplot(1,2,1)
     hold on
     imshow(im / max(im(:)));
-    plot(c9(:,1),c9(:,2),'r.'); %edges
+    plot(c9(:,1),c9(:,2),'r.'); % edges
     
     subplot(1,2,2)
     hold on
     imshow(im / max(im(:)));
     
-    c9 = [c9(:,2),c9(:,1)];
+    c9 = [c9(:,2),c9(:,1)];     % swap x and y columns
     if c == 1
         Size(c,1) = numel(c9(:,1));
     else
@@ -149,6 +148,5 @@ for c = 1:length(f1)
     
     toc
 end
-
 
 clear figure
