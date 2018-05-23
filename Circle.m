@@ -263,10 +263,10 @@ else
                                             Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
                                             Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
                                             Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
-                                            angle = calculate_vector_angle(Edge(j,ME2+1),Edge(j,ME2),alpha(el1,2),alpha(el1,1)); %[MODIFIED]
+                                            angle = calculate_vector_angle(alpha(el1,2), alpha(el1,1), Edge(j,ME2+1), Edge(j,ME2)); %[MODIFIED]
                                             %---------------------------- DL calculator!
                                             mk1 = (alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
-                                            angle0 = calculate_vector_angle(alpha(el1,4), alpha(el1,3), alpha(el1,2), alpha(el1,1)); %[MODIFIED]
+                                            angle0 = calculate_vector_angle(alpha(el1,2), alpha(el1,1), alpha(el1,4), alpha(el1,3)); %[MODIFIED]
                                             %angle
                                             %angle0
                                             Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
@@ -600,6 +600,7 @@ end
                     En(k,2)=Edge(j,i+1); %X
                     En(k,3)=BLS; %BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
                     En(k,4)=round((Trcr+Trs)/2);
+                    %angle = calculate_vector_angle(ICX, ICY, Edge(j,i+1), Edge(j,i));
                     m=(Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
                     if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>=0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>=0)
                         angle=(180/pi)*atan(m);
