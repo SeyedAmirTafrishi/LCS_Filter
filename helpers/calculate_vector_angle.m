@@ -22,6 +22,7 @@ function [ angle ] = calculate_vector_angle( x2, y2, x1, y1 )
 
     angle2 = atan2(y2 - y1, -(x2 - x1)) * (180/pi);
 
-    angle
-    angle2
+    if (abs(angle - angle2) >= 10^-5)
+        [angle, angle2, x1, y1, x2, y2]
+    end
 end
