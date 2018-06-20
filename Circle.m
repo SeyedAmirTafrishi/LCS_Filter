@@ -9,10 +9,10 @@ global t1 frame
 ICX = 320;  %2
 ICY = 240;  %1
 % VeS=2;%Standard Edge Velocity
-BLS = 25; %Standard Boundery layer Initialization Constant 
+BLS = 25; %Standard Boundery layer Initialization Constant
 L = 3; %The el of rebel edge alignment, Step of accuracy to have rebel edges
 options = odeset('RelTol',1e-4,'AbsTol',[1e-5 1e-5]);
-NormRows = sqrt(sum(Edge.*Edge,2)); 
+NormRows = sqrt(sum(Edge.*Edge,2));
 EdgeNorm = bsxfun(@rdivide,abs(Edge),NormRows);
 t1 = 1/frame;%second devided by frame per sec in real activation
 alooo = 0; %REMOVE
@@ -263,7 +263,7 @@ else
                                             Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
                                             Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
                                             Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
-                                            angle = calculate_vector_angle(Edge(j,ME2+1),Edge(j,ME2),alpha(el1,2),alpha(el1,1)); %[MODIFIED]
+                                            angle = calculate_vector_angle(Edge(j,ME2+1), Edge(j,ME2), alpha(el1,2), alpha(el1,1)); %[MODIFIED]
                                             %---------------------------- DL calculator!
                                             mk1 = (alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
                                             angle0 = calculate_vector_angle(alpha(el1,4), alpha(el1,3), alpha(el1,2), alpha(el1,1)); %[MODIFIED]
@@ -388,38 +388,10 @@ else
                                             Er(numel(Er(:,1))+1,1)=Edge(j,ME2);
                                             Er(numel(Er(:,1)),2)=Edge(j,ME2+1);
                                             Er(numel(Er(:,1)),4)=-1;%rebel size  L+1
-                                            if (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>=0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>=0)
-                                                angle = (180/pi)*atan(ml);
-                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0)
-                                                angle = (180/pi)*atan(ml);
-                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))<0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-                                                angle = (180/pi)*atan(ml)+180;
-                                            elseif (((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))>0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0)
-                                                angle = (180/pi)*atan(ml)+180;
-                                            elseif (Edge(j,ME2+1)-alpha(el1,2))==0
-                                                angle = -((Edge(j,ME2)-alpha(el1,1))/abs((Edge(j,ME2)-alpha(el1,1))))*90;
-                                            elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))>0
-                                                angle = 0;
-                                            elseif (Edge(j,ME2)-alpha(el1,1))==0 && ((Edge(j,ME2+1)-alpha(el1,2))/abs((Edge(j,ME2+1)-alpha(el1,2))))<0
-                                                angle = 180;
-                                            end
+                                            angle = calculate_vector_angle(Edge(j,ME2+1), Edge(j,ME2), alpha(el1,2), alpha(el1,1) );
                                             %---------------------------- DL calculator!
                                             mk1=(alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
-                                            if (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>=0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>=0)
-                                                angle0 = (180/pi)*atan(mk1);
-                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0)
-                                                angle0 = (180/pi)*atan(mk1);
-                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))<0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-                                                angle0 = (180/pi)*atan(mk1)+180;
-                                            elseif (((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))>0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0)
-                                                angle0 = (180/pi)*atan(mk1)+180;
-                                            elseif (alpha(el1,4)-alpha(el1,2))==0
-                                                angle0 = -((alpha(el1,3)-alpha(el1,1))/abs((alpha(el1,3)-alpha(el1,1))))*90;
-                                            elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))>0
-                                                angle0 = 0;
-                                            elseif (alpha(el1,3)-alpha(el1,1))==0 && ((alpha(el1,4)-alpha(el1,2))/abs((alpha(el1,4)-alpha(el1,2))))<0
-                                                angle0 = 180;
-                                            end
+                                            angle0 = calculate_vector_angle(alpha(el1,4), alpha(el1,3), alpha(el1,2), alpha(el1,1) );
                                             %angle
                                             %angle0
                                             Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
@@ -514,21 +486,7 @@ else
                     if (((((NEr(1,1)-(Edge(j,i)))^2) + ((NEr(1,2)-(Edge(j,i+1)))^2))^(0.5)) <= NBL) && ~(Edge(j,i)==0 && Edge(j,i+1)==0) && (((abs((-(Edge(j,i+1)))+mr*(Edge(j,i))))/sqrt(1+mr^2)) < deltaTr) && (MatchR==0)% I DO NOT PUT !!!! The zeroes in the Er omittion so! NO!!! ~(Er(r,1)==0 && Er(r,2)==0)
                         MatchR=MatchR+1;
                         me= ((Edge(j,i)-Er(r,7))/-(Edge(j,i+1)-Er(r,8)));
-                        if (((Edge(j,i)-Er(r,7))/abs((Edge(j,i)-Er(r,7))))>=0 && ((Edge(j,i+1)-Er(r,8))/abs((Edge(j,i+1)-Er(r,8))))>=0)
-                            angle=(180/pi)*atan(me);
-                        elseif (((Edge(j,i)-Er(r,7))/abs((Edge(j,i)-Er(r,7))))<0 && ((Edge(j,i+1)-Er(r,8))/abs((Edge(j,i+1)-Er(r,8))))>0)
-                            angle=(180/pi)*atan(me);
-                        elseif (((Edge(j,i)-Er(r,7))/abs((Edge(j,i)-Er(r,7))))<0 && ((Edge(j,i+1)-Er(r,8))/abs((Edge(j,i+1)-Er(r,8))))<0)
-                            angle=(180/pi)*atan(me)+180;
-                        elseif (((Edge(j,i)-Er(r,7))/abs((Edge(j,i)-Er(r,7))))>0 && ((Edge(j,i+1)-Er(r,8))/abs((Edge(j,i+1)-Er(r,8))))<0)
-                            angle=(180/pi)*atan(me)+180;
-                        elseif (Edge(j,i+1)-Er(r,8))==0
-                            angle=-((Edge(j,i)-Er(r,7))/abs((Edge(j,i)-Er(r,7))))*90;
-                        elseif (Edge(j,i)-Er(r,7))==0 && ((Edge(j,i+1)-Er(r,8))/abs((Edge(j,i+1)-Er(r,8))))>0
-                            angle=0;
-                        elseif (Edge(j,i)-Er(r,7))==0 && ((Edge(j,i+1)-Er(r,8))/abs((Edge(j,i+1)-Er(r,8))))<0
-                            angle=180;
-                        end
+                        angle = calculate_vector_angle( Edge(j,i+1), Edge(j,i), Er(r,8), Er(r,7) );
                         %-------------Delta Er
                         if (NEr(1,1)==Inf) || (NEr(1,2)==Inf) || (Er(r,1)==Inf) || (Er(r,2)==Inf) || (Er(r,6)==Inf)
                             % pass
@@ -589,7 +547,7 @@ else
 end
 
 %-------------------------------------------------------------------------------------
-%% LEFT EDGEs with En + Initiation of En 
+%% LEFT EDGEs with En + Initiation of En
         k=(numel(En(:,1)))+1; % The size of latest En matrix (REMOVE)
         i=1; %Check the Edge to find related group
         while (i<=(numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
@@ -600,22 +558,9 @@ end
                     En(k,2)=Edge(j,i+1); %X
                     En(k,3)=BLS; %BL not good (((abs(Vv-VeS)/det(corr(EdgeNorm(:,j:j+1))))+BLS)/2)
                     En(k,4)=round((Trcr+Trs)/2);
+                    %angle = calculate_vector_angle(Edge(j,i+1), Edge(j,i), ICX, ICY);
                     m=(Edge(j,i)-ICY)/-(Edge(j,i+1)-ICX);
-                    if (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>=0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>=0)
-                        angle=(180/pi)*atan(m);
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))<0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>0)
-                        angle=(180/pi)*atan(m);
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))<0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0)
-                        angle=(180/pi)*atan(m)+180;
-                    elseif (((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))>0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0)
-                        angle=(180/pi)*atan(m)+180;
-                    elseif (Edge(j,i+1)-ICX)==0
-                        angle=-((Edge(j,i)-ICY)/abs((Edge(j,i)-ICY)))*90;
-                    elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))>0
-                        angle=0;
-                    elseif (Edge(j,i)-ICY)==0 && ((Edge(j,i+1)-ICX)/abs((Edge(j,i+1)-ICX)))<0
-                        angle=180;
-                    end
+                    angle = calculate_vector_angle( Edge(j,i+1), Edge(j,i), ICX, ICY);
                     En(k,5)=angle;
                     En(k,6)=Vv;
                     k=k+1;
@@ -811,21 +756,7 @@ else
             Cr(numel(Cr(:,1)),4)=round((Trcr+Trs)/2); %Trust Low
             angleC=0;
             mC=(MY-OY)/-(MX-OX);
-            if (((MY-OY)/abs((MY-OY)))>=0 && ((MX-OX)/abs((MX-OX)))>=0)
-                angleC=(180/pi)*atan(mC);
-            elseif (((MY-OY)/abs((MY-OY)))<0 && ((MX-OX)/abs((MX-OX)))>0)
-                angleC=(180/pi)*atan(mC);
-            elseif (((MY-OY)/abs((MY-OY)))<0 && ((MX-OX)/abs((MX-OX)))<0)
-                angleC=(180/pi)*atan(mC)+180;
-            elseif (((MY-OY)/abs((MY-OY)))>0 && ((MX-OX)/abs((MX-OX)))<0)
-                angleC=(180/pi)*atan(mC)+180;
-            elseif (MX-OX)==0
-                angleC=-((MY-OY)/abs((MY-OY)))*90;
-            elseif (MY-OY)==0 && ((MX-OX)/abs((MX-OX)))>0
-                angleC=0;
-            elseif (MY-OY)==0 && ((MX-OX)/abs((MX-OX)))<0
-                angleC=180;
-            end
+            angleC = calculate_vector_angle( MX, MY, OX, OY );
             Cr(numel(Cr(:,1)),5)=angleC+mean(M(:,3));
             Cr(numel(Cr(:,1)),6)=Vv;
             Cr(numel(Cr(:,1)),7)=OY;
@@ -972,21 +903,7 @@ else
             C(numel(C(:,1)),3)=MR;
             C(numel(C(:,1)),4)=round((Trcr+Trs)/2); %Trust Low
             mC=(MY-ICY)/-(MX-ICX);
-            if (((MY-ICY)/abs((MY-ICY)))>=0 && ((MX-ICX)/abs((MX-ICX)))>=0)
-                angleC=(180/pi)*atan(mC);
-            elseif (((MY-ICY)/abs((MY-ICY)))<0 && ((MX-ICX)/abs((MX-ICX)))>0)
-                angleC=(180/pi)*atan(mC);
-            elseif (((MY-ICY)/abs((MY-ICY)))<0 && ((MX-ICX)/abs((MX-ICX)))<0)
-                angleC=(180/pi)*atan(mC)+180;
-            elseif (((MY-ICY)/abs((MY-ICY)))>0 && ((MX-ICX)/abs((MX-ICX)))<0)
-                angleC=(180/pi)*atan(mC)+180;
-            elseif (MX-ICX)==0
-                angleC=-((MY-ICY)/abs((MY-ICY)))*90;
-            elseif (MY-ICY)==0 && ((MX-ICX)/abs((MX-ICX)))>0
-                angleC=0;
-            elseif (MY-ICY)==0 && ((MX-ICX)/abs((MX-ICX)))<0
-                angleC=180;
-            end
+            angleC = calculate_vector_angle( MX, MY, ICX, ICY );
             C(numel(C(:,1)),5)=angleC;
             C(numel(C(:,1)),6)=Vv;
         else
