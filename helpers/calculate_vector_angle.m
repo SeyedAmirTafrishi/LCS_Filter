@@ -1,4 +1,4 @@
-function [ angle ] = calculate_vector_angle( ICX, ICY, x1, y1 )
+function [ angle ] = calculate_vector_angle( x1, y1, ICX, ICY )
 %calculate_vector_angle
 %   Calculate the angle between two pixels
 %   [ICX, ICY] is the origin
