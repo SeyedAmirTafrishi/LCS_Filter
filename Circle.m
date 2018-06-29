@@ -36,8 +36,8 @@ else
             x_0 = R;
             x_1 = (En(e,6)+Vv)/2; % CHanged! :D
             [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEn(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*beta)+(En(e,1)-ICY);%estimation of En x
-            NEn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
+            NEn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*beta)+(En(e,1)-ICY);%estimation of En x
+            NEn(1,2) = (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
             hold on
             subplot(1,2,1)
             plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'ys')
@@ -47,8 +47,9 @@ else
             m = tan((pi/180)*(beta+90));
             deltaT = sqrt(deltay^2+deltaz^2);
             z = 1;
-            while z<= (numel(lambda(:,1)))%Search P_P The Lambda Classification Cases 1 2 3 5
-                if (((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2))^(0.5)) <= lambda(z,3))  %this is Lambda Check in En ok?
+            while z <= (numel(lambda(:,1))) % Lambda column counter
+                if (((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2))^(0.5)) <= lambda(z,3))  %this is Lambda Check in En ok? Check whether curent edge in En is in the circle of
+                                                                                                     % z th lambda
                     i=1; %Check the Edge to find related group
                     while (i <= (numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
                         j=1;
