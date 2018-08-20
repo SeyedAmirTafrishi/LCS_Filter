@@ -4,7 +4,7 @@ set(0,'DefaultTextInterpreter','Latex');
 %---General
 global beta
 global deltay deltaz Trs Trcr Trmax ploti
-global t1 frame
+global time_diff frame
 %IC=255/2;%Image Center
 ICX = 320;  %2
 ICY = 240;  %1
@@ -14,7 +14,7 @@ L = 3; %The el of rebel edge alignment, Step of accuracy to have rebel edges
 options = odeset('RelTol',1e-4,'AbsTol',[1e-5 1e-5]);
 NormRows = sqrt(sum(Edge.*Edge,2));
 EdgeNorm = bsxfun(@rdivide,abs(Edge),NormRows);
-t1 = 1/frame;%second devided by frame per sec in real activation
+time_diff = 1/frame;%second devided by frame per sec in real activation
 alooo = 0; %REMOVE
 
 %% normal edge
@@ -32,137 +32,134 @@ else
             ME1 = 0;
             ME2 = 0;
             beta = En(e,5);
-            R = (((En(e,1)-ICY)^2)+(En(e,2)-ICX)^2)^(0.5);%The R
+            R = (((En(e,1)-ICY)^2) + (En(e,2)-ICX)^2)^(0.5); %The R
             x_0 = R;
             x_1 = (En(e,6)+Vv)/2; % CHanged! :D
-            [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEn(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*beta)+(En(e,1)-ICY);%estimation of En x
-            NEn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*beta)+(En(e,2)-ICX);%estimation of En y
+            [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
+            NEn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*beta) + (En(e,1)-ICY); %estimation of En x
+            NEn(1,2) = (Y1(end,1)-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
             hold on
             subplot(1,2,1)
-            plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'ys')
+            plot(NEn(1,2)+ICX, NEn(1,1)+ICY, 'ys')
             %hold on
             %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
-            NVe = Y1(end,2);%Estimated edge velocity
-            m = tan((pi/180)*(beta+90));
-            deltaT = sqrt(deltay^2+deltaz^2);
-            z = 1;
-            while z<= (numel(lambda(:,1)))%Search P_P The Lambda Classification Cases 1 2 3 5
-                if (((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2))^(0.5)) <= lambda(z,3))  %this is Lambda Check in En ok?
-                    i=1; %Check the Edge to find related group
+            NVe = Y1(end,2); % Estimated edge velocity
+            m = tan((pi/180)*(beta + 90)); % Slope of given angle of En respect to O frame
+            deltaT = sqrt(deltay^2 + deltaz^2);
+            z = 1; % loop search of suitable edge in Lambda
+            while z <= (numel(lambda(:,1))) % Lambda column counter
+                if ( ((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2)) ^ 0.5) <= lambda(z,3) ) % this is Lambda Check in En ok?
+                    i = 1; %Check the Edge to find related group
                     while (i <= (numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
-                        j=1;
+                        j = 1;
                         while (j <= (numel(Edge(:,1))))%Column counter
-                            if ~(Edge(j,i)==0 && Edge(j,i+1)==0) && (((((lambda(z,1)-Edge(j,i))^2) + ((lambda(z,2)-Edge(j,i+1))^2))^(0.5)) <= lambda(z,3))
+                            if ~(Edge(j,i)==0 && Edge(j,i+1)==0) && (((((lambda(z,1)-Edge(j,i))^2) + ((lambda(z,2)-Edge(j,i+1))^2))^(0.5)) <= lambda(z,3)) % find which Edge is in circle of Lambda
                                 %MainEdge(1,1)=Edge(j,i);%no need for this?
                                 %MainEdge(1,2)=Edge(j,i+1);
                                 %plot(MainEdge(1,2),MainEdge(1,1),'rs')
-                                ME1=j;
-                                ME2=i;
-                                i=(numel(Edge(1,:)))+1;
-                                j=(numel(Edge(:,1)))+1;
-                                z=(numel(lambda(:,1)))+1;
+                                ME1 = j; % Columns of encompassed grouped Edge in Lambda
+                                ME2 = i;
+                                i = numel(Edge(1,:)) + 1; % if there is a match, break the loop
+                                j = numel(Edge(:,1)) + 1;
+                                z = numel(lambda(:,1)) + 1;
                             end
-                            j=j+1;
+                            j = j + 1;
                         end
-                        i=i+2;
+                        i = i + 2;
                     end
                 end
-                z=z+1;
+                z = z + 1;
             end
-            if (ME2==0 && ME1==0) %lonely not a single match? :\
-                En(e,1)=NEn(1,1);
-                En(e,2)=NEn(1,2);
-                En(e,4)=En(e,4)-1;
-            else
-                %if (Edge(j,ME2)==0 && Edge(j,ME2+1)==0)
-                %NBL=BLS
-                %else
-                NBL1=(((abs(Vv-NVe)/det(corr(EdgeNorm(:,ME2:ME2+1))))+En(e,3))/2); %Estmated
-                NBL=(NBL1+En(e,3))/2;
-                %end
-                j=1;
-                Edgetrans(1,1)=0;%The nearest Edge to En finder
-                Edgetrans(1,2)=0;
-                d=-1;%-1 means deactive
-                side=0;
-                while (j<=(numel(Edge(:,1)))) %loop check for classifications ME1, Edge,
-                    if (((((NEn(1,1)-(Edge(j,ME2)-ICY))^2) + ((NEn(1,2)-(Edge(j,ME2+1)-ICX))^2))^(0.5)) <= NBL) && ~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT)% Circle with NBL size AND deltay delta x error and zero remover,  yEdge=Edge(j,ME2) first parameter
+            if (ME2==0 && ME1==0) % lonely not a single match? :\ ([issue] Maybe can be moved)
+                En(e,1) = NEn(1,1);
+                En(e,2) = NEn(1,2);
+                En(e,4) = En(e,4) - 1;
+            else % Main En and Lambda matching (Lambda 1 3 ...)
+                NBL1 = ( (abs(Vv-NVe) / det(corr(EdgeNorm(:,ME2:ME2+1)))) + En(e,3) ) / 2; % Estmated Boundary with using Eq. (4.1) (En and Edge Group)
+                NBL = (NBL1 + En(e,3)) / 2;
+                j = 1;
+                Edgetrans(1,1) = 0; % The nearest Edge to En finder (temporary variable for comparing)
+                Edgetrans(1,2) = 0;
+                d = -1;   % d is a distance value, if d = -1 that means deactive (En is lambda2,3)
+                side = 0; % flag for choosing either Lambda 1 or 2
+                while ( j <= (numel(Edge(:,1))) ) % loop check for classifications ME1, Edge,
+                    % --- Lambda 2 and 3 condition check
+                    if (((((NEn(1,1)-(Edge(j,ME2)-ICY))^2) + ((NEn(1,2)-(Edge(j,ME2+1)-ICX))^2))^(0.5)) <= NBL) && ~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) % Circle with NBL size AND deltay delta x error and zero remover,  yEdge=Edge(j,ME2) first parameter
                         if ((NEn(1,1)/abs(NEn(1,1))) == ((Edge(j,ME2)-ICY)/abs((Edge(j,ME2)-ICY)))  && ~(NEn(1,2)/abs(NEn(1,2))) == ((Edge(j,ME2+1)-ICX)/abs((Edge(j,ME2+1)-ICX)))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) <= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) %Sign check and magnitude check which is far, lambda_2
-                            En(e,1)=((((En(e,4)-Trcr)*(NEn(1,1)+ICY))+Edge(j,ME2))/((En(e,4)-Trcr)+1));
-                            En(e,2)=((((En(e,4)-Trcr)*(NEn(1,2)+ICX))+Edge(j,ME2+1))/((En(e,4)-Trcr)+1)); %Estimation of En, X direction
-                            En(e,3)=NBL;
-                            %    subplot(1,2,1)
-                            %    hold on
-                            %    plot(En(e,2),En(e,1),'r*')
+                            En(e,1) = (((En(e,4)-Trcr)*(NEn(1,1)+ICY)) + Edge(j,ME2)) / ((En(e,4)-Trcr) + 1);
+                            En(e,2) = (((En(e,4)-Trcr)*(NEn(1,2)+ICX)) + Edge(j,ME2+1)) / ((En(e,4)-Trcr) + 1); %Estimation of En, X direction
+                            En(e,3) = NBL;
+                            %subplot(1,2,1)
+                            %hold on
+                            %plot(En(e,2),En(e,1),'r*')
                             if (((Edgetrans(1,1)-ICY)^2+(Edgetrans(1,2)-ICX)^2)^(0.5) > (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) && (~(Edgetrans(1,1)==0 && Edgetrans(1,2)==0))%Edge Remmover and modifier
-                                d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
-                                a=Edgetrans(1,1);
-                                b=Edgetrans(1,2);
-                                Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
-                                Edgetrans(1,2)=Edge(j,ME2+1);%?
-                                Edge(j,ME2)=a;
-                                Edge(j,ME2+1)=b;
-                                side=1;
-                            elseif (Edgetrans(1,1)==0 && Edgetrans(1,2)==0)
-                                d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
-                                Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
-                                Edgetrans(1,2)=Edge(j,ME2+1);
-                                Edge(j,ME2)=0;
-                                Edge(j,ME2+1)=0;
-                                En(e,4)=En(e,4)+1; % CHECK THIS? right?
-                                side=1;%front
+                                d = (abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2);
+                                a = Edgetrans(1,1);
+                                b = Edgetrans(1,2);
+                                Edgetrans(1,1) = Edge(j,ME2); % Update the nearest point to the estimated En
+                                Edgetrans(1,2) = Edge(j,ME2+1);
+                                Edge(j,ME2) = a; % return the worst match to the edge again
+                                Edge(j,ME2+1) = b;
+                                side = 1;
+                            elseif (Edgetrans(1,1) == 0 && Edgetrans(1,2) == 0)
+                                d = (abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2);
+                                Edgetrans(1,1) = Edge(j,ME2); % The nearest finder
+                                Edgetrans(1,2) = Edge(j,ME2+1);
+                                Edge(j,ME2) = 0;
+                                Edge(j,ME2+1) = 0;
+                                En(e,4) = En(e,4) + 1; % CHECK THIS? right?
+                                side = 1; % front
                             end
                         elseif ((NEn(1,1)/abs(NEn(1,1))) == ((Edge(j,ME2)-ICY)/abs((Edge(j,ME2)-ICY)))  && (NEn(1,2)/abs(NEn(1,2))) == ((Edge(j,ME2+1)-ICX)/abs((Edge(j,ME2+1)-ICX)))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) >= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5)))%lambda*_3
-                            En(e,1)=((((En(e,4)-Trcr)*(NEn(1,1)+ICY))+Edge(j,ME2))/((En(e,4)-Trcr)+1));
-                            En(e,2)=((((En(e,4)-Trcr)*(NEn(1,2)+ICX))+Edge(j,ME2+1))/((En(e,4)-Trcr)+1)); %Estimation of En, X direction
-                            En(e,3)=NBL;
+                            En(e,1) = ((((En(e,4)-Trcr)*(NEn(1,1)+ICY))+Edge(j,ME2))/((En(e,4)-Trcr)+1));
+                            En(e,2) = ((((En(e,4)-Trcr)*(NEn(1,2)+ICX))+Edge(j,ME2+1))/((En(e,4)-Trcr)+1)); %Estimation of En, X direction
+                            En(e,3) = NBL;
                             %    subplot(1,2,1)
                             %    hold on
                             %    plot(En(e,2),En(e,1),'r*')
-                            if (((Edgetrans(1,1)-ICY)^2+(Edgetrans(1,2)-ICX)^2)^(0.5) < (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) && (~(Edgetrans(1,1)==0 && Edgetrans(1,2)==0)) && (~(d==-1))%Edge Remmover and modifier d is for when there is more than near edge in the boundery to find most fit
-                                a=Edgetrans(1,1);
-                                b=Edgetrans(1,2);
-                                Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
-                                Edgetrans(1,2)=Edge(j,ME2+1);
-                                Edge(j,ME2)=a;
-                                Edge(j,ME2+1)=b;
-                                side=-1;%back
+                            if ( ((Edgetrans(1,1)-ICY)^2 + (Edgetrans(1,2)-ICX)^2)^(0.5) < (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5)) ) && (~(Edgetrans(1,1)==0 && Edgetrans(1,2)==0)) && (~(d==-1)) %Edge Remmover and modifier d is for when there is more than near edge in the boundery to find most fit
+                                a = Edgetrans(1,1);
+                                b = Edgetrans(1,2);
+                                Edgetrans(1,1) = Edge(j,ME2);%The nearest finder
+                                Edgetrans(1,2) = Edge(j,ME2+1);
+                                Edge(j,ME2) = a;
+                                Edge(j,ME2+1) = b;
+                                side = -1;%back
                             elseif (Edgetrans(1,1)==0 && Edgetrans(1,2)==0) && (d==-1)
-                                d=((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2));
-                                Edgetrans(1,1)=Edge(j,ME2);%The nearest finder
-                                Edgetrans(1,2)=Edge(j,ME2+1);
-                                Edge(j,ME2)=0;
-                                Edge(j,ME2+1)=0;
-                                En(e,4)=En(e,4)-1;
-                                side=-1;%back
+                                d = (abs((-(Edge(j,ME2+1)-ICX)) + m*(Edge(j,ME2)-ICY))) / sqrt(1+m^2);
+                                Edgetrans(1,1) = Edge(j,ME2);%The nearest finder
+                                Edgetrans(1,2) = Edge(j,ME2+1);
+                                Edge(j,ME2) = 0;
+                                Edge(j,ME2+1) = 0;
+                                En(e,4) = En(e,4) - 1;
+                                side = -1;%back
                             end
                         end
                     end
-                    j=j+1;
+                    j = j + 1;
                 end %While of Edge
-                if side==1 %Velocity update of lambda3 and lambda2
-                    En(e,6)=abs((En(e,6)+((((((NEn(1,1)+ICY)-Edgetrans(1,1))^2+(NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(t1))));
-                elseif side==-1
-                    En(e,6)=abs((En(e,6)-((((((NEn(1,1)+ICY)-Edgetrans(1,1))^2+(NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(t1))));
+                if (side == 1) %Velocity update of lambda3 and lambda2
+                    En(e,6) = abs((En(e,6)+((((((NEn(1,1)+ICY)-Edgetrans(1,1))^2+(NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(time_diff)))); % lambda 2
+                elseif (side == -1)
+                    En(e,6) = abs((En(e,6)-((((((NEn(1,1)+ICY)-Edgetrans(1,1))^2+(NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(time_diff)))); % lambda 3
                 end
                 %-------------Delta En L
-                if d==-1
+                if (d == -1)
                     % pass
                 else
-                    if (NEn(1,1)==Inf) || (NEn(1,2)==Inf) || (En(e,1)==Inf) || (En(e,2)==Inf) || (En(e,6)==Inf)
+                    if (NEn(1,1) == Inf) || (NEn(1,2) == Inf) || (En(e,1) == Inf) || (En(e,2) == Inf) || (En(e,6) == Inf)
                         % pass
                     else
-                        if delta(2,1)==0
-                            delta(2,1)=(((NEn(1,1)+ICY-En(e,1))^2+(NEn(1,2)+ICX-En(e,2))^2)^(.5));
-                            delta(2,2)=abs(En(e,6)-Vv);
-                            delta(2,3)=abs(NBL-NBL1);
-                            delta(2,4)=delta(2,4)+1;
+                        if (delta(2,1) == 0)
+                            delta(2,1) = (((NEn(1,1)+ICY-En(e,1))^2+(NEn(1,2)+ICX-En(e,2))^2)^(.5));
+                            delta(2,2) = abs(En(e,6)-Vv);
+                            delta(2,3) = abs(NBL-NBL1);
+                            delta(2,4) = delta(2,4)+1;
                         else
-                            delta(2,4)=delta(2,4)+1;
-                            delta(2,1)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*((((NEn(1,1)+ICY)-En(e,1))^2+((NEn(1,2)+ICX)-En(e,2))^2)^(.5)));
-                            delta(2,2)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(En(e,6))-Vv));
-                            delta(2,3)=((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(NBL-NBL1)));
+                            delta(2,4) = delta(2,4)+1;
+                            delta(2,1) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*((((NEn(1,1)+ICY)-En(e,1))^2 + ((NEn(1,2)+ICX)-En(e,2))^2)^(.5)));
+                            delta(2,2) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(En(e,6))-Vv));
+                            delta(2,3) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(NBL-NBL1)));
                         end
                     end
                 end
@@ -272,7 +269,7 @@ else
                                             Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
                                             %----------------------------------------------DL Calculator End
                                             Er(numel(Er(:,1)),5) = angle;%angle
-                                            Er(numel(Er(:,1)),6) = (((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(t1); %2 last point velocity
+                                            Er(numel(Er(:,1)),6) = (((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(time_diff); %2 last point velocity
                                             Er(numel(Er(:,1)),7) = alpha(el1,1);%origin
                                             Er(numel(Er(:,1)),8) = alpha(el1,2);
                                             %Prepare the killer of edges!
@@ -397,7 +394,7 @@ else
                                             Er(numel(Er(:,1)),3) = angle-angle0; % DL ('-' means clockwise '+' means counter-clockwise)
                                             %----------------------------------------------DL Calculator End
                                             Er(numel(Er(:,1)),5)= angle;%angle
-                                            Er(numel(Er(:,1)),6)=(((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(t1); %2 last point velocity
+                                            Er(numel(Er(:,1)),6)=(((Edge(j,ME2)-alpha(el1,3))^2+(Edge(j,ME2+1)-alpha(el1,4))^2)^(0.5))/(time_diff); %2 last point velocity
                                             Er(numel(Er(:,1)),7)=alpha(el1,1);%origin
                                             Er(numel(Er(:,1)),8)=alpha(el1,2);
                                             %Prepare the killer of edges!
@@ -429,7 +426,7 @@ else
                                 end
 
                                 %end BL SAME AS OTHER En
-                                el1=el1+1;
+                                el1 = el1 + 1;
                             end
                             Edge(j,ME2)=0;
                             Edge(j,ME2+1)=0;
@@ -471,7 +468,7 @@ else
             R = (((Er(r,1)-Er(r,7))^2)+(Er(r,2)-Er(r,8))^2)^(0.5);%The R
             x_0 = R;
             x_1 = En(r,6);%check velocity
-            [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
+            [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
             NEr(1,1) =  -(Y1(end,1)-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
             NEr(1,2) =  (Y1(end,1)-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
             NBL=BLS; % WILL CHANGE
@@ -493,18 +490,18 @@ else
                         else
                             if delta(3,1)==0
                                 delta(3,1)=(((NEr(1,1)-Er(r,1))^2+(NEr(1,2)-Er(r,2))^2)^(.5));
-                                delta(3,2)=abs(Er(r,6)-((((Edge(j,i)-Er(r,1))^2+(Edge(j,i+1)-Er(r,2))^2)^(0.5))/(t1)));
+                                delta(3,2)=abs(Er(r,6)-((((Edge(j,i)-Er(r,1))^2+(Edge(j,i+1)-Er(r,2))^2)^(0.5))/(time_diff)));
                                 delta(3,3)=abs(Er(r,3)-((angle-(betar+Er(r,3)))));
                                 delta(3,4)=delta(3,4)+1;
                             else
                                 delta(3,4)=delta(3,4)+1;
                                 delta(3,1)=((delta(3,4)-1)/delta(3,4))*delta(3,1)+((1/delta(3,4))*(((NEr(1,1)-Er(r,1))^2+(NEr(1,2)-Er(r,2))^2)^(.5)));
-                                delta(3,2)=((delta(3,4)-1)/delta(3,4))*delta(3,1)+((1/delta(3,4))*(abs(Er(r,6)-((((Edge(j,i)-Er(r,1))^2+(Edge(j,i+1)-Er(r,2))^2)^(0.5))/(t1)))));
+                                delta(3,2)=((delta(3,4)-1)/delta(3,4))*delta(3,1)+((1/delta(3,4))*(abs(Er(r,6)-((((Edge(j,i)-Er(r,1))^2+(Edge(j,i+1)-Er(r,2))^2)^(0.5))/(time_diff)))));
                                 delta(3,3)=((delta(3,4)-1)/delta(3,4))*delta(3,1)+((1/delta(3,4))*(abs(Er(r,3)-((angle-(betar+Er(r,3)))))));
                             end
                         end
                         %-----------------Delta Er
-                        Er(r,6)=(((Edge(j,i)-Er(r,1))^2+(Edge(j,i+1)-Er(r,2))^2)^(0.5))/(t1);
+                        Er(r,6)=(((Edge(j,i)-Er(r,1))^2+(Edge(j,i+1)-Er(r,2))^2)^(0.5))/(time_diff);
                         Er(r,1)=((((Er(r,4)-Trcr)*(NEr(1,1)))+Edge(j,i))/((Er(r,4)-Trcr)+1));
                         Er(r,2)=((((Er(r,4)-Trcr)*(NEr(1,2)))+Edge(j,i+1))/((Er(r,4)-Trcr)+1));
                         Er(r,3)=(Er(r,3)+(angle-(betar+Er(r,3)))); %DL - Error of Edge
@@ -608,7 +605,7 @@ else
         R=(((Cr(ci,1)-Cr(ci,7))^2)+(Cr(ci,2)-Cr(ci,8))^2)^(0.5);%The R
         x_0=R;
         x_1=Cr(ci,6);
-        [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
+        [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
         NCn(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*(beta))+(Cr(ci,1));%estimation of Cn x
         NCn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*(beta))+(Cr(ci,2));%estimation of Cn y
 
@@ -786,7 +783,7 @@ else
         R=(((C(ci,1)-ICY)^2)+(C(ci,2)-ICX)^2)^(0.5);%The R
         x_0=R;
         x_1=C(ci,6);
-        [T1,Y1] = ode45(@EdgeTR,[0 t1],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
+        [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
         NCn(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*(beta))+(C(ci,1));%estimation of Cn x
         NCn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*(beta))+(C(ci,2));%estimation of Cn y
 
