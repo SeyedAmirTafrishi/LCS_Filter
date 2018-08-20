@@ -1,5 +1,7 @@
 clc
 clear m cam lambda psi En Er C alpha Trs Trcr Cr
+addpath('./helpers/')
+
 %--------------------------- Parameters
 CAM_WIDTH = 640;
 CAM_HEIGHT = 480;
@@ -32,8 +34,11 @@ Trcr = 1;
 Trmax = 3;
 delta = 0;
 Dv = .1;
+
 %-------- Sensors
 m = mobiledev;
+pause(5);
+
 %---------
 while(1)
     tic
