@@ -1,14 +1,16 @@
 clc
 clear m cam lambda psi En Er C alpha Trs Trcr Cr
+addpath('./helpers/')
+
 %--------------------------- Parameters
 CAM_WIDTH = 640;
 CAM_HEIGHT = 480;
 
 %--------------------------- Open Camera
-% cam = webcam('USB Camera'); %camera name  USB2.0 Camera USB Video Device
-cam = webcam('Logitech HD Pro Webcam C920');
+%cam = webcam('USB Camera'); %camera name  USB2.0 Camera USB Video Device
+%cam = webcam('Logitech HD Pro Webcam C920');
 cam.Resolution = sprintf('%dx%d', CAM_WIDTH, CAM_HEIGHT);
-% preview(cam)
+%preview(cam)
 
 % Main intial conditions
 %--------------------------- Algorithm Constants
@@ -18,11 +20,7 @@ En = 0;
 Er = 0;
 C = 0;
 Cr = 0;
-delta = [0 0 0 0; 
-         0 0 0 0; 
-         0 0 0 0; 
-         0 0 0 0; 
-         0 0 0 0];
+delta = zeros(5, 4); %[0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0];
 %----------------------------
 alpha = [0 0 0 0 0 0 0];
 global deltay deltaz Trs Trcr Trmax Av
@@ -32,8 +30,11 @@ Trcr = 1;
 Trmax = 3;
 delta = 0;
 Dv = .1;
+
 %-------- Sensors
 m = mobiledev;
+pause(5);
+
 %---------
 while(1)
     tic
@@ -114,7 +115,7 @@ while(1)
     size(En)
     size(Er)
     clear figure
-    delta = [0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
+    delta = [0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0];
 end % end of while: dont touch while !!!
 %----------
 clear(cam)

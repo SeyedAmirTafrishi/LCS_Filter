@@ -27,14 +27,14 @@ else
         % elseif psi(:,4) == 2  %WILL BE FILLED for SQUARE
             % WILL BE FILLED
         end
-        
+
         % can be delete
         th = 0:pi/50:2*pi; % for loop for creating circle
         xunit = (psi(i,3) + CB) * cos(th) + psi(i,2); % equation of circle :D
         yunit = (psi(i,3) + CB) * sin(th) + psi(i,1);
         hold on
         subplot(1,2,1)
-        ploti = plot(xunit, yunit,'y'); % Plot the boys :v
+        ploti = plot(xunit, yunit, 'y'); % Plot the boys :v
         xlim([1 640])
         ylim([1 480])
     end
@@ -53,7 +53,7 @@ ploti = plot(c9(:,2), c9(:,1), 'y.'); %edges
 
 DV = 0; % Data variable for categorizing the edges in tree form collections
 f = 1;  % the counter of new column edge groups
-k = 0;  % shifter triger for new column edge groups; 
+k = 0;  % shifter triger for new column edge groups;
         % After checking the Nth Lambda for all newly detected edges. It set k=1 to add new couple column
 %-------in Lambda
 for z = 1:numel(lambda(:,1)) % Lambda Counter

@@ -1,0 +1,119 @@
+ans =
+
+   450     6
+
+Elapsed time is 3.187644 seconds.
+
+ans =
+
+   538     6
+
+Elapsed time is 4.326903 seconds.
+
+ans =
+
+   436     6
+
+Elapsed time is 5.641011 seconds.
+
+ans =
+
+   537     6
+
+Elapsed time is 5.201280 seconds.
+
+ans =
+
+   785     6
+
+Elapsed time is 14.359409 seconds.
+
+ans =
+
+   981     6
+
+Elapsed time is 12.282378 seconds.
+
+ans =
+
+        1238           6
+
+Elapsed time is 12.792077 seconds.
+
+ans =
+
+        1320           6
+
+Elapsed time is 14.605879 seconds.
+
+ans =
+
+        1442           6
+
+Elapsed time is 16.135365 seconds.
+
+ans =
+
+        1437           6
+
+Elapsed time is 14.488762 seconds.
+
+ans =
+
+        1450           6
+
+Elapsed time is 8.161028 seconds.
+
+ans =
+
+        1549           6
+
+Elapsed time is 6.714260 seconds.
+
+ans =
+
+        1436           6
+
+Elapsed time is 8.648779 seconds.
+
+ans =
+
+        1260           6
+
+Elapsed time is 7.286978 seconds.
+
+ans =
+
+        1352           6
+
+Elapsed time is 10.677822 seconds.
+
+ans =
+
+        1221           6
+
+Elapsed time is 10.839459 seconds.
+
+ans =
+
+        1312           6
+
+Elapsed time is 16.207692 seconds.
+
+ans =
+
+        1399           6
+
+Elapsed time is 19.326570 seconds.
+
+ans =
+
+        1453           6
+
+Elapsed time is 14.076827 seconds.
+
+ans =
+
+        1490           6
+
+Elapsed time is 7.063724 seconds.

@@ -15,12 +15,12 @@ En = 0;
 Er = 0;
 C  = 0;
 Cr = 0;
-delta = [0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
+delta = zeros(5, 4); %[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
 
 %% algoritm parameters
 alpha = [0 0 0 0 0 0 0];
-global Trs Trcr Trmax 
-global frame Av Vv deltay deltaz 
+global Trs Trcr Trmax
+global frame Av Vv deltay deltaz
 
 frame = 1; %Every Sec one frame! Works
 
@@ -44,7 +44,7 @@ f1 = {dr1.name};            % get filenames to cell
 mkdir('./results')          % dir for saving results
 
 % loop for each image
-for c = 1:length(f1)        
+for c = 1:length(f1)
     tic
 
     % read one image
@@ -61,19 +61,19 @@ for c = 1:length(f1)
     end
 
     c9 = fast9(im, 30, 1);      % run fast9 edge detection
-    
+
     axis image
     colormap(gray)
-    
+
     subplot(1,2,1)
     hold on
     imshow(im / max(im(:)));
     plot(c9(:,1),c9(:,2),'r.'); % edges
-    
+
     subplot(1,2,2)
     hold on
     imshow(im / max(im(:)));
-    
+
     c9 = [c9(:,2),c9(:,1)];     % swap x and y columns
     if c == 1
         Size(c,1) = numel(c9(:,1));
@@ -145,7 +145,7 @@ for c = 1:length(f1)
 %   fig_filename = ['./results/fig', num2str(c),'.fig'];
 %   saveas(gca, fig_filename);
     % %--------------------
-    
+
     toc
 end
 
