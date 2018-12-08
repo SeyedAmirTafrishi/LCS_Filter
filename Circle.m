@@ -11,10 +11,13 @@ global ICX ICY
 BLS = 25; %Standard Boundery layer Initialization Constant
 L = 3; %The el of rebel edge alignment, Step of accuracy to have rebel edges
 options = odeset('RelTol',1e-4,'AbsTol',[1e-5 1e-5]);
+
+
 NormRows = sqrt(sum(Edge.*Edge,2));
 EdgeNorm = bsxfun(@rdivide,abs(Edge),NormRows);
 time_diff = 1/frame;%second devided by frame per sec in real activation
 alooo = 0; %REMOVE
+
 
 %% normal edge
 %----------En
@@ -23,7 +26,7 @@ if En == 0 %CHANGE!
     %REMOVE
 else
     if lambda == 0
-        % pass
+        %pass
     else
         %Edge couple counter
         e = 1;
@@ -305,10 +308,10 @@ else
                             Edge(j,ME2)=0;
                             Edge(j,ME2+1)=0;
                         elseif (En(e,4) <= Trcr-1) %Good bye En
-                            En(e,:)=[];
-                            e=e-1;
-                            if e<1
-                                e=1;
+                            En(e,:) = [];
+                            e = e - 1;
+                            if e < 1
+                                e = 1;
                             end
                             %----    L construction :D
                             el1=1;
@@ -544,10 +547,10 @@ end
 
 %-------------------------------------------------------------------------------------
 %% LEFT EDGEs with En + Initiation of En
-        k=(numel(En(:,1)))+1; % The size of latest En matrix (REMOVE)
-        i=1; %Check the Edge to find related group
+        k = (numel(En(:,1)))+1; % The size of latest En matrix (REMOVE)
+        i = 1; %Check the Edge to find related group
         while (i<=(numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
-            j=1;
+            j = 1;
             while (j<=(numel(Edge(:,1))))%Column counter
                 if  ~(Edge(j,i)==0 && Edge(j,i+1)==0)
                     En(k,1)=Edge(j,i); %Y
@@ -569,23 +572,23 @@ end
         end
 %-----------------------------------------------------------------------------
 %% En infinity ones remover
-u=1;
-while u<=(numel(En(:,1)))
+u = 1;
+while u <= (numel(En(:,1)))
     if En(u,4) > Trmax
-        En(u,4)=TrMax;
+        En(u,4) = Trmax;
     end
-    if En(u,4) < 0
-        En(u,:)=[];
-        u=u-1;
-        if u<1
-            u=1;
+    if En(u,4) < 0          %if trust of exsting edges goes to minus, has to be removed
+        En(u,:) = [];
+        u = u-1;
+        if u < 1
+            u = 1;
         end
     end
-    if ((En(u,1) > (2*ICY)) || (En(u,2) > (2*ICX)) || (En(u,1) < 0) || (En(u,2) < 0)) %Kill more than that :D
-        En(u,:)=[];
-        u=u-1;
+    if ((En(u,1) > (2*ICY)) || (En(u,2) > (2*ICX)) || (En(u,1) < 0) || (En(u,2) < 0)) %remove edges that are out of screen
+        En(u,:) = [];
+        u = u - 1;
     end
-    u=u+1;
+    u = u + 1;
 end
 
 %% match circle with rebel edges (estimating the rebel circle)
@@ -598,17 +601,17 @@ action=0;
 if (Cr==0)
     % pass
 else
-    ci=1;
-    while ci<=(numel(Cr(:,1))) % proper C finderd
-        beta=Cr(ci,5);
-        R=(((Cr(ci,1)-Cr(ci,7))^2)+(Cr(ci,2)-Cr(ci,8))^2)^(0.5);%The R
-        x_0=R;
-        x_1=Cr(ci,6);
+    ci = 1;
+    while ci <= (numel(Cr(:,1))) % proper C finderd
+        beta = Cr(ci,5);
+        R = (((Cr(ci,1)-Cr(ci,7))^2)+(Cr(ci,2)-Cr(ci,8))^2)^(0.5);%The R
+        x_0 = R;
+        x_1 = Cr(ci,6);
         [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
-        NCn(1,1)=  -(Y1(end,1)-R)*sin((pi/180)*(beta))+(Cr(ci,1));%estimation of Cn x
-        NCn(1,2) =  (Y1(end,1)-R)*cos((pi/180)*(beta))+(Cr(ci,2));%estimation of Cn y
+        NCn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(beta))+(Cr(ci,1));%estimation of Cn x
+        NCn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(beta))+(Cr(ci,2));%estimation of Cn y
 
-        u=1;
+        u = 1;
         if Er==0
             % pass
         else
