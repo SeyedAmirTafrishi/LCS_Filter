@@ -8,6 +8,14 @@ close all
 addpath('./helpers/')
 
 %% intial conditions
+% screen parameteres
+SCREEN_RESOLUTION_X = 640;
+SCREEN_RESOLUTION_Y = 480;
+
+global ICX ICY
+ICX = SCREEN_RESOLUTION_X / 2;  %2
+ICY = SCREEN_RESOLUTION_Y / 2;  %1
+
 % algorithm constants
 lambda = 0;
 psi = 0; %first is x next is y? O_

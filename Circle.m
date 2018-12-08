@@ -5,9 +5,8 @@ set(0,'DefaultTextInterpreter','Latex');
 global beta
 global deltay deltaz Trs Trcr Trmax ploti
 global time_diff frame
-%IC=255/2;%Image Center
-ICX = 320;  %2
-ICY = 240;  %1
+global ICX ICY
+
 % VeS=2;%Standard Edge Velocity
 BLS = 25; %Standard Boundery layer Initialization Constant
 L = 3; %The el of rebel edge alignment, Step of accuracy to have rebel edges
