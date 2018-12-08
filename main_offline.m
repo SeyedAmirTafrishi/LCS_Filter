@@ -85,6 +85,7 @@ for c = 1:length(f1)
     %--------Algo begins HERE ......!!!!!
     Edge = Line(lambda,psi,Edge);
     [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
+    % Square() add square here
     Size(c,2) = numel(En(:,1));
     Size(c,3) = numel(Er(:,1));
     Size(c,4) = numel(C(:,1));
