@@ -8,6 +8,14 @@ close all
 addpath('./helpers/')
 
 %% intial conditions
+% screen parameteres
+SCREEN_X = 640;
+SCREEN_Y = 480;
+
+global ICX ICY
+ICX = SCREEN_X / 2;  %2
+ICY = SCREEN_Y / 2;  %1
+
 % algorithm constants
 lambda = 0;
 psi = 0; %first is x next is y? O_
@@ -85,6 +93,7 @@ for c = 1:length(f1)
     %--------Algo begins HERE ......!!!!!
     Edge = Line(lambda,psi,Edge);
     [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
+    % Square() add square here
     Size(c,2) = numel(En(:,1));
     Size(c,3) = numel(Er(:,1));
     Size(c,4) = numel(C(:,1));
@@ -108,8 +117,8 @@ for c = 1:length(f1)
             yunit = (C(i,3) + CB) * sin(th) + C(i,1);
             subplot(1,2,2)
             ploti = plot(xunit, yunit,'g');%Plot the boys :v
-            xlim([1 640])
-            ylim([1 480])
+            xlim([1 SCREEN_X])
+            ylim([1 SCREEN_Y])
         end
     end
     CB = 1;
@@ -121,8 +130,8 @@ for c = 1:length(f1)
             yunit = (Cr(i,3) + CB) * sin(th) + Cr(i,1);
             subplot(1,2,2)
             ploti = plot(xunit, yunit,'r');%Plot the boys :v
-            xlim([1 640])
-            ylim([1 480])
+            xlim([1 SCREEN_X])
+            ylim([1 SCREEN_Y])
         end
     end
     hold on
