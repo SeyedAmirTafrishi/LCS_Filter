@@ -9,12 +9,12 @@ addpath('./helpers/')
 
 %% intial conditions
 % screen parameteres
-SCREEN_RESOLUTION_X = 640;
-SCREEN_RESOLUTION_Y = 480;
+SCREEN_X = 640;
+SCREEN_Y = 480;
 
 global ICX ICY
-ICX = SCREEN_RESOLUTION_X / 2;  %2
-ICY = SCREEN_RESOLUTION_Y / 2;  %1
+ICX = SCREEN_X / 2;  %2
+ICY = SCREEN_Y / 2;  %1
 
 % algorithm constants
 lambda = 0;
@@ -117,8 +117,8 @@ for c = 1:length(f1)
             yunit = (C(i,3) + CB) * sin(th) + C(i,1);
             subplot(1,2,2)
             ploti = plot(xunit, yunit,'g');%Plot the boys :v
-            xlim([1 640])
-            ylim([1 480])
+            xlim([1 SCREEN_X])
+            ylim([1 SCREEN_Y])
         end
     end
     CB = 1;
@@ -130,8 +130,8 @@ for c = 1:length(f1)
             yunit = (Cr(i,3) + CB) * sin(th) + Cr(i,1);
             subplot(1,2,2)
             ploti = plot(xunit, yunit,'r');%Plot the boys :v
-            xlim([1 640])
-            ylim([1 480])
+            xlim([1 SCREEN_X])
+            ylim([1 SCREEN_Y])
         end
     end
     hold on
