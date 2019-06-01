@@ -11,9 +11,10 @@ Betaconstant=90; %Angle of two circle from each other
 Betaconsame=10;  %Angle offset for case B when there is no 90+/- angle matches of couple circles
 % Take a normal circle *Done
 
-
-
 %%
+
+
+%
 while u_m <= (numel(Ctem(:,1)))  %*Done
     %% Find a furthest distance of circle at same velocity
     u_mn=1; %Internal counter
