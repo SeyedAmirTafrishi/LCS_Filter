@@ -32,6 +32,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done
         u_mn=u_mn+1;
         end
 % Find a furthest distance of circle at same velocity
+
 % D_D = 0 distance of further (Maybe maximum value initiation)
 % Same while loop for Ct (1) 
 % if condition (furthest distance) && (Angle and velocity) Match CASE A
