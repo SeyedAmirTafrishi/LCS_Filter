@@ -68,7 +68,10 @@ for c = 1:length(f1)
         im = double(i);
     end
 
-    c9 = fast9(im, 30, 1);      % run fast9 edge detection
+    %c9 = fast9(im, 30, 1);      % run fast9 edge detection
+    c9 = detectFASTFeatures(rgb2gray(i),'MinContrast',0.2);
+    c9 = c9.Location;
+    %c9 = corner(rgb2gray(i), 'MinimumEigenvalue');
 
     axis image
     colormap(gray)

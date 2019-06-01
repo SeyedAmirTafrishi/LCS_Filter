@@ -9,6 +9,7 @@ CAM_HEIGHT = 480;
 %--------------------------- Open Camera
 %cam = webcam('USB Camera'); %camera name  USB2.0 Camera USB Video Device
 %cam = webcam('Logitech HD Pro Webcam C920');
+cam = webcam(1);
 cam.Resolution = sprintf('%dx%d', CAM_WIDTH, CAM_HEIGHT);
 %preview(cam)
 
