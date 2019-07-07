@@ -18,9 +18,5 @@ classdef Vector
          obj.y = y;
       end
    end
-   
-   methods(static)
-    
-   end
 end
 
