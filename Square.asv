@@ -70,9 +70,9 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
 % Apply Unified Circle to the two circles
 %% Construcst the Square from Collected Circles 
     if CanswerA ~= [] %Case A 
-    Cv_Y=round(mean(CanswerA(:,1))); % Virtual Center of Y for Square 
-    Cv_X=round(mean(CanswerA(:,2))); %Virtual Center of Y for Square     
-    TempD=max(CanswerA(:,1)-Cv_Y+CanswerA(:,3)) %Y 
+    S(numel(S)+1,1)=round(mean(CanswerA(:,1))); % Center of Y for Square 
+    S(numel(S)+1,2)=round(mean(CanswerA(:,2))); % Center of Y for Square     
+    TempD=Max*S(:,1) %Y 
     
     
     

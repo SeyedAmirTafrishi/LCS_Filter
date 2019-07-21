@@ -801,7 +801,7 @@ else
                     %        C=abs(TEn(i,6))
                     %        D=abs(3*Vv)
                     if (TEn(i,5)>= EXTEn(1,5)-BetaDev) && ((TEn(i,5) <= EXTEn(1,5)+BetaDev)) && (abs(TEn(i,6)) <= abs(10*Vv)) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
-                        M(Mk,1:6) = TEn(i,:);%Our Circule Mother! :D
+                        M(Mk,1:6) = TEn(i,:);%Our Circule Main
                         Mk = Mk + 1;
                         TEn(i,:) = [];
                         i = i - 1;
