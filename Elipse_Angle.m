@@ -1,21 +1,32 @@
 %%
 X_e= 1;%Elipse center coordinate
 Y_e= 3;
-Y_o=2;%Original coordinate
-X_o=3;
+Y_o=1;%Original coordinate
+X_o=-3;
 a_1=1; %elipse minor past
 b_1=.5; %elipse major past
-syms X Y
-F1=(a_1^2*(Y_o-Y)*(Y-Y_e))+(b_1^2*(X_o-X)*(X-X_e))==0;
-F2=((Y-Y_e)^2/(b_1^2))+((X-X_e)^2/(a_1^2))==1;
+%syms X Y
 
-sol = solve([F1, F2], [X, Y]); % Solver may increase computation time, may solve it algebrically in future.
-Point1 = double(sol.X)
-Point2 = double(sol.Y)
-Px1=Point1(1,1);
-Py1=Point2(1,1);
-Px2=Point1(2,1);
-Py2=Point2(2,1);
+x0 =0; 
+  % Solver may increase computation time, may solve it algebrically in future.
+  
+soly1 = fsolve(@FindTangenty1,x0)
+%fsolve doesnt give multiple solutons
+solx2 = fsolve(@FindTangentx1,x0) 
+load x_1
+load y_2
+Px1=x_1
+Py1=soly1
+Px2=solx2
+Py2=y_2
+Point1(1,1)=Px1;
+Point2(1,1)=Py1;
+Point1(2,1)=Px2;
+Point2(2,1)=Py2;
+% Px1=Point1(1,1);
+% Py1=Point2(1,1);
+% Px2=Point1(2,1);
+% Py2=Point2(2,1);
 
 %% Plot the results!
     th = 0:pi/50:2*pi;%for loop for creating circle
