@@ -1,21 +1,21 @@
 %%
 X_e= 1;%Elipse center coordinate
 Y_e= 3;
-X_o=2;
-Y_o=2;%Original coordinate
+X_o=1;
+Y_o=5;%Original coordinate
 a_1=1; %elipse minor past
 b_1=.5; %elipse major past
 %syms X Y
 
-x0 =[0 0]; 
-
+x0 =[0 0 0 0]; 
+    global x_1 y_2
+ tic
   % Solver may increase computation time, may solve it algebrically in future.
- REF = [X_e,Y_e,X_o,Y_o,a_1,b_1];
- 
+REF = [X_e,Y_e,X_o,Y_o,a_1,b_1];
 f = @(x) FindTangentx1(x,REF); % function of dummy variable y
 %fsolve doesnt give multiple solutons
-[F,x_1,y_2] = fsolve(f,x0) 
- 
+F = fsolve(f,x0) 
+ toc
   Point1(1,1)=x_1(1,1);
   Point2(1,1)=F(1,1);
   Point1(2,1)=F(1,2);
