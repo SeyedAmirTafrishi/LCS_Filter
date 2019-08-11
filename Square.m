@@ -14,15 +14,16 @@ Betaconsame=10;  %Angle offset for case B when there is no 90+/- angle matches o
 
 
 %%
-while u_m <= (numel(Ctem(:,1)))  %*Done
+while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter 
     %% Find a furthest distance of circle at same velocity
     u_mn=1; %Internal counter
     d_tem=10000; %temprorary distance, large 
     Cmain=Ctem(u_m,:); %Main Circle
     Ctem(u_m,:) = []; % Remove the chosen circle
-    Canswer = [];
+    CanswerA = []; %Case A Matrix
+    CanswerB = []; %CAse B Matrix
     CtT=[]; %Stupid matrix
-        while  u_mn <= (numel(Ctem(:,1))) % Check all circles 
+        while  u_mn <= (numel(Ctem(:,1))) % Check all circles Case A Certain Range Angle 
             %----- Angle refinment 
             A=cos(Cmain(1,5)*(pi/180)); 
             B=sin(Cmain(1,5)*(pi/180));
@@ -35,15 +36,27 @@ while u_m <= (numel(Ctem(:,1)))  %*Done
                 if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) && (Cmain(1,6)> Ctem(u_mn,6)-e_v)) && ((abs(Cmain(1,5))< abs(Ctem(u_mn,5))+Betaconstant+DeltaBeta) && (abs(Cmain(1,5))> abs(Ctem(u_mn,5))+Betaconstant-DeltaBeta)) && d_m<d_tem %Find the match of 90^o angle and same velocity threshold with furthest distance,NOte: it checks both +/- 90
                 %---------- Remove and ADD matched circles from main matrix
                 %Ctem
-                    if Canswer == []
-                    Canswer=Ctem(u_mn,:); %Update temprary Circle
+                    if CanswerA == []
+                    CanswerA=Ctem(u_mn,:); %Update temprary Circle
                     d_tem=d_m;% update distance   
                     Ctem(u_mn,:)=[];
                     else %Canswer is not empty
                     CtT=Ctem(u_mn,:); %Goes to temprary 0
                     Ctem(u_mn,:)=[];
-                    Ctem(numel(Ctem(:,1))+1,:)=Canswer; % PLease verify
-                    Canswer=CtT;
+                    Ctem(numel(Ctem(:,1))+1,:)=CanswerA; % PLease verify
+                    CanswerA=CtT;
+                    d_tem=d_m;% update distance  
+                    end
+                elseif ((Cmain(1,6)< Ctem(u_mn,6)+e_v) && (Cmain(1,6)> Ctem(u_mn,6)-e_v)) && ((abs(Cmain(1,5))< abs(Ctem(u_mn,5))+Betaconsame+DeltaBeta) && (abs(Cmain(1,5))> abs(Ctem(u_mn,5))+Betaconsame-DeltaBeta)) %Find same velocity threshold and small angle offset 
+                    if CanswerB == []
+                    CanswerB=Ctem(u_mn,:); %Update temprary Circle
+                    d_tem=d_m;% update distance   
+                    Ctem(u_mn,:)=[];
+                    else %Canswer is not empty
+                    CtT=Ctem(u_mn,:); %Goes to temprary 0
+                    Ctem(u_mn,:)=[];
+                    Ctem(numel(Ctem(:,1))+1,:)=CanswerB; % PLease verify
+                    CanswerB=CtT;
                     d_tem=d_m;% update distance  
                     end
                 end
@@ -55,25 +68,46 @@ while u_m <= (numel(Ctem(:,1)))  %*Done
 % if condition (furthest distance) && (Angle and velocity) Match CASE A
 % WE have couple C(A) and C(B)
 % Apply Unified Circle to the two circles
-%% Does couple and circle found?
-        if Canswer == []
-            MS=[]; %Collector temprary matrix
-            nMS=0; % Counter of collector temp. matrix
-                while  u_mn <= (numel(Ctem(:,1))) % Check all circles 
-            %----- Angle refinment 
-            A=cos(Cmain(1,5)*(pi/180)); 
-            B=sin(Cmain(1,5)*(pi/180));
-            Cmain(1,5)=atan2(B,A)*(180/pi);% Note: Gives back the angle in degree
-            A=cos(Ctem(u_mn,5)*(pi/180));
-            B=sin(Ctem(u_mn,5)*(pi/180));
-            Ctem(u_mn,5)=atan2(B,A)*(180/pi);
-            %----- Angle refinment
-                if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) && (Cmain(1,6)> Ctem(u_mn,6)-e_v)) && ((abs(Cmain(1,5))< abs(Ctem(u_mn,5))+Betaconsame+DeltaBeta) && (abs(Cmain(1,5))> abs(Ctem(u_mn,5))+Betaconsame-DeltaBeta)) %Find same velocity threshold and small angle offset 
-                    nMS=nMS+1;
-                    MS(nMS,:)=Ctem(u_mn,:); %Update temprary Circle
-                end
-                    u_mn=u_mn+1;
-                end %NOTE: Matrix Computation is possible for future work 
+%% Construcst the Square from Collected Circles 
+    if CanswerA ~= [] %Case A 
+    Cv_Y=round(mean(CanswerA(:,1))); % Virtual Center of Y for Square 
+    Cv_X=round(mean(CanswerA(:,2))); %Virtual Center of Y for Square     
+    TempD=max(CanswerA(:,1)-Cv_Y+CanswerA(:,3)) %Y 
+    
+    
+    
+    
+    S(numel(S)+1,3)= % R of grouped Circles Y dis     
+    S(numel(S)+1,4)= % R of grouped circles X dis    
+    
+    elseif  CanswerB ~= [] %Case B
+    
+    
+    else % Case Lonely
+    
+    end
+
+
+
+%% Does couple and circle found? Case B Certain Range Angle 
+        if Canswer == [] 
+%             MS=[]; %Collector temprary matrix
+%             nMS=0; % Counter of collector temp. matrix
+%                 while  u_mn <= (numel(Ctem(:,1))) % Check all circles 
+%             %----- Angle refinment 
+%             A=cos(Cmain(1,5)*(pi/180)); 
+%             B=sin(Cmain(1,5)*(pi/180));
+%             Cmain(1,5)=atan2(B,A)*(180/pi);% Note: Gives back the angle in degree
+%             A=cos(Ctem(u_mn,5)*(pi/180));
+%             B=sin(Ctem(u_mn,5)*(pi/180));
+%             Ctem(u_mn,5)=atan2(B,A)*(180/pi);
+%             %----- Angle refinment
+%                 if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) && (Cmain(1,6)> Ctem(u_mn,6)-e_v)) && ((abs(Cmain(1,5))< abs(Ctem(u_mn,5))+Betaconsame+DeltaBeta) && (abs(Cmain(1,5))> abs(Ctem(u_mn,5))+Betaconsame-DeltaBeta)) %Find same velocity threshold and small angle offset 
+%                     nMS=nMS+1;
+%                     MS(nMS,:)=Ctem(u_mn,:); %Update temprary Circle
+%                 end
+%                     u_mn=u_mn+1;
+%                 end %NOTE: Matrix Computation is possible for future work 
 %%    Create Square S(k) and estimated with any matched S'(k-1)        
             if MS == [] %Lonely Circle :D
                 %------- Estimation and Matching Squares 
