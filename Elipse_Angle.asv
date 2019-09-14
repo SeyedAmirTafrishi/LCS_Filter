@@ -3,8 +3,8 @@ clc
 clear
 X_e= 1;%Elipse center coordinate
 Y_e= 3;
-X_o=3;
-Y_o=-2;%Original coordinate
+X_o=1;
+Y_o=4;%Original coordinate
 a_1=1; %elipse minor past
 b_1=.5; %elipse major past
 %syms X Y
@@ -78,11 +78,27 @@ Delta_r=1.6; %Estimated shift on R_e
 %sold = solve([FN1, FN2], [X_n1, Y_n1]); % Solver may increase computation time, may solve it algebrically in future.
 %Pointn1a = real(y_n1(1,2))
 %Pointn1b = real(y_n1(1,1))
+if Y_o<Y_e % working Solution
+Y_nf1=Point2(1,1)+sqrt(DRo1^2/(m_ro1^2+1));
+X_nf1=Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));    
+else
+Y_nf1=Point2(1,1)-sqrt(DRo1^2/(m_ro1^2+1));
+X_nf1=Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));    
+end
+if Y_o<Y_e % working Solution
+Y_nf1=Point2(1,1)+sqrt(DRo2^2/(m_ro2^2+1));
+X_nf1=Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));    
+else
+Y_nf1=Point2(1,1)-sqrt(DRo2^2/(m_ro2^2+1));
+X_nf1=Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));    
+end
+ 
 % FM1=(X_n2-Point1(2,1))^2+(Y_n2-Point2(2,1))^2==DRo2^2;
 % FM2=(m_ro2*(Y_n2-Point2(2,1)))-(X_n2-Point1(2,1))==0;
 % sold = solve([FM1, FM2], [X_n2, Y_n2]); % Solver may increase computation time, may solve it algebrically in future.
 % Pointn2a = double(sold.X_n2)
 % Pointn2b = double(sold.Y_n2)
+
 % if sqrt((Pointn1b(1,1)-Y_o)^2+(Pointn1a(1,1)-X_o)^2) > R_o1+DRo1 %Length must be longer than existing one always to find right points
 % X_nf1=Pointn1a(1,1);
 % Y_nf1=Pointn1b(1,1);
@@ -97,55 +113,39 @@ Delta_r=1.6; %Estimated shift on R_e
 % X_nf2=Pointn2a(2,1);
 % Y_nf2=Pointn2b(2,1);  
 % end
-if Y_o<Y_e % working Solution
-Y_nf1=Point2(1,1)+sqrt(DRo1^2/(m_ro1^2+1));
-X_nf1=Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));    
-else
-Y_nf1=Point2(1,1)-sqrt(DRo1^2/(m_ro1^2+1));
-X_nf1=Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));    
-end
-if Y_o<Y_e % working Solution
-Y_nf2=Point2(2,1)+sqrt(DRo2^2/(m_ro2^2+1));
-X_nf2=Point1(2,1)+m_ro2*(Y_nf2-Point2(2,1));    
-else
-Y_nf2=Point2(2,1)-sqrt(DRo2^2/(m_ro2^2+1));
-X_nf2=Point1(2,1)+m_ro2*(Y_nf2-Point2(2,1));    
-end
-%Algebric results
     plot(X_nf1,Y_nf1,'- xy','MarkerSize', 18,'LineWidth' , 2.5) 
-    plot(X_nf2,Y_nf2,'- xy','MarkerSize', 18,'LineWidth' , 2.5)     
-    
-  %% Solving Equations of Elipse for a_n and b_n
+%     plot(X_nf2,Y_nf2,'- xy','MarkerSize', 18,'LineWidth' , 2.5)     
+% %% Solving Equations of Elipse for a_n and b_n
 % % Estimated location of center of elipse
-syms X_ne Y_ne 
-EN1=(X_ne-X_e)^2+(Y_ne-Y_e)^2==(Delta_r)^2;
-EN2=(m_re*(Y_ne-Y_e))-(X_ne-X_e)==0;
-sold = solve([EN1, EN2], [X_ne, Y_ne]); % Solver may increase computation time, may solve it algebrically in future.
-XE = double(sold.X_ne);
-YE = double(sold.Y_ne);
-if sqrt((YE(1,1)-Y_o)^2+(XE(1,1)-X_o)^2) > R_e+Delta_r %Length must be longer than existing one always to find right points
-X_ef1=XE(1,1);
-Y_ef1=YE(1,1);
-else
-X_ef1=XE(2,1);
-Y_ef1=YE(2,1);  
-end
-    plot(X_ef1,Y_ef1,'- ok','MarkerSize', 18,'LineWidth' , 2.5) 
-
-syms a_n b_n
-Fa1=(a_n^2*(Y_o-Y_nf1)*(Y_nf1-Y_ef1))+(b_n^2*(X_o-X_nf1)*(X_nf1-X_ef1))==0;
-Fb2=((Y_nf1-Y_ef1)^2/(b_n^2))+((X_nf1-X_ef1)^2/(a_n^2))==1;
-
-sol = solve([Fa1, Fb2], [a_n, b_n]); % Solver may increase computation time, may solve it algebrically in future.
-A_n = double(sol.a_n)
-B_n = double(sol.b_n)
- 
-    th = 0:pi/50:2*pi;%for loop for creating circle
-    CB = 1;
-            xunit = (abs(A_n(2,1)) ) * cos(th) + X_ef1;%equation of circle :D
-            yunit = (abs(B_n(2,1)) ) * sin(th) + Y_ef1;
-            ploti = plot(xunit, yunit,'b');% Ellipse
-
-
- 
- 
+% syms X_ne Y_ne 
+% EN1=(X_ne-X_e)^2+(Y_ne-Y_e)^2==(Delta_r)^2;
+% EN2=(m_re*(Y_ne-Y_e))-(X_ne-X_e)==0;
+% sold = solve([EN1, EN2], [X_ne, Y_ne]); % Solver may increase computation time, may solve it algebrically in future.
+% XE = double(sold.X_ne);
+% YE = double(sold.Y_ne);
+% if sqrt((YE(1,1)-Y_o)^2+(XE(1,1)-X_o)^2) > R_e+Delta_r %Length must be longer than existing one always to find right points
+% X_ef1=XE(1,1);
+% Y_ef1=YE(1,1);
+% else
+% X_ef1=XE(2,1);
+% Y_ef1=YE(2,1);  
+% end
+%     plot(X_ef1,Y_ef1,'- ok','MarkerSize', 18,'LineWidth' , 2.5) 
+% 
+% syms a_n b_n
+% Fa1=(a_n^2*(Y_o-Y_nf1)*(Y_nf1-Y_ef1))+(b_n^2*(X_o-X_nf1)*(X_nf1-X_ef1))==0;
+% Fb2=((Y_nf1-Y_ef1)^2/(b_n^2))+((X_nf1-X_ef1)^2/(a_n^2))==1;
+% 
+% sol = solve([Fa1, Fb2], [a_n, b_n]); % Solver may increase computation time, may solve it algebrically in future.
+% A_n = double(sol.a_n)
+% B_n = double(sol.b_n)
+%  
+%     th = 0:pi/50:2*pi;%for loop for creating circle
+%     CB = 1;
+%             xunit = (abs(A_n(2,1)) ) * cos(th) + X_ef1;%equation of circle :D
+%             yunit = (abs(B_n(2,1)) ) * sin(th) + Y_ef1;
+%             ploti = plot(xunit, yunit,'b');% Ellipse
+% 
+% 
+%  
+%  
