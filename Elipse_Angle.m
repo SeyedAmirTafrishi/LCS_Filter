@@ -1,10 +1,11 @@
 %%
 clc
 clear
+
 X_e= 1;%Elipse center coordinate
 Y_e= 3;
-X_o=3;
-Y_o=-2;%Original coordinate
+X_o=-1;
+Y_o=4;%Original coordinate
 a_1=1; %elipse minor past
 b_1=.5; %elipse major past
 %syms X Y
@@ -117,18 +118,26 @@ end
     
   %% Solving Equations of Elipse for a_n and b_n
 % % Estimated location of center of elipse
-syms X_ne Y_ne 
-EN1=(X_ne-X_e)^2+(Y_ne-Y_e)^2==(Delta_r)^2;
-EN2=(m_re*(Y_ne-Y_e))-(X_ne-X_e)==0;
-sold = solve([EN1, EN2], [X_ne, Y_ne]); % Solver may increase computation time, may solve it algebrically in future.
-XE = double(sold.X_ne);
-YE = double(sold.Y_ne);
-if sqrt((YE(1,1)-Y_o)^2+(XE(1,1)-X_o)^2) > R_e+Delta_r %Length must be longer than existing one always to find right points
-X_ef1=XE(1,1);
-Y_ef1=YE(1,1);
+% syms X_ne Y_ne 
+% EN1=(X_ne-X_e)^2+(Y_ne-Y_e)^2==(Delta_r)^2;
+% EN2=(m_re*(Y_ne-Y_e))-(X_ne-X_e)==0;
+% sold = solve([EN1, EN2], [X_ne, Y_ne]); % Solver may increase computation time, may solve it algebrically in future.
+% XE = double(sold.X_ne);
+% YE = double(sold.Y_ne);
+% if sqrt((YE(1,1)-Y_o)^2+(XE(1,1)-X_o)^2) > R_e+Delta_r %Length must be longer than existing one always to find right points
+% X_ef1=XE(1,1);
+% Y_ef1=YE(1,1);
+% else
+% X_ef1=XE(2,1);
+% Y_ef1=YE(2,1);  
+% end
+%% Solved Algebriclly
+if Y_o<Y_e % working Solution
+Y_ef1=Y_e+sqrt(Delta_r^2/(m_re^2+1));
+X_ef1=X_e+m_re*(Y_ef1-Y_e);    
 else
-X_ef1=XE(2,1);
-Y_ef1=YE(2,1);  
+Y_ef1=Y_e-sqrt(Delta_r^2/(m_re^2+1));
+X_ef1=X_e+m_re*(Y_ef1-Y_e);    
 end
     plot(X_ef1,Y_ef1,'- ok','MarkerSize', 18,'LineWidth' , 2.5) 
 
