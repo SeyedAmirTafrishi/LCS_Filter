@@ -4,12 +4,12 @@ clear
 
 X_e= 1;%Elipse center coordinate
 Y_e= 3;
-X_o=4;
+X_o=2;
 Y_o=-1;%Original coordinate
 a_1=1; %elipse minor past
 b_1=.5; %elipse major past
 %syms X Y
-tic
+
 x0 =[0 0 0 0]; 
 global x_1 y_2
   % Solver may increase computation time, may solve it algebrically in future.
@@ -151,8 +151,9 @@ end
 if abs((X_o-X_nf1))> .01
 B_n=sqrt(abs((((X_o-X_nf1)*(Y_nf1-Y_ef1)^2)-((X_nf1-X_ef1)*(Y_o-Y_nf1)*(Y_nf1-Y_ef1)))/((X_o-X_nf1))))
 A_n=sqrt(abs((B_n^2*(X_o-X_nf1)*(X_nf1-X_ef1))/((Y_o-Y_nf1)*(Y_nf1-Y_ef1))))    
-else %when it is zero Singular point
-
+else %when it is zero
+B_n=sqrt(abs((((X_o-X_nf1)*(Y_nf1-Y_ef1)^2)-((X_nf1-X_ef1)*(Y_o-Y_nf1)*(Y_nf1-Y_ef1)))/((X_o-X_nf1))))
+A_n=sqrt(abs((B_n^2*(X_o-X_nf1)*(X_nf1-X_ef1))/((Y_o-Y_nf1)*(Y_nf1-Y_ef1)))) 
 end
 
     th = 0:pi/50:2*pi;%for loop for creating circle
@@ -163,4 +164,4 @@ end
 
 
  
- toc
+ 
