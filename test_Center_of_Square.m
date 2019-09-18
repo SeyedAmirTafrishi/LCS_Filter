@@ -1,6 +1,6 @@
 %Problem Solved :D center of Square
 
-CanswerA = [1 2 5; 3 10 4; 12 3 5];
+CanswerA = [1 8 5; 7 10 4; 12 11 5];
 for i=1:1:numel(CanswerA(:,1))
     xunit = 0;
     yunit = 0;
@@ -24,8 +24,8 @@ TempYNegaitive=min(CanswerA(:,1)-CanswerA(:,3)) %Y
 TempXPositive=max(CanswerA(:,2)+CanswerA(:,3)) %Y 
 TempXNegaitive=min(CanswerA(:,2)-CanswerA(:,3)) %Y    
 
-Y_o=((TempYPositive-TempYNegaitive)/2)
-X_o=((TempXPositive-TempXNegaitive)/2)
+Y_o=((TempYPositive+TempYNegaitive)/2)
+X_o=((TempXPositive+TempXNegaitive)/2)
 a=abs(TempYPositive-TempYNegaitive)/2 %height
 b=abs(TempXPositive-TempXNegaitive)/2
 plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)  

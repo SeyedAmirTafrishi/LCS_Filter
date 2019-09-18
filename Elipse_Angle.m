@@ -3,9 +3,9 @@ clc
 clear
 
 X_e = 1;%Elipse center coordinate
-Y_e = 3;
-X_o = 4;
-Y_o = -1;%Original coordinate
+Y_e = 2;
+X_o = -3.01;
+Y_o = 4;%Original coordinate
 a_1 = 1; %elipse minor past
 b_1 = .5; %elipse major past
 %syms X Y
@@ -158,7 +158,8 @@ if abs((X_o-X_nf1)) > .01
   B_n = sqrt(abs((((X_o-X_nf1)*(Y_nf1-Y_ef1)^2)-((X_nf1-X_ef1)*(Y_o-Y_nf1)*(Y_nf1-Y_ef1))) / ((X_o-X_nf1))))
   A_n = sqrt(abs((B_n^2*(X_o-X_nf1)*(X_nf1-X_ef1)) / ((Y_o-Y_nf1)*(Y_nf1-Y_ef1))))    
 else %when it is zero Singular point
-
+% deviate with 0.01
+    
 end
 
 th = 0:pi/50:2*pi;%for loop for creating circle
@@ -166,4 +167,6 @@ CB = 1;
 xunit = (abs(A_n) ) * cos(th) + X_ef1;%equation of circle :D
 yunit = (abs(B_n) ) * sin(th) + Y_ef1;
 ploti = plot(xunit, yunit,'b');% Ellipse
+
+%% Approximate the point to largest, Output is a, b (minor and major radii) as well as the rounded X and Y (Think about property of variables Natural or DEcimal) 
  toc
