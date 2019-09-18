@@ -1,3 +1,4 @@
+% Vector class for solving vector calculus
 classdef Vector
    properties
       x
@@ -12,11 +13,10 @@ classdef Vector
             obj.icy = 0;
          elseif nargin == 4
             obj.icx = icx;
-            obj.icy = icy;     
+            obj.icy = icy;
          end
          obj.x = x;
          obj.y = y;
       end
    end
 end
-
