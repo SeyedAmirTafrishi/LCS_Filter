@@ -15,7 +15,7 @@ Betaconsame = 10;  % Angle offset for case B when there is no 90+/- angle matche
 while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
     %% Find a furthest distance of circle at same velocity
     u_mn = 1; %Internal counter
-    d_tem = 10000; %temprorary distance, large 
+    d_tem = ICY*2; %temprorary distance, large  (Must be the maximum pixel)
     Cmain = Ctem(u_m,:); %Main Circle C_A of our Loop
     Ctem(u_m,:) = []; % Remove the chosen circle
     CanswerA = []; %Case A Matrix
