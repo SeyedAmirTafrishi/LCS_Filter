@@ -22,6 +22,21 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
     CanswerB = []; %CAse B Matrix
     CtT = []; %Stupid matrix
     FlagBReak=0;
+    %% Reorder the matrix
+    % Expand another column in Ctem
+    Ctem = [Ctem zeros(numel(Ctem(:,1)),1)];
+    % Calculate all the distance
+    u_mn = 1;
+    while u_mn <= (numel(Ctem(:,1)))
+        d_m = sqrt((Cmain(1,1)-Ctem(u_mn,1))^2+((Cmain(1,2)-Ctem(u_mn,2))^2));
+        Ctem(u_mn,7) = d_m;
+        u_mn = u_mn + 1;
+    end
+    
+    % Now we have the circle matrix argumented with a distance (as the final column)
+    % let's sort it:
+    Ctem_sorted = sortrows(Ctem, 7, 'descend'); %from far to near
+    %%
         while  u_mn <= (numel(Ctem(:,1))) % Check all circles Case A Certain Range Angle 
             %----- Angle refinment 
             A = cos(Cmain(1,5)*(pi/180)); 
@@ -31,7 +46,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
             B = sin(Ctem(u_mn,5)*(pi/180));
             Ctem(u_mn,5) = atan2(B,A)*(180/pi);
             %----- Angle refinment
-            d_m=sqrt((Cmain(1,1)-Ctem(u_mn,1))^2+((Cmain(1,2)-Ctem(u_mn,2))^2)); % Check !
+            d_m=Ctem(u_mn,7); % Check !
             
             if CanswerA ~= [] || CanswerB ~= [] % if we have potential C_B from previous iterations (Case A and B of C_B) 
             if d_m<d_tem && (( Ctem(u_mn,6) < Cmain(1,6))) %Case for exceptional circles with low velocity between two potentially matched circles
