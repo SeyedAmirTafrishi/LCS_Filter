@@ -27,8 +27,8 @@ Point2(2,1) = real(yd_2(1,1));
 %[ angle ] = calculate_vector_angle( x1, y1, X_A, Y_A ) we cant use it
 %since our initial zero angle line is not making true angle between Cricle
 %x,d and y,d and C_b
-AngleCtangL=atan2(sqrt((Point2(1,1)-Y_d)^2+(Point1(1,1)-X_d)^2),sqrt((Y_d-Y_A)^2+(X_d-X_A)^2))
-AngleCtangU=asin(sqrt((Point2(2,1)-Y_d)^2+(Point1(2,1)-X_d)^2)/sqrt((Y_d-Y_A)^2+(X_d-X_A)^2))
+AngleCtangL=asin(sqrt((Point2(1,1)-Y_d)^2+(Point1(1,1)-X_d)^2)/sqrt((Y_d-Y_A)^2+(X_d-X_A)^2))
+AngleCtangU=asin(sqrt((Point2(2,1)-Y_d)^2+(Point1(2,1)-X_d)^2)/sqrt((Y_d-Y_A)^2+(X_d-X_A)^2));
 
 % The Circle B can be anywhere and there is not tangent point! So we have
 % to have at least 6 cases
@@ -71,4 +71,4 @@ plot(X_A,Y_A,'- om','MarkerSize', 18,'LineWidth' , 2.5)
 plot(X_B,Y_B,'- ob','MarkerSize', 18,'LineWidth' , 2.5)
 plot([X_A Point1(1,1)],[Y_A Point2(1,1)],'y','MarkerSize', 18,'LineWidth' , 1.5)
 plot([X_A Point1(2,1)],[Y_A Point2(2,1)],'y','MarkerSize', 18,'LineWidth' , 1.5)
-
+%abs()<abs()

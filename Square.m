@@ -10,7 +10,7 @@ DeltaBeta = .05; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
 Betaconsame = 10;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
 % Take a normal circle *Done
-
+global xd_1 yd_2
 %%
 while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
     %% Find a furthest distance of circle at same velocity
@@ -49,20 +49,91 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
             d_m=Ctem(u_mn,7); % Check !
             
             if CanswerA ~= [] || CanswerB ~= [] % if we have potential C_B from previous iterations (Case A and B of C_B) 
-            if d_m<d_tem && (( Ctem(u_mn,6) < Cmain(1,6))) %Case for exceptional circles with low velocity between two potentially matched circles
-            % Failiur OBject exists with in C_A and C_B
-            d_tem=d_tem-d_m; %decrease the distance
-            if CanswerA ~=[]
-            Ctem(numel(Ctem(:,1))+1,:) = CanswerA;  
-            CanswerA=[];
-            end  
-            if CanswerB~= [] 
-            Ctem(numel(Ctem(:,1))+1,:) = CanswerB;  
-            CanswerB=[];    
+                %% Calculate the whether D_m removes cooresponding C_B and add it back to loop for all previous Circles
+                %The order, i change, update CanswerA/B and Ctem!!!% make it in line for easiness
+             if (d_m<d_tem && (( Ctem(u_mn,6) < Cmain(1,6))))    
+                  
+                if CanswerA ~=[]
+                 u_dm=1;
+                    while u_dm<=(numel(CanswerA(:,1))) %X_B Y_B
+                 x0 = [0 0 0 0]; 
+                 xd_1=0;
+                 yd_2=0;
+                 REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)];%Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
+                 f = @(x) FindTangenfordm(x,REF); % function of dummy variable y
+                 %fsolve doesnt give multiple solutons
+                 F = fsolve(f,x0);
+                 Point1(1,1) = real(xd_1(1,1)); 
+                 Point2(1,1) = real(F(1,1));
+                 Point1(2,1) = real(F(1,2));
+                 Point2(2,1) = real(yd_2(1,1));
+                 AngleCtangL=asin(sqrt((Point2(1,1)-Ctem(u_mn,1))^2+(Point1(1,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2)); %Due to circular form lower and uper has same angle but you can use only one
+                 AngleCtangU=asin(sqrt((Point2(2,1)-Ctem(u_mn,1))^2+(Point1(2,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2));
+                 D_Ad=sqrt((Cmain(1,2)-Ctem(u_mn,2))^2+(Cmain(1,1)-Ctem(u_mn,1))^2);
+                 D_AB=sqrt((Cmain(1,2)-CanswerA(u_dm,2))^2+(Cmain(1,1)-CanswerA(u_dm,1))^2);
+                 D_Bd=sqrt((CanswerA(u_dm,2)-Ctem(u_mn,2))^2+(CanswerA(u_dm,1)-Ctem(u_mn,1))^2);
+                 Ahh=acos((D_AB^2+D_Ad^2-D_Bd^2)/(2*D_AB*D_Ad));
+                    if (abs(AngleCtangL)>=abs(Ahh) || abs(AngleCtangU)>=abs(Ahh))  %+/- Deltae can be added due to pixal relations
+                    d_tem=d_tem-d_m; %decrease the distance
+                    Ctem = cat(1,Ctem,CanswerA(u_dm,:)); %add CanswerA to end of Ctem all arrays!
+                    CanswerA(u_dm,:)=[];
+                    FlagBReak=1;
+                    end
+                    
+                 u_dm=u_dm+1;   
+                    end
+
+                end  
+                
+                
+                if CanswerB~= [] 
+                 u_dm=1;
+                    while u_dm<=(numel(CanswerB(:,1))) %X_B Y_B
+                 x0 = [0 0 0 0]; 
+                 xd_1=0;
+                 yd_2=0;
+                 REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)];%Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
+                 f = @(x) FindTangenfordm(x,REF); % function of dummy variable y
+                 %fsolve doesnt give multiple solutons
+                 F = fsolve(f,x0);
+                 Point1(1,1) = real(xd_1(1,1)); 
+                 Point2(1,1) = real(F(1,1));
+                 Point1(2,1) = real(F(1,2));
+                 Point2(2,1) = real(yd_2(1,1));
+                 AngleCtangL=asin(sqrt((Point2(1,1)-Ctem(u_mn,1))^2+(Point1(1,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2)); %Due to circular form lower and uper has same angle but you can use only one
+                 AngleCtangU=asin(sqrt((Point2(2,1)-Ctem(u_mn,1))^2+(Point1(2,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2));
+                 D_Ad=sqrt((Cmain(1,2)-Ctem(u_mn,2))^2+(Cmain(1,1)-Ctem(u_mn,1))^2);
+                 D_AB=sqrt((Cmain(1,2)-CanswerB(u_dm,2))^2+(Cmain(1,1)-CanswerB(u_dm,1))^2);
+                 D_Bd=sqrt((CanswerB(u_dm,2)-Ctem(u_mn,2))^2+(CanswerB(u_dm,1)-Ctem(u_mn,1))^2);
+                 Ahh=acos((D_AB^2+D_Ad^2-D_Bd^2)/(2*D_AB*D_Ad));
+                    if (abs(AngleCtangL)>=abs(Ahh) || abs(AngleCtangU)>=abs(Ahh))  %+/- Deltae can be added due to pixal relations
+                    d_tem=d_tem-d_m; %decrease the distance
+                    Ctem = cat(1,Ctem,CanswerB(u_dm,:)); %CHECK where to add back the Ctem? %add CanswerA to end of Ctem all arrays!
+                    CanswerB(u_dm,:)=[]; 
+                    FlagBReak=1;
+                    end
+                    
+                 u_dm=u_dm+1;   
+                    end
+  
+                end              
+            
+%                 if d_m<d_tem && (( Ctem(u_mn,6) < Cmain(1,6))) %Case for exceptional circles with low velocity between two potentially matched circles
+%                 % Failiur OBject exists with in C_A and C_B
+%                 d_tem=d_tem-d_m; %decrease the distance
+%                 if CanswerA ~=[]
+%                % Ctem(numel(Ctem(:,1))+1,:) = CanswerA;  
+%                 %CanswerA=[];
+%                 end  
+%                 if CanswerB~= [] 
+%                 %Ctem(numel(Ctem(:,1))+1,:) = CanswerB;  
+%                 %CanswerB=[];    
+%                 end
+                
+             end
             end
-            FlagBReak=1;
-            end
-            end
+        end
+             %%
                    if FlagBReak==0
                 if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) ...
                     && (Cmain(1,6)> Ctem(u_mn,6)-e_v)) ...
