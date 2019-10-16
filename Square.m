@@ -10,11 +10,12 @@ DeltaBeta = .05; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
 Betaconsame = 10;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
 % Take a normal circle *Done
-global xd_1 yd_2
+global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
-while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
+    while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
     %% Find a furthest distance of circle at same velocity
     u_mn = 1; %Internal counter
+    ushift_mn=0; % number of shifts in u_mn after adding back the C_A and C_B excluded by d_m
     d_tem = ICY*2; %temprorary distance, large  (Must be the maximum pixel)
     Cmain = Ctem(u_m,:); %Main Circle C_A of our Loop
     Ctem(u_m,:) = []; % Remove the chosen circle
@@ -75,14 +76,14 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                  Ahh=acos((D_AB^2+D_Ad^2-D_Bd^2)/(2*D_AB*D_Ad));
                     if (abs(AngleCtangL)>=abs(Ahh) || abs(AngleCtangU)>=abs(Ahh))  %+/- Deltae can be added due to pixal relations
                     d_tem=d_tem-d_m; %decrease the distance
-                    Ctem = cat(1,Ctem,CanswerA(u_dm,:)); %add CanswerA to end of Ctem all arrays!
+                    Ctem = cat(1,CanswerA(u_dm,:),Ctem); %add CanswerA to begining of Ctem all arrays! we add it to begining because they are farthest circles and we dont need to re-do searching by u_nm of main loop
                     CanswerA(u_dm,:)=[];
+                    ushift_mn=ushift_mn+1;
                     FlagBReak=1;
                     end
-                    
+                 
                  u_dm=u_dm+1;   
                     end
-
                 end  
                 
                 
@@ -108,16 +109,16 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                  Ahh=acos((D_AB^2+D_Ad^2-D_Bd^2)/(2*D_AB*D_Ad));
                     if (abs(AngleCtangL)>=abs(Ahh) || abs(AngleCtangU)>=abs(Ahh))  %+/- Deltae can be added due to pixal relations
                     d_tem=d_tem-d_m; %decrease the distance
-                    Ctem = cat(1,Ctem,CanswerB(u_dm,:)); %CHECK where to add back the Ctem? %add CanswerA to end of Ctem all arrays!
+                    Ctem = cat(1,CanswerB(u_dm,:),Ctem); %%add CanswerA to begining of Ctem all arrays!
                     CanswerB(u_dm,:)=[]; 
+                    ushift_mn=ushift_mn+1;
                     FlagBReak=1;
                     end
                     
                  u_dm=u_dm+1;   
                     end
   
-                end              
-            
+                end                       
 %                 if d_m<d_tem && (( Ctem(u_mn,6) < Cmain(1,6))) %Case for exceptional circles with low velocity between two potentially matched circles
 %                 % Failiur OBject exists with in C_A and C_B
 %                 d_tem=d_tem-d_m; %decrease the distance
@@ -129,10 +130,8 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
 %                 %Ctem(numel(Ctem(:,1))+1,:) = CanswerB;  
 %                 %CanswerB=[];    
 %                 end
-                
              end
             end
-        end
              %%
                    if FlagBReak==0
                 if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) ...
@@ -172,11 +171,11 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                 end
                     u_mn = u_mn+1;    
                    else % Flag = 1 Reset!
-                    u_mn =1; 
+                    u_mn =u_mn+ushift_mn; 
                     FlagBReak=0;
                    end
         end %NOTE: Matrix Computation is possible for future work 
-        
+   
 % D_D = 0 distance of further (Maybe maximum value initiation)
 % Same while loop for Ct (1) 
 % if condition (furthest distance) && (Angle and velocity) Match CASE A
@@ -288,4 +287,4 @@ end
 
 % return S delta Psi 
 
-end
+ end
