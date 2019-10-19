@@ -8,7 +8,7 @@ u_m = 1;
 e_v = .05; % Deviation for circle velocity,
 DeltaBeta = .05; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
-Betaconsame = 10;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
+Betaconsame = 6;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
@@ -36,8 +36,9 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
     
     % Now we have the circle matrix argumented with a distance (as the final column)
     % let's sort it:
-    Ctem_sorted = sortrows(Ctem, 7, 'descend'); %from far to near
-    %%
+    Cmain  = sortrows(Ctem, 7, 'descend'); %from far to near
+    %% 
+    u_mn = 1;
         while  u_mn <= (numel(Ctem(:,1))) % Check all circles Case A Certain Range Angle 
             %----- Angle refinment 
             A = cos(Cmain(1,5)*(pi/180)); 
@@ -133,8 +134,8 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
              end
             end
              %%
-                   if FlagBReak==0
-                if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) ...
+       if FlagBReak==0    
+                if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) ... %CASE A
                     && (Cmain(1,6)> Ctem(u_mn,6)-e_v)) ...
                     && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))+Betaconstant+DeltaBeta) ...
                     && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))+Betaconstant-DeltaBeta)) ...
@@ -152,7 +153,7 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
                         CanswerA = CtT;
                         d_tem = d_m;% update distance  
                     end
-                elseif ((Cmain(1,6) < Ctem(u_mn,6)+e_v) ...
+                elseif ((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
                     && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ... 
                     && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))+Betaconsame+DeltaBeta) ...
                     && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))+Betaconsame-DeltaBeta)) %Find same velocity threshold and small angle offset 
@@ -168,12 +169,59 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
                         CanswerB = CtT;
                         d_tem = d_m;% update distance  
                     end
+                else %if Case A/B fails, check whether circle can be a minor
+                 %%         
+ %!!!! Check if u_m be the CanswerA/B do we have to check this condition
+ %again?
+               if CanswerA ~= [] % Check if u)m is a Minor circles for correspondin C_B CASE A
+               MeanYO=mean(CanswerA(:,7)+Ctem(u_m,7))/2;
+               MeanXO=mean(CanswerA(:,8)+Ctem(u_m,8))/2;
+               NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
+               SQYPositive=max([(CanswerA(:,1)+CanswerA(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
+               SQYNegaitive=min([(CanswerA(:,1)-CanswerA(:,3));(Ctem(u_m,1)-Ctem(u_m,3))]); %Y 
+               SQXPositive=max([(CanswerA(:,2)+CanswerA(:,3));(Ctem(u_m,2)+Ctem(u_m,3))]); %Y 
+               SQXNegaitive=min([(CanswerA(:,2)-CanswerA(:,3));(Ctem(u_m,2)-Ctem(u_m,3))]);%Y  
+                if Ctem(u_m,1) > SQYNegaitive && Ctem(u_m,1) < SQYPositive && Ctem(u_m,2)<SQXPositive && Ctem(u_m,2)>SQXNegaitive
+                    if abs(NbetaO)+Betaconsame> abs(Ctem(u_mn,5)) && abs(NbetaO)-Betaconsame< abs(Ctem(u_mn,5)) % add the minor circle if it follows a circular array with 
+                %collected couple C_A \SumC_B
+                % there are two conditions 1: angle match 2: the circle be inside the regions of C_A and C_B    
+                %IMPORTANT: CHeck after running Square whether condition cathes
+                        CtT = Ctem(u_mn,:); %Goes to temporary 0
+                        Ctem(u_mn,:) = [];
+                        CanswerA(numel(CanswerA(:,1))+1,:) = CtT; %works
+                    end
                 end
-                    u_mn = u_mn+1;    
-                   else % Flag = 1 Reset!
-                    u_mn =u_mn+ushift_mn; 
-                    FlagBReak=0;
-                   end
+               end
+               if CanswerB ~= [] % The Minor circles for correspondin C_B CASE B
+               MeanYO=mean(CanswerB(:,7)+Ctem(u_m,7))/2;
+               MeanXO=mean(CanswerB(:,8)+Ctem(u_m,8))/2;
+               NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
+               SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
+               SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Ctem(u_m,1)-Ctem(u_m,3))]); %Y 
+               SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Ctem(u_m,2)+Ctem(u_m,3))]); %Y 
+               SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Ctem(u_m,2)-Ctem(u_m,3))]);%Y  
+                if Ctem(u_m,1) > SQYNegaitive && Ctem(u_m,1) < SQYPositive && Ctem(u_m,2)<SQXPositive && Ctem(u_m,2)>SQXNegaitive
+                    if abs(NbetaO)+Betaconsame> abs(Ctem(u_mn,5)) && abs(NbetaO)-Betaconsame< abs(Ctem(u_mn,5)) % add the minor circle if it follows a circular array with 
+                %collected couple C_A \SumC_B
+                % there are two conditions 1: angle match 2: the circle be inside the regions of C_A and C_B    
+                %IMPORTANT: CHeck after running Square whether condition cathes
+                        CtT = Ctem(u_mn,:); %Goes to temporary 0
+                        Ctem(u_mn,:) = [];
+                        CanswerB(numel(CanswerB(:,1))+1,:) = CtT; %works
+                    end
+                end    
+               end  
+           
+                    
+                    
+                end
+
+              
+        u_mn = u_mn+1;    
+        else % Flag = 1 Reset!
+        u_mn =u_mn+ushift_mn; 
+        FlagBReak=0;
+       end           
         end %NOTE: Matrix Computation is possible for future work 
    
 % D_D = 0 distance of further (Maybe maximum value initiation)
@@ -279,7 +327,7 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
 
     % Does just unmatched circles left (no match of case A and B)?
 u_m = u_m + 1;%*Done
-end
+    end
 
 
 % Match remaining circles as a squre
