@@ -36,7 +36,7 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
     
     % Now we have the circle matrix argumented with a distance (as the final column)
     % let's sort it:
-    Cmain  = sortrows(Ctem, 7, 'descend'); %from far to near
+    Ctem  = sortrows(Ctem, 7, 'descend'); %from far to near
     %% 
     u_mn = 1;
         while  u_mn <= (numel(Ctem(:,1))) % Check all circles Case A Certain Range Angle 
@@ -269,13 +269,23 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
         S(numel(S)+1,7) = mean(CanswerB(:,7)); % Center of Frame for moving Square
         S(numel(S)+1,8) = mean(CanswerB(:,8)); % Center of Frame for moving Square  
     else % Case Lonely
-    %Lonely Square
+        %Lonely Square
+        S(numel(S)+1,1)= Cmain(1,1); % The location 
+        S(numel(S)+1,2)= Cmain(1,2);
+        S(numel(S)+1,3) = Cmain(1,3);% R of grouped Circles Y dis     
+        S(numel(S)+1,5) = Trs;%Standard Trust factor for new co 
+        S(numel(S)+1,4) = Cmain(1,4);% R of grouped circles X dis  
+        S(numel(S)+1,6) = Cmain(1,5);% beta angle of square 
+        S(numel(S)+1,7) = Cmain(1,7); % Center of Frame for moving Square
+        S(numel(S)+1,8) = Cmain(1,8); % Center of Frame for moving Square 
     end
 
-
-
-%% Does couple and circle found? Case B Certain Range Angle 
-        if Canswer == [] 
+%%
+ % make Arbitary Square matrix with estimated ones if you find succesful
+ % one include to temp S and remove it from main S
+ % do till all circles done! 
+ %estimate the remining with T-1 trust
+if Canswer == [] 
 %%    Create Square S(k) and estimated with any matched S'(k-1)        
             if MS == [] %Lonely Circle :D
                 %------- Estimation and Matching Squares 
