@@ -1,8 +1,9 @@
 function [S, C, Cr] = Square(S, C, Cr, delta, Vv, Dv)
 % Subsitute C and Cr to new Ct (Temprery matrix) *Done
-global ICX ICY Trs
+global ICX ICY Trs time_diff
 C(:,7) = ICX; % Make the normal circle in same dimension with rebel circle (Center is the center of image) 
 C(:,8) = ICY;
+Stem = [S zeros(numel(S(:,1)),1)];
 Ctem = [C;Cr];
 u_m = 1;
 e_v = .05; % Deviation for circle velocity,
@@ -134,7 +135,7 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
              end
             end
              %%
-       if FlagBReak==0    
+       if FlagBReak==0    %***!!!!! ATTENTION Depending Results the sum of Case A and B is not yet decided! We may assume them together if both exist!!!**
                 if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) ... %CASE A
                     && (Cmain(1,6)> Ctem(u_mn,6)-e_v)) ...
                     && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))+Betaconstant+DeltaBeta) ...
@@ -174,15 +175,16 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
  %!!!! Check if u_m be the CanswerA/B do we have to check this condition
  %again?
                if CanswerA ~= [] % Check if u)m is a Minor circles for correspondin C_B CASE A
-               MeanYO=mean(CanswerA(:,7)+Ctem(u_m,7))/2;
-               MeanXO=mean(CanswerA(:,8)+Ctem(u_m,8))/2;
+               MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2;
+               MeanXO=(mean(CanswerA(:,8))+Cmain(1,8))/2;
                NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
                SQYPositive=max([(CanswerA(:,1)+CanswerA(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
                SQYNegaitive=min([(CanswerA(:,1)-CanswerA(:,3));(Ctem(u_m,1)-Ctem(u_m,3))]); %Y 
                SQXPositive=max([(CanswerA(:,2)+CanswerA(:,3));(Ctem(u_m,2)+Ctem(u_m,3))]); %Y 
                SQXNegaitive=min([(CanswerA(:,2)-CanswerA(:,3));(Ctem(u_m,2)-Ctem(u_m,3))]);%Y  
                 if Ctem(u_m,1) > SQYNegaitive && Ctem(u_m,1) < SQYPositive && Ctem(u_m,2)<SQXPositive && Ctem(u_m,2)>SQXNegaitive
-                    if abs(NbetaO)+Betaconsame> abs(Ctem(u_mn,5)) && abs(NbetaO)-Betaconsame< abs(Ctem(u_mn,5)) % add the minor circle if it follows a circular array with 
+                    if abs(NbetaO)+Betaconsame> abs(Ctem(u_mn,5)) && abs(NbetaO)-Betaconsame< abs(Ctem(u_mn,5)) && ((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
+                    && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ...  % add the minor circle if it follows a circular array with 
                 %collected couple C_A \SumC_B
                 % there are two conditions 1: angle match 2: the circle be inside the regions of C_A and C_B    
                 %IMPORTANT: CHeck after running Square whether condition cathes
@@ -193,15 +195,16 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
                 end
                end
                if CanswerB ~= [] % The Minor circles for correspondin C_B CASE B
-               MeanYO=mean(CanswerB(:,7)+Ctem(u_m,7))/2;
-               MeanXO=mean(CanswerB(:,8)+Ctem(u_m,8))/2;
+               MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2;
+               MeanXO=(mean(CanswerA(:,8))+Cmain(1,8))/2;
                NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
                SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
                SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Ctem(u_m,1)-Ctem(u_m,3))]); %Y 
                SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Ctem(u_m,2)+Ctem(u_m,3))]); %Y 
                SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Ctem(u_m,2)-Ctem(u_m,3))]);%Y  
                 if Ctem(u_m,1) > SQYNegaitive && Ctem(u_m,1) < SQYPositive && Ctem(u_m,2)<SQXPositive && Ctem(u_m,2)>SQXNegaitive
-                    if abs(NbetaO)+Betaconsame> abs(Ctem(u_mn,5)) && abs(NbetaO)-Betaconsame< abs(Ctem(u_mn,5)) % add the minor circle if it follows a circular array with 
+                    if abs(NbetaO)+Betaconsame> abs(Ctem(u_mn,5)) && abs(NbetaO)-Betaconsame< abs(Ctem(u_mn,5)) && ((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
+                    && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ...  % add the minor circle if it follows a circular array with 
                 %collected couple C_A \SumC_B
                 % there are two conditions 1: angle match 2: the circle be inside the regions of C_A and C_B    
                 %IMPORTANT: CHeck after running Square whether condition cathes
@@ -211,8 +214,7 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
                     end
                 end    
                end  
-           
-                    
+            
                     
                 end
 
@@ -231,6 +233,7 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
 % Apply Unified Circle to the two circles
 
 %% Construcst the Square from Collected Circles 
+   if CanswerA ~= [] || CanswerB ~= []
     if CanswerA ~= [] %Case A 
        % Cv_Y = round(mean(CanswerA(:,1))); % Virtual Center of Y for Square 
        % Cv_X = round(mean(CanswerA(:,2))); %Virtual Center of Y for Square     
@@ -242,16 +245,16 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
         X_o=((TempXPositive+TempXNegaitive)/2);
         a=abs(TempYPositive-TempYNegaitive)/2; %Y direction major
         b=abs(TempXPositive-TempXNegaitive)/2; %X direction major
-        S(numel(S)+1,1)=Y_o; % The location 
-        S(numel(S)+1,2)=X_o;
-        S(numel(S)+1,3) = a;% R of grouped Circles Y dis     
-        S(numel(S)+1,5) = Trs;%Standard Trust factor for new co 
-        S(numel(S)+1,4) = b;% R of grouped circles X dis  
-        S(numel(S)+1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean(CanswerA(:,8)), mean(CanswerA(:,7)));% beta angle of square 
-        S(numel(S)+1,7) = mean(CanswerA(:,7)); % Center of Frame for moving Square
-        S(numel(S)+1,8) = mean(CanswerA(:,8)); % Center of Frame for moving Square  
-         
-    elseif  CanswerB ~= [] %Case B
+        SA(1,1)=Y_o; % The location 
+        SA(1,2)=X_o;
+        SA(1,3) = a;% R of grouped Circles Y dis     
+        SA(1,5) = Trs;%Standard Trust factor for new co 
+        SA(1,4) = b;% R of grouped circles X dis  
+        SA(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean(CanswerA(:,8)), mean(CanswerA(:,7)));% beta angle of square 
+        SA(1,7) = mean(CanswerA(:,7)); % Center of Frame for moving Square
+        SA(1,8) = mean(CanswerA(:,8)); % Center of Frame for moving Square  
+    end   
+     if  CanswerB ~= [] %Case B
         TempYPositive=max(CanswerB(:,1)+CanswerB(:,3)); % Position of summed Circles
         TempYNegaitive=min(CanswerB(:,1)-CanswerB(:,3)); %Y 
         TempXPositive=max(CanswerB(:,2)+CanswerB(:,3)); %Y 
@@ -260,89 +263,74 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
         X_o=((TempXPositive+TempXNegaitive)/2);
         a=abs(TempYPositive-TempYNegaitive)/2; %Y direction major
         b=abs(TempXPositive-TempXNegaitive)/2; %X direction major
-        S(numel(S)+1,1)=Y_o; % The location 
-        S(numel(S)+1,2)=X_o;
-        S(numel(S)+1,3) = a;% R of grouped Circles Y dis     
-        S(numel(S)+1,5) = Trs;%Standard Trust factor for new co 
-        S(numel(S)+1,4) = b;% R of grouped circles X dis  
-        S(numel(S)+1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean(CanswerB(:,8)), mean(CanswerB(:,7)));% beta angle of square 
-        S(numel(S)+1,7) = mean(CanswerB(:,7)); % Center of Frame for moving Square
-        S(numel(S)+1,8) = mean(CanswerB(:,8)); % Center of Frame for moving Square  
+        SB(1,1)=Y_o; % The location 
+        SB(1,2)=X_o;
+        SB(1,3) = a;% R of grouped Circles Y dis     
+        SB(1,5) = Trs;%Standard Trust factor for new co 
+        SB(1,4) = b;% R of grouped circles X dis  
+        SB(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean(CanswerB(:,8)), mean(CanswerB(:,7)));% beta angle of square 
+        SB(1,7) = mean(CanswerB(:,7)); % Center of Frame for moving Square
+        SB(1,8) = mean(CanswerB(:,8)); % Center of Frame for moving Square  
+     end
     else % Case Lonely
         %Lonely Square
-        S(numel(S)+1,1)= Cmain(1,1); % The location 
-        S(numel(S)+1,2)= Cmain(1,2);
-        S(numel(S)+1,3) = Cmain(1,3);% R of grouped Circles Y dis     
-        S(numel(S)+1,5) = Trs;%Standard Trust factor for new co 
-        S(numel(S)+1,4) = Cmain(1,4);% R of grouped circles X dis  
-        S(numel(S)+1,6) = Cmain(1,5);% beta angle of square 
-        S(numel(S)+1,7) = Cmain(1,7); % Center of Frame for moving Square
-        S(numel(S)+1,8) = Cmain(1,8); % Center of Frame for moving Square 
+        SB(1,1)= Cmain(1,1); % The location 
+        SB(1,2)= Cmain(1,2);
+        SB(1,3) = Cmain(1,3);% R of grouped Circles Y dis     
+        SB(1,5) = Trs;%Standard Trust factor for new co 
+        SB(1,4) = Cmain(1,4);% R of grouped circles X dis  
+        SB(1,6) = Cmain(1,5);% beta angle of square 
+        SB(1,7) = Cmain(1,7); % Center of Frame for moving Square
+        SB(1,8) = Cmain(1,8); % Center of Frame for moving Square 
     end
 
-%%
- % make Arbitary Square matrix with estimated ones if you find succesful
- % one include to temp S and remove it from main S
- % do till all circles done! 
- %estimate the remining with T-1 trust
-if Canswer == [] 
-%%    Create Square S(k) and estimated with any matched S'(k-1)        
-            if MS == [] %Lonely Circle :D
-                %------- Estimation and Matching Squares 
-                
-            else
-            
-            
-            end
-                      
-        else % Remove
-    
+%%    Create Square S(k) and estimated with any matched S'(k-1)   
+ 
+        if SA ~= [] 
+            % S(K),find S'(K) to match with our current square from real
+            % data
+            %1) sortrows the Complete S(.) respect to our S(K)  
+            %2) every step find S'(K) of each square and compare with S(K)
+            %3) Move the Estimated New Square to Temp matrix and Remove it
+            %from S(.) 
+            % FINAL step after the main while loop of Cmain, update the
+            %remining sqaures in Temp. Matrix with T-1 Trust, estimate them and construct Main Square :D  
+             IK = 1; %Reordering the squares
+         while IK <= (numel(Stem(:,1)))
+        d_m = sqrt((SA(1,1)-Stem(IK,1))^2+((SA(1,2)-Stem(IK,2))^2));
+        Stem(IK,7) = d_m;
+        IK = IK + 1;
+         end
+        Stem  = sortrows(Stem, 7, 'descend'); %from far to near 
+        u_sm=1;
+         while u_sm <= (numel(Stem(:,1)))
+           %Estimate the Squares from Stem  
+        betaS = Stem(u_sm,6);
+        R = (((Stem(u_sm,1)-Stem(u_sm,7))^2)+(Stem(u_sm,2)-Stem(u_sm,8))^2)^(0.5);%The R
+        x_0 = R;
+        x_1 = Stem(u_sm,6);
+        [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated S the 4 space is nutrilized to one since we want just vel
+        NSn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betaS))+(Stem(u_sm,1));%estimation of Sn x
+        NSn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y   
+        % Estimation of Square from Elipse_
+        [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
+          if (1)%1.Beta_angle respect to approx. origin of SA 2.check velocity 3. The Percentage of involvement if 60% of estimated square is in SA/SB we are done
+          %Update the final Square and put it to the Sready and remove it from Stemp
+          u_sm=(numel(Stem(:,1))); %break the looop! :D 
+          %T+1
+          end
+          u_sm=u_sm+1;   
+         end  
+        elseif  SB ~= []  
+         % Same operation for this part as SA
     
         end
-
-
-
-% State: Search loop for verifying any circle exsitis that makes two C(A) and C(B)
-% as seperate circle 
-% IF condition (2) V*_C < V_C(B), V_C(A)
-% Same while loop excluding C(A) and C(B) 
-% Find matches of exstiing circles
-% if matches are over
-% State Remove the circles from Ct
-% Square While loop
-% Find Square matching the create square from C(A) and C(B) couples
-% Estimate the Square 
-% end all loops 
-% Else of If CASE A (No match) (1) CASE B
-% Find C(A) where it is align with other circles in delta Beta
-% Loop for C_t 
-% Construct the unified circle
-% Loop for Square search
-% Estimate for Square
-% Remove the Circles From C_t
-%ELSE of IF (2) 
-%decrease the D_D
-% Return to while loop of 1 to fin
-
-% end
-
-% 
-    % Does couple C(A) and C(B) found?
-
-    % Any normal/rebel circle found?
-
-    % Include any circle that matches same velocity and certain angle
-
-    % Create square and estimated with any matched S'(k-1)
-
-    % Does just unmatched circles left (no match of case A and B)?
+%%
 u_m = u_m + 1;%*Done
     end
-
-
-% Match remaining circles as a squre
-% S = []
-
+ %After checking all the circles in Cmain, The remaining squares in Stemp
+ %are estimated with T-1 if it is less than the critical trust remove them.
+    
 % return S delta Psi 
 
  end
