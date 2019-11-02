@@ -6,7 +6,7 @@ X_e = 1;%Elipse center coordinate
 Y_e = 2;
 X_o = -3.01;
 Y_o = 4;%Original coordinate
-a_1 = 1; %elipse minor past
+a_1 = 4; %elipse minor past
 b_1 = .5; %elipse major past
 %syms X Y
 tic
