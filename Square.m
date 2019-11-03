@@ -304,6 +304,7 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
         Stem  = sortrows(Stem, 7, 'descend'); %from far to near 
         u_sm=1;
          while u_sm <= (numel(Stem(:,1)))
+             %% Square Estimator
            %Estimate the Squares from Stem  
         betaS = Stem(u_sm,6);
         R = (((Stem(u_sm,1)-Stem(u_sm,7))^2)+(Stem(u_sm,2)-Stem(u_sm,8))^2)^(0.5);%The R
@@ -312,13 +313,33 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
         [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated S the 4 space is nutrilized to one since we want just vel
         NSn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betaS))+(Stem(u_sm,1));%estimation of Sn x
         NSn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y   
+        Y_e=Stem(u_sm,1);
+        X_e=Stem(u_sm,2); 
+        Y_o=Stem(u_sm,7);
+        X_o=Stem(u_sm,8);
+        a_1=Stem(u_sm,3);
+        b_1=Stem(u_sm,4);
+        Delta_r=sqrt((NSn(1,1)-Y_e)^2+(NSn(1,2)-X_e)^2);
         % Estimation of Square from Elipse_
-        [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
-          if (1)%1.Beta_angle respect to approx. origin of SA 2.check velocity 3. The Percentage of involvement if 60% of estimated square is in SA/SB we are done
+            t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
+            R_al=sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
+            r_eE= sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
+            if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
+            [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
+            elseif R_al <= r_eE % Case the (X_o,Y_o) is in of the ellipse
+            %betaang = calculate_vector_angle(X_e,Y_e ,X_o,Y_o);    %Degree unit
+            A_n=a_1+Delta_r;
+            B_n=b_1+Delta_r;
+            Y_ef1=NSn(1,1);
+            X_ef1=NSn(1,2);
+            end
+        
+            %%
+            if (1)%1.Beta_angle respect to approx. origin of SA 2.check velocity 3. The Percentage of involvement if 60% of estimated square is in SA/SB we are done
           %Update the final Square and put it to the Sready and remove it from Stemp
           u_sm=(numel(Stem(:,1))); %break the looop! :D 
           %T+1
-          end
+            end
           u_sm=u_sm+1;   
          end  
         elseif  SB ~= []  

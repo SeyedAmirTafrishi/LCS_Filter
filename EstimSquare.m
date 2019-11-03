@@ -16,18 +16,10 @@ global x_1 y_2
 % To plot output, make: config_plot_on = true
 % What is global variable x_1, y_2 for?
 % Do we have to change the value of x0?
-t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
-R_al=sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
-r_eE= sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
-%%
-if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
-    
 %%
 b_config_plot_on = true;
  
 x0 = [0 0 0 0];
-
-
 % Solver may increase computation time, may solve it algebrically in future.
 REF = [X_e,Y_e,X_o,Y_o,a_1,b_1];
 
@@ -141,12 +133,8 @@ if b_config_plot_on
     yunit = (abs(B_n)) * sin(th) + Y_ef1;
     plot(xunit, yunit,'b');% Ellipse
 end
+ 
 
-%%
-elseif R_al <= r_eE % Case the (X_o,Y_o) is out of the ellipse
-    
-    
-end
 
 
 
