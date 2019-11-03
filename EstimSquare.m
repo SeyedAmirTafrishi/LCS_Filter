@@ -1,6 +1,7 @@
 function [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r) %A_n on X axis B_n on Y Axis
 % ESTIMSQUARE : this code is based on Elipse_Angle.m
-% 
+%
+global x_1 y_2
 % Inputs:
 % X_e, Y_e : elipse center coordinate
 % X_o, Y_o : the original coordinate
@@ -15,12 +16,17 @@ function [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r) %A
 % To plot output, make: config_plot_on = true
 % What is global variable x_1, y_2 for?
 % Do we have to change the value of x0?
-
-global x_1 y_2
-
+t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
+R_al=sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
+r_eE= sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
+%%
+if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
+    
+%%
 b_config_plot_on = true;
  
 x0 = [0 0 0 0];
+
 
 % Solver may increase computation time, may solve it algebrically in future.
 REF = [X_e,Y_e,X_o,Y_o,a_1,b_1];
@@ -29,10 +35,10 @@ f = @(x) FindTangentx1(x,REF); % function of dummy variable y
 
 %fsolve doesnt give multiple solutons
 F = fsolve(f,x0);
-Point1(1,1) = real(x_1(1,1));
-Point2(1,1) = real(F(1,1));
-Point1(2,1) = real(F(1,2));
-Point2(2,1) = real(y_2(1,1));
+Point1(1,1) = real(x_1(1,1))
+Point2(1,1) = real(F(1,1))
+Point1(2,1) = real(F(1,2))
+Point2(2,1) = real(y_2(1,1))
 
 %% Plot the results!
 if b_config_plot_on
@@ -135,5 +141,13 @@ if b_config_plot_on
     yunit = (abs(B_n)) * sin(th) + Y_ef1;
     plot(xunit, yunit,'b');% Ellipse
 end
+
+%%
+elseif R_al <= r_eE % Case the (X_o,Y_o) is out of the ellipse
+    
+    
+end
+
+
 
 end

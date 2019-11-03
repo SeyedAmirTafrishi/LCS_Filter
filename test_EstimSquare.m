@@ -6,14 +6,14 @@ clear
 %global x_1 y_2
 x_1 = 0;
 y_2 = 0;
+%Problem in MINUS?
 
-
-X_e = 1;        % Elipse center coordinate
-Y_e = 2;
-X_o = -3.01;
-Y_o = 4;        % Original coordinate
-a_1 = 4;        % elipse minor past
-b_1 = .5;       % elipse major past
+X_e = 300;        % Elipse center coordinate
+Y_e = 300;
+X_o = 303+.1;
+Y_o= 303+.1;        % Original coordinate
+a_1 = 10.01;        % elipse minor past
+b_1 = 5.01;       % elipse major past
 Delta_r = 1.6;  % Estimated shift on R_e
 
 tic
