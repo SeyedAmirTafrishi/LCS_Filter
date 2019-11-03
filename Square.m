@@ -324,18 +324,17 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
             t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
             R_al=sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
             r_eE= sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
-            if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
-            [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
-            elseif R_al <= r_eE % Case the (X_o,Y_o) is in of the ellipse
-            %betaang = calculate_vector_angle(X_e,Y_e ,X_o,Y_o);    %Degree unit
-            A_n=a_1+Delta_r;
-            B_n=b_1+Delta_r;
-            Y_ef1=NSn(1,1);
-            X_ef1=NSn(1,2);
-            end
-        
+                if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
+                [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
+                elseif R_al <= r_eE % Case the (X_o,Y_o) is in of the ellipse
+                %betaang = calculate_vector_angle(X_e,Y_e ,X_o,Y_o);    %Degree unit
+                A_n=a_1+Delta_r;
+                B_n=b_1+Delta_r;
+                Y_ef1=NSn(1,1);
+                X_ef1=NSn(1,2);
+                end
             %%
-            if (1)%1.Beta_angle respect to approx. origin of SA 2.check velocity 3. The Percentage of involvement if 60% of estimated square is in SA/SB we are done
+            if (1)%1. Beta_angle respect to approx. origin of SA 2.check velocity 3. The Percentage of involvement if 60% of estimated square is in SA/SB we are done
           %Update the final Square and put it to the Sready and remove it from Stemp
           u_sm=(numel(Stem(:,1))); %break the looop! :D 
           %T+1
