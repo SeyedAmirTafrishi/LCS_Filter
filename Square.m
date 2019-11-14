@@ -335,9 +335,10 @@ global xd_1 yd_2 % temporory global variables in solution of tangential points o
                 end
             %%
             if (1)%1. Beta_angle respect to approx. origin of SA 2.check velocity 3. The Percentage of involvement if 60% of estimated square is in SA/SB we are done
-          %Update the final Square and put it to the Sready and remove it from Stemp
-          u_sm=(numel(Stem(:,1))); %break the looop! :D 
-          %T+1
+                
+                %Update the final Square and put it to the Sready and remove it from Stemp
+                u_sm=(numel(Stem(:,1))); %break the looop! :D 
+                %T+1
             end
           u_sm=u_sm+1;   
          end  
