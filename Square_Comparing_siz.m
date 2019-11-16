@@ -13,15 +13,14 @@ Ly_1=40;
 a_2=11;
 b_2=14;
 Lx_2=50;
-Ly_2=40;
+Ly_2=30;
 
 %Find where Sq 1 is located around 2
-
 if (Lx_1+a_1<Lx_2-a_2 || Lx_1-a_1>Lx_2+a_2 ) ||  (Ly_1-b_1>Ly_2+b_2 || Ly_1+b_1<Ly_2-b_2 )% Sq_1 is out of Sq_2
- 1 % If out then good bye
+ disp("not in") % If out then good bye
     
 else %Always in
- 2 % if in who is bigger?
+ disp("is in") % if in who is bigger?
  % Find intersecting area!
  %need to know direction
  
