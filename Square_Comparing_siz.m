@@ -5,8 +5,8 @@ clear
 %Square 1
 a_1=5;
 b_1=10;
-Lx_1=50;
-Ly_1=40;
+Lx_1=60;
+Ly_1=15;
 
 
 %Square 2
@@ -23,6 +23,25 @@ else %Always in
  disp("is in") % if in who is bigger?
  % Find intersecting area!
  %need to know direction
+ 
+
+%The overlap area can be computed as follows:
+Left1=Lx_1-a_1;
+Top1=Ly_1+b_1;
+Bottom1=Ly_1-b_1;
+Right1=Lx_1+a_1;
+
+Left2=Lx_2-a_2;
+Top2=Ly_2+b_2;
+Bottom2=Ly_2-b_2;
+Right2=Lx_2+a_2;
+
+x_overlap = abs(min([Right1, Right2]) - max([Left1, Left2]))
+y_overlap =abs(max([Bottom1, Bottom2]) - min([Top1, Top2]))
+overlapArea = x_overlap * y_overlap
+
+ 
+ 
  
 end
 hold on
