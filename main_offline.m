@@ -23,6 +23,7 @@ En = 0;
 Er = 0;
 C  = 0;
 Cr = 0;
+S = 0;
 delta = zeros(5, 4); %[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
 
 %% algoritm parameters
@@ -96,11 +97,17 @@ for c = 1:length(f1)
     %--------Algo begins HERE ......!!!!!
     Edge = Line(lambda,psi,Edge);
     [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
+    if S==0
+    S=[100 100 40 30 6 60 .1 200 160;112 134 20 20 4 30 .05 100 180];    
+    end
+    [S] = Square(S, C, Cr, delta, Vv, Dv)
     % Square() add square here
     Size(c,2) = numel(En(:,1));
     Size(c,3) = numel(Er(:,1));
     Size(c,4) = numel(C(:,1));
     Size(c,5) = numel(Cr(:,1));
+    %***************************************************! Add step k
+    %velocity to C and S and Subtract the vel. of k-1*!
     %delta
     %delta=[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
     hold on

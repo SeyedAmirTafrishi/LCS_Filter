@@ -1,4 +1,4 @@
-function [flag, overlapArea] = Square_Intersects(Lx_1,Ly_1, a_1,b_1, Lx_2,Ly_2,a_2,b_2) 
+function [flag, overlapPrec] = Square_Intersects(Lx_1,Ly_1, a_1,b_1, Lx_2,Ly_2,a_2,b_2) 
 % Square_Intersects()
 % Test case: [flag, overlapArea] = Square_Intersects(60, 15, 5, 10, 50, 30, 11, 14)
 
@@ -26,6 +26,7 @@ else %Always in
     y_overlap =abs(max([Bottom1, Bottom2]) - min([Top1, Top2]));
     overlapArea = x_overlap * y_overlap;
 end
+overlapPrec = (overlapArea / min(4*a_1*b_1,4*a_2*b_2))*100;
 
 % hold on
 % plot(Lx_1,Ly_1,'- *r','MarkerSize', 18,'LineWidth' , 2.5)

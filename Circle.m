@@ -10,7 +10,7 @@ global ICX ICY
 % VeS=2;%Standard Edge Velocity
 BLS = 25; %Standard Boundery layer Initialization Constant
 L = 3; %The el of rebel edge alignment, Step of accuracy to have rebel edges
-options = odeset('RelTol',1e-4,'AbsTol',[1e-5 1e-5]);
+options = odeset('RelTol',1e-3,'AbsTol',[1e-3 1e-3]);
 
 NormRows = sqrt(sum(Edge.*Edge,2));
 EdgeNorm = bsxfun(@rdivide,abs(Edge),NormRows);

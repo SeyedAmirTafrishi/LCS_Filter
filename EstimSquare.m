@@ -17,7 +17,7 @@ global x_1 y_2
 % What is global variable x_1, y_2 for?
 % Do we have to change the value of x0?
 %%
-b_config_plot_on = true;
+b_config_plot_on = false;
  
 x0 = [0 0 0 0];
 % Solver may increase computation time, may solve it algebrically in future.
@@ -27,10 +27,10 @@ f = @(x) FindTangentx1(x,REF); % function of dummy variable y
 
 %fsolve doesnt give multiple solutons
 F = fsolve(f,x0);
-Point1(1,1) = real(x_1(1,1))
-Point2(1,1) = real(F(1,1))
-Point1(2,1) = real(F(1,2))
-Point2(2,1) = real(y_2(1,1))
+Point1(1,1) = real(x_1(1,1));
+Point2(1,1) = real(F(1,1));
+Point1(2,1) = real(F(1,2));
+Point2(2,1) = real(y_2(1,1));
 
 %% Plot the results!
 if b_config_plot_on
