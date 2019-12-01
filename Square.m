@@ -1,6 +1,6 @@
 function [S] = Square(S, C, Cr, delta, Vv, Dv)
 % Subsitute C and Cr to new Ct (Temprery matrix) *Done
-global ICX ICY Trs time_diff
+global ICX ICY Trs time_diff Trcr Trmax
 C(:,7) = ICY; % Make the normal circle in same dimension with rebel circle (Center is the center of image)
 C(:,8) = ICX;
 Stem = [S zeros(numel(S(:,1)),1)];
@@ -12,14 +12,16 @@ else
  Ctem = [C;Cr];   
 end
 u_m = 1;
-e_v = .05; % Deviation for circle velocity,
-DeltaBeta = .05; % Deviation for beta angle
+e_v = .4; % Deviation for circle velocity,
+DeltaBeta = 13; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
 Betaconsame = 6;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
 PercntSqComp= 65; %Minimum Overlap percentage of two squares
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
+
+
 while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
     %% Find a furthest distance of circle at same velocity
     u_mn = 1; %Internal counter
@@ -150,14 +152,15 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     && d_m<d_tem %Find the match of 90^o angle and same velocity threshold with furthest distance,NOte: it checks both +/- 90
                 %---------- Remove and ADD matched circles from main matrix
                 %Ctem
-                if CanswerA == []
+                if isempty(CanswerA)
                     CanswerA = Ctem(u_mn,:); %Update temporary Circle
                     d_tem = d_m;% update distance
                     Ctem(u_mn,:) = [];
                 else %Canswer is not empty
                     CtT = Ctem(u_mn,:); %Goes to temporary 0
                     Ctem(u_mn,:) = [];
-                    Ctem(numel(Ctem(:,1))+1,:) = CanswerA; % PLease verify
+                    Ctem = cat(1,CanswerA,Ctem);
+                    %Ctem(numel(Ctem(:,1))+1,:) = CanswerA; % PLease verify
                     CanswerA = CtT;
                     d_tem = d_m;% update distance
                 end
@@ -166,14 +169,15 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))+Betaconsame+DeltaBeta) ...
                     && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))+Betaconsame-DeltaBeta)) %Find same velocity threshold and small angle offset
                 
-                if CanswerB == []
+                if isempty(CanswerB)
                     CanswerB = Ctem(u_mn,:); %Update temporary Circle
                     d_tem = d_m;% update distance
                     Ctem(u_mn,:) = [];
                 else %Canswer is not empty
                     CtT = Ctem(u_mn,:); %Goes to temporary 0
                     Ctem(u_mn,:) = [];
-                    Ctem(numel(Ctem(:,1))+1,:) = CanswerB; % PLease verify
+                    Ctem = cat(1,CanswerB,Ctem);
+                    %Ctem(numel(Ctem(:,1))+1,:) = CanswerB; % PLease verify
                     CanswerB = CtT;
                     d_tem = d_m;% update distance
                 end
@@ -182,10 +186,12 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                 %!!!! Check if u_m be the CanswerA/B do we have to check this condition
                 %again?
                 if ~isempty(CanswerA) % Check if u)m is a Minor circles for correspondin C_B CASE A
-                    MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2;
-                    MeanXO=(mean(CanswerA(:,8))+Cmain(1,8))/2;
-                    NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
-                    SQYPositive=max([(CanswerA(:,1)+CanswerA(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
+                    MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2
+                    MeanXO=(mean(CanswerA(:,8))+Cmain(1,8))/2
+                    NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO)%[MODIFIED]
+                    u_m
+                    Ctem
+                    SQYPositive=max([(CanswerA(:,1)+CanswerA(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]) %Sqaure boundaries are determined to see whether u_mn is inside this square
                     SQYNegaitive=min([(CanswerA(:,1)-CanswerA(:,3));(Ctem(u_m,1)-Ctem(u_m,3))]); %Y
                     SQXPositive=max([(CanswerA(:,2)+CanswerA(:,3));(Ctem(u_m,2)+Ctem(u_m,3))]); %Y
                     SQXNegaitive=min([(CanswerA(:,2)-CanswerA(:,3));(Ctem(u_m,2)-Ctem(u_m,3))]);%Y
@@ -202,8 +208,8 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     end
                 end
                 if ~isempty(CanswerB) % The Minor circles for correspondin C_B CASE B
-                    MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2;
-                    MeanXO=(mean(CanswerA(:,8))+Cmain(1,8))/2;
+                    MeanYO=(mean(CanswerB(:,7))+Cmain(1,7))/2;
+                    MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2;
                     NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
                     SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
                     SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Ctem(u_m,1)-Ctem(u_m,3))]); %Y
@@ -284,7 +290,7 @@ SB=[];
         SB(1,2) = Cmain(1,2);
         SB(1,3) = Cmain(1,3);% R of grouped Circles Y dis
         SB(1,5) = Trs;%Standard Trust factor for new co
-        SB(1,4) = Cmain(1,4);% R of grouped circles X dis
+        SB(1,4) = Cmain(1,3);% R of grouped circles X dis
         SB(1,6) = Cmain(1,5);% beta angle of square
         SB(1,7)= Cmain(1,6);
         SB(1,8) = Cmain(1,7); % Center of Frame for moving Square
@@ -292,7 +298,31 @@ SB=[];
     end
     
     %%    Create Square S(k) and estimated with any matched S'(k-1)
-    
+  if S==0
+      if ~isempty(SA)
+                 Sup(countSup,1) = SA(1,1);
+                 Sup(countSup,2) = SA(1,2); %Estimation of Square, X direction
+                 Sup(countSup,3)=  SA(1,3);
+                 Sup(countSup,4)=  SA(1,4);
+                 Sup(countSup,5) = SA(1,5);
+                 Sup(countSup,6)= SA(1,6);
+                 Sup(countSup,7)= SA(1,7);
+                 Sup(countSup,8)= SA(1,8);
+                 Sup(countSup,9)= SA(1,9);
+                 countSup=countSup+1;
+      elseif ~isempty(SB)
+                 Sup(countSup,1) = SB(1,1);
+                 Sup(countSup,2) = SB(1,2); %Estimation of Square, X direction
+                 Sup(countSup,3)=  SB(1,3);
+                 Sup(countSup,4)=  SB(1,4);
+                 Sup(countSup,5) = SB(1,5);
+                 Sup(countSup,6)= SB(1,6);
+                 Sup(countSup,7)= SB(1,7);
+                 Sup(countSup,8)= SB(1,8);
+                 Sup(countSup,9)= SB(1,9);
+                 countSup=countSup+1;
+      end
+  else
     if ~isempty(SA)
         % S(K),find S'(K) to match with our current square from real
         % data
@@ -332,6 +362,10 @@ SB=[];
             t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
             R_al = sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
             r_eE = sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
+            if a_1==0 && b_1==0 % Very small edges that transformed to circles and then to square
+            a_1=2;    
+            b_1=2;   
+            end
             if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
             elseif R_al <= r_eE % Case the (X_o,Y_o) is in of the ellipse
@@ -407,6 +441,10 @@ SB=[];
             t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
             R_al = sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
             r_eE = sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
+            if a_1==0 && b_1==0 % Very small edges that transformed to circles and then to square
+            a_1=2;    
+            b_1=2;   
+            end
             if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
             elseif R_al <= r_eE % Case the (X_o,Y_o) is in of the ellipse
@@ -450,16 +488,65 @@ SB=[];
         countSup=countSup+1;
         end
     end
+  end
     %%
     u_m = u_m + 1;%*Done
 end
- 
+if S==0
+S=Sup
+else
 Stem(:,5)=Stem(:,5)-1;
 Stem(:,10)=[];
-Sup = cat(1,Stem,Sup)
+Sup = cat(1,Stem,Sup)   
+S=Sup
+end
 %After checking all the circles in Cmain, The remaining squares in Stemp
 %are estimated with T-1 if it is less than the critical trust remove them.
-S=Sup
+%Psi and trust cleaner! :D 
+u = 1;
+if S==0
+    S = 0;
+else
+    %   a=lambda;
+    %lambda = 0;
+    while u <= (numel(S(:,1)))
+        L1 = 0;
+        L2 = 0;
+        if S(u,5) > Trmax
+            S(u,5) = Trmax-2;
+            psi(numel(psi(:,1))+1,1) = S(u,1);
+            psi(numel(psi(:,1)),2) = S(u,2);
+            psi(numel(psi(:,1)),3) = S(u,3);
+            psi(numel(psi(:,1)),4) = 1; %--- 2 for square 1 circle, 4 to 5th (because a and b)
+        end
+        if ((S(u,1) > (2*ICY)) || (S(u,2) > (2*ICX)) || (S(u,1) < 0) || (S(u,2) < 0)) %Kill more than that :D
+            S(u,:) = [];
+            u = u - 1;
+            L1 = 1;
+        end
+        if (L1==1) && (u==0)
+            u = u + 1;
+        end
+        if S(u,5) < Trcr
+            S(u,:)=[];
+            u = u - 1;
+            L2 = 1;
+        end
+        if (L1==1 || L2==1) && (u==0) %either or both active and intial 0 or -1 make it 1
+            u = 1;
+        elseif (L1==1) && (L2==1) %both active make it one
+            u = u + 1;
+        end
+        if S(u,5) > Trcr
+%            lambda(numel(lambda(:,1))+1,1) = S(u,1); % change all the psi parts to 5 array square and circle! 
+%            lambda(numel(lambda(:,1)),2) = S(u,2);
+%            lambda(numel(lambda(:,1)),3) = S(u,3);
+        end
+        u = u + 1;
+    end
+end
+
+
 % return S delta Psi
 
 end

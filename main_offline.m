@@ -97,9 +97,9 @@ for c = 1:length(f1)
     %--------Algo begins HERE ......!!!!!
     Edge = Line(lambda,psi,Edge);
     [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
-    if S==0
-    S=[100 100 40 30 6 60 .1 200 160;112 134 20 20 4 30 .05 100 180];    
-    end
+%     if S==0
+%     S=[100 100 40 30 6 60 .1 200 160;112 134 20 20 4 30 .05 100 180];    
+%     end
     [S] = Square(S, C, Cr, delta, Vv, Dv)
     % Square() add square here
     Size(c,2) = numel(En(:,1));
@@ -144,6 +144,28 @@ for c = 1:length(f1)
             ylim([1 SCREEN_Y])
         end
     end
+       if S == 0
+        % pass
+        else
+        for i = 1:1:(numel(S(:,1)))
+            subplot(1,2,2)
+            hold on
+    TempYPositive= S(i,1)+S(i,3); % 
+    TempYNegaitive=S(i,1)-S(i,3); %  
+    TempXPositive=S(i,2)+S(i,4); % 
+    TempXNegaitive=S(i,2)-S(i,4); %    
+    %plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)  
+    plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'m')
+    plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'m')
+    plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'m')
+    plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'m')  
+            %ploti = plot(xunit, yunit,'r');%Plot the boys :v
+            xlim([1 SCREEN_X])
+            ylim([1 SCREEN_Y])
+        end
+       end 
+    
+    
     hold on
     subplot(1,2,2)
     txt = ['Frame ',num2str(c)];
