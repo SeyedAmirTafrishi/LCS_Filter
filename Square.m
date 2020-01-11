@@ -1,4 +1,4 @@
-function [S] = Square(S, C, Cr, delta, Vv, Dv)
+function [S] = Square(S, C, Cr, delta, Vv, Dv, psi)
 % Subsitute C and Cr to new Ct (Temprery matrix) *Done
 global ICX ICY Trs time_diff Trcr Trmax
 C(:,7) = ICY; % Make the normal circle in same dimension with rebel circle (Center is the center of image)
@@ -191,11 +191,12 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                 %% if circle u_m fails to be C_B, is it minor between C_A and C_B
                 %!!!! Check if u_m be the CanswerA/B do we have to check this condition
                 %again?
+               % Ctem
                 if ~isempty(CanswerA) % Check if u)m is a Minor circles for correspondin C_B CASE A
-                    MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2 % Cmain(u_mn) is candidate, C_A=Cmain C_B=CanswerA
-                    MeanXO=(mean(CanswerA(:,8))+Cmain(1,8))/2
-                    NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO)%[MODIFIED]
-                    Vmean=(mean(CanswerA(:,6))+Cmain(1,6))/2
+                    MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2; % Cmain(u_mn) is candidate, C_A=Cmain C_B=CanswerA
+                    MeanXO=(mean(CanswerA(:,8))+Cmain(1,8))/2;
+                    NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
+                    Vmean=(mean(CanswerA(:,6))+Cmain(1,6))/2;
 %                     u_m
 %                     Ctem
                     SQYPositive=max([(CanswerA(:,1)+CanswerA(:,3));(Cmain(1,1)+Cmain(1,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
@@ -220,16 +221,22 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2;
                     NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
                     Vmean=(mean(CanswerB(:,6))+Cmain(1,6))/2;
-                    SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Cmain(1,1)+Cmain(1,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
-                    SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Cmain(1,1)-Cmain(1,3))]); %Y
-                    SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Cmain(1,2)+Cmain(1,3))]); %Y
-                    SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Cmain(1,2)-Cmain(1,3))]);%Y
-                    if Ctem(u_mn,1) > SQYNegaitive && Ctem(u_mn,1) < SQYPositive && Ctem(u_mn,2)<SQXPositive && Ctem(u_m,2)>SQXNegaitive
+                    SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Cmain(1,1)+Cmain(1,3))]) %Sqaure boundaries are determined to see whether u_mn is inside this square
+                    SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Cmain(1,1)-Cmain(1,3))])  %Y
+                    SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Cmain(1,2)+Cmain(1,3))])  %Y
+                    SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Cmain(1,2)-Cmain(1,3))]) %Y
+                    Ctem(u_mn,:)
+%                     Cmain
+%                     u_mn
+%                     3
+                    if Ctem(u_mn,1) > SQYNegaitive && Ctem(u_mn,1) < SQYPositive && Ctem(u_mn,2)<SQXPositive && Ctem(u_mn,2)>SQXNegaitive
+                       % 1
                         if  abs(NbetaO)+Betaconsame> abs(Cmain(1,5)) && abs(NbetaO)-Betaconsame< abs(Cmain(1,5)) && ((Vmean < Ctem(u_mn,6)+e_v) ... %CASE B
                                 && (Vmean > Ctem(u_mn,6)-e_v)) ...  % add the minor circle if it follows a circular array with
                             % collected couple C_A \SumC_B
                             % there are two conditions 1: angle match 2: the circle be inside the regions of C_A and C_B
                             %IMPORTANT: CHeck after running Square whether condition cathes
+                           % 2
                             CtT = Ctem(u_mn,:); %Goes to temporary 0
                             Ctem(u_mn,:) = [];
                             CanswerB = cat(1,CanswerB,CtT);
@@ -358,6 +365,7 @@ SB=[];
             R = (((Stem(u_sm,1)-Stem(u_sm,7))^2)+(Stem(u_sm,2)-Stem(u_sm,8))^2)^(0.5);%The R
             x_0 = R;
             x_1 = Stem(u_sm,6);
+            options = odeset('RelTol',1e-3,'AbsTol',[1e-3 1e-3]);
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated S the 4 space is nutrilized to one since we want just vel
             NSn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betaS))+(Stem(u_sm,1));%estimation of Sn x
             NSn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y
