@@ -9,8 +9,8 @@ y_2 = 0;
 %Problem in MINUS?
 
 X_e = 300;        % Elipse center coordinate
-Y_e = 300;
-X_o = 303+.1;
+Y_e = 340;
+X_o = 305+.1;
 Y_o= 303+.1;        % Original coordinate
 a_1 = 10.01;        % elipse minor past
 b_1 = 5.01;       % elipse major past

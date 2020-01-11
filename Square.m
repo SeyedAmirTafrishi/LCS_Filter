@@ -13,10 +13,10 @@ else
 end
 u_m = 1;
 e_v = .4; % Deviation for circle velocity,
-DeltaBeta = 13; % Deviation for beta angle
+DeltaBeta = 16; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
-Betaconsame = 6;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
-PercntSqComp= 65; %Minimum Overlap percentage of two squares
+Betaconsame = 10;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
+PercntSqComp= 50; %Minimum Overlap percentage of two squares
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
@@ -71,6 +71,9 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         x0 = [0 0 0 0];
                         xd_1=0;
                         yd_2=0;
+                        if Ctem(u_mn,3)<.3
+                        Ctem(u_mn,3)=2; 
+                        end
                         REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)];%Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
                         f = @(x) FindTangenfordm(x,REF); % function of dummy variable y
                         %fsolve doesnt give multiple solutons
@@ -104,14 +107,17 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         x0 = [0 0 0 0];
                         xd_1=0;
                         yd_2=0;
-                        REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)];%Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
-                        f = @(x) FindTangenfordm(x,REF); % function of dummy variable y
+                        if Ctem(u_mn,3)<.3 %For edge=circle with zero radius
+                        Ctem(u_mn,3)=2; 
+                        end
+                        REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)] %Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
+                        f = @(x) FindTangenfordm(x,REF)  % function of dummy variable y
                         %fsolve doesnt give multiple solutons
-                        F = fsolve(f,x0);
-                        Point1(1,1) = real(xd_1(1,1));
-                        Point2(1,1) = real(F(1,1));
-                        Point1(2,1) = real(F(1,2));
-                        Point2(2,1) = real(yd_2(1,1));
+                        F = fsolve(f,x0) 
+                        Point1(1,1) = real(xd_1(1,1)) 
+                        Point2(1,1) = real(F(1,1))  
+                        Point1(2,1) = real(F(1,2)) 
+                        Point2(2,1) = real(yd_2(1,1)) 
                         AngleCtangL=asin(sqrt((Point2(1,1)-Ctem(u_mn,1))^2+(Point1(1,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2)); %Due to circular form lower and uper has same angle but you can use only one
                         AngleCtangU=asin(sqrt((Point2(2,1)-Ctem(u_mn,1))^2+(Point1(2,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2));
                         D_Ad=sqrt((Cmain(1,2)-Ctem(u_mn,2))^2+(Cmain(1,1)-Ctem(u_mn,1))^2);
@@ -182,28 +188,30 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     d_tem = d_m;% update distance
                 end
             else %if Case A/B fails, check whether circle can be a minor
-                %%
+                %% if circle u_m fails to be C_B, is it minor between C_A and C_B
                 %!!!! Check if u_m be the CanswerA/B do we have to check this condition
                 %again?
                 if ~isempty(CanswerA) % Check if u)m is a Minor circles for correspondin C_B CASE A
-                    MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2
+                    MeanYO=(mean(CanswerA(:,7))+Cmain(1,7))/2 % Cmain(u_mn) is candidate, C_A=Cmain C_B=CanswerA
                     MeanXO=(mean(CanswerA(:,8))+Cmain(1,8))/2
                     NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO)%[MODIFIED]
-                    u_m
-                    Ctem
-                    SQYPositive=max([(CanswerA(:,1)+CanswerA(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]) %Sqaure boundaries are determined to see whether u_mn is inside this square
-                    SQYNegaitive=min([(CanswerA(:,1)-CanswerA(:,3));(Ctem(u_m,1)-Ctem(u_m,3))]); %Y
-                    SQXPositive=max([(CanswerA(:,2)+CanswerA(:,3));(Ctem(u_m,2)+Ctem(u_m,3))]); %Y
-                    SQXNegaitive=min([(CanswerA(:,2)-CanswerA(:,3));(Ctem(u_m,2)-Ctem(u_m,3))]);%Y
-                    if Ctem(u_m,1) > SQYNegaitive && Ctem(u_m,1) < SQYPositive && Ctem(u_m,2)<SQXPositive && Ctem(u_m,2)>SQXNegaitive
-                        if abs(NbetaO)+Betaconsame> abs(Ctem(u_mn,5)) && abs(NbetaO)-Betaconsame< abs(Ctem(u_mn,5)) && ((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
-                                && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ...  % add the minor circle if it follows a circular array with
+                    Vmean=(mean(CanswerA(:,6))+Cmain(1,6))/2
+%                     u_m
+%                     Ctem
+                    SQYPositive=max([(CanswerA(:,1)+CanswerA(:,3));(Cmain(1,1)+Cmain(1,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
+                    SQYNegaitive=min([(CanswerA(:,1)-CanswerA(:,3));(Cmain(1,1)-Cmain(1,3))]); %Y
+                    SQXPositive=max([(CanswerA(:,2)+CanswerA(:,3));(Cmain(1,2)+Cmain(1,3))]); %Y
+                    SQXNegaitive=min([(CanswerA(:,2)-CanswerA(:,3));(Cmain(1,2)-Cmain(1,3))]);%Y
+                    if Ctem(u_mn,1) > SQYNegaitive && Ctem(u_mn,1) < SQYPositive && Ctem(u_mn,2)<SQXPositive && Ctem(u_mn,2)>SQXNegaitive
+                        if abs(NbetaO)+Betaconsame> abs(Cmain(1,5)) && abs(NbetaO)-Betaconsame< abs(Cmain(1,5)) && ((Vmean < Ctem(u_mn,6)+e_v) ... %CASE B
+                                && (Vmean > Ctem(u_mn,6)-e_v)) ...  % add the minor circle if it follows a circular array with
                                 %collected couple C_A \SumC_B
                             % there are two conditions 1: angle match 2: the circle be inside the regions of C_A and C_B
                             %IMPORTANT: CHeck after running Square whether condition cathes
                             CtT = Ctem(u_mn,:); %Goes to temporary 0
                             Ctem(u_mn,:) = [];
-                            CanswerA(numel(CanswerA(:,1))+1,:) = CtT; %works
+                            CanswerA = cat(1,CanswerA,CtT);
+                            %CanswerA(numel(CanswerA(:,1))+1,:) = CtT; %works
                         end
                     end
                 end
@@ -211,19 +219,21 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     MeanYO=(mean(CanswerB(:,7))+Cmain(1,7))/2;
                     MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2;
                     NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
-                    SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Ctem(u_m,1)+Ctem(u_m,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
-                    SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Ctem(u_m,1)-Ctem(u_m,3))]); %Y
-                    SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Ctem(u_m,2)+Ctem(u_m,3))]); %Y
-                    SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Ctem(u_m,2)-Ctem(u_m,3))]);%Y
-                    if Ctem(u_m,1) > SQYNegaitive && Ctem(u_m,1) < SQYPositive && Ctem(u_m,2)<SQXPositive && Ctem(u_m,2)>SQXNegaitive
-                        if abs(NbetaO)+Betaconsame> abs(Ctem(u_mn,5)) && abs(NbetaO)-Betaconsame< abs(Ctem(u_mn,5)) && ((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
-                                && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ...  % add the minor circle if it follows a circular array with
+                    Vmean=(mean(CanswerB(:,6))+Cmain(1,6))/2;
+                    SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Cmain(1,1)+Cmain(1,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
+                    SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Cmain(1,1)-Cmain(1,3))]); %Y
+                    SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Cmain(1,2)+Cmain(1,3))]); %Y
+                    SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Cmain(1,2)-Cmain(1,3))]);%Y
+                    if Ctem(u_mn,1) > SQYNegaitive && Ctem(u_mn,1) < SQYPositive && Ctem(u_mn,2)<SQXPositive && Ctem(u_m,2)>SQXNegaitive
+                        if  abs(NbetaO)+Betaconsame> abs(Cmain(1,5)) && abs(NbetaO)-Betaconsame< abs(Cmain(1,5)) && ((Vmean < Ctem(u_mn,6)+e_v) ... %CASE B
+                                && (Vmean > Ctem(u_mn,6)-e_v)) ...  % add the minor circle if it follows a circular array with
                             % collected couple C_A \SumC_B
                             % there are two conditions 1: angle match 2: the circle be inside the regions of C_A and C_B
                             %IMPORTANT: CHeck after running Square whether condition cathes
                             CtT = Ctem(u_mn,:); %Goes to temporary 0
                             Ctem(u_mn,:) = [];
-                            CanswerB(numel(CanswerB(:,1))+1,:) = CtT; %works
+                            CanswerB = cat(1,CanswerB,CtT);
+                            %CanswerB(numel(CanswerB(:,1))+1,:) = CtT; %works
                         end
                     end
                 end
