@@ -12,7 +12,7 @@ else
  Ctem = [C;Cr];   
 end
 u_m = 1;
-e_v = .4; % Deviation for circle velocity,
+e_v = .35; % Deviation for circle velocity,
 DeltaBeta = 16; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
 Betaconsame = 10;  % Angle offset for case B when there is no 90+/- angle matches of couple circles

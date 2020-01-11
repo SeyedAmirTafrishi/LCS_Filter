@@ -34,9 +34,9 @@ global frame Av Vv deltay deltaz
 frame = 1; %Every Sec one frame! Works
 
 % trust parameters
-Trs   = 7;
+Trs   = 4;
 Trcr  = 2;
-Trmax = 8;
+Trmax = 5;
 
 % kinematic variables (simulated)
 Dv = 0.05;
