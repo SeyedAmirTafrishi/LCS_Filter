@@ -119,6 +119,7 @@ for c = 1:length(f1)
     th = 0:pi/50:2*pi;%for loop for creating circle
     CB = 1;
     hold on
+    %plot(ICX,ICY,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
     if C == 0
         % pass
     else

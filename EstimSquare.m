@@ -1,7 +1,7 @@
 function [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r) %A_n on X axis B_n on Y Axis
 % ESTIMSQUARE : this code is based on Elipse_Angle.m
 %
-global x_1 y_2
+global x_1 y_2 ICX ICY
 % Inputs:
 % X_e, Y_e : elipse center coordinate
 % X_o, Y_o : the original coordinate
@@ -17,8 +17,8 @@ global x_1 y_2
 % What is global variable x_1, y_2 for?
 % Do we have to change the value of x0?
 %%
-b_config_plot_on = false;
- 
+b_config_plot_on = true;
+ hold on
 x0 = [0 0 0 0];
 % Solver may increase computation time, may solve it algebrically in future.
 REF = [X_e,Y_e,X_o,Y_o,a_1,b_1];
@@ -34,17 +34,19 @@ Point2(2,1) = real(y_2(1,1));
 
 %% Plot the results!
 if b_config_plot_on
+ 
     th = 0:pi/50:2*pi;%for loop for creating circle
     xunit = (a_1) * cos(th) + X_e;%equation of circle :D
     yunit = (b_1) * sin(th) + Y_e;
     plot(xunit, yunit,'g');% Ellipse
     hold on
+     plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
     plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
     plot(Point1(1,1),Point2(1,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
     plot(Point1(2,1),Point2(2,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
     plot(X_e,Y_e,'- om','MarkerSize', 18,'LineWidth' , 2.5)
 end
-
+plot(ICX,ICY,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
 
 %% 
 %   R_e R_o

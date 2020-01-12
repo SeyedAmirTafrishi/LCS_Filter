@@ -13,10 +13,10 @@ else
 end
 u_m = 1;
 e_v = .35; % Deviation for circle velocity,
-DeltaBeta = 16; % Deviation for beta angle
+DeltaBeta = 18; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
-Betaconsame = 10;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
-PercntSqComp= 50; %Minimum Overlap percentage of two squares
+Betaconsame = 13;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
+PercntSqComp= 40; %Minimum Overlap percentage of two squares
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
@@ -364,15 +364,15 @@ SB=[];
             betaS = Stem(u_sm,6);
             R = (((Stem(u_sm,1)-Stem(u_sm,7))^2)+(Stem(u_sm,2)-Stem(u_sm,8))^2)^(0.5);%The R
             x_0 = R;
-            x_1 = Stem(u_sm,6);
+            x_1 = Stem(u_sm,7);
             options = odeset('RelTol',1e-3,'AbsTol',[1e-3 1e-3]);
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated S the 4 space is nutrilized to one since we want just vel
             NSn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betaS))+(Stem(u_sm,1));%estimation of Sn x
             NSn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y
             Y_e = Stem(u_sm,1);
             X_e = Stem(u_sm,2);
-            Y_o = Stem(u_sm,7);
-            X_o = Stem(u_sm,8);
+            Y_o = Stem(u_sm,8);
+            X_o = Stem(u_sm,9);
             a_1 = Stem(u_sm,3);
             b_1 = Stem(u_sm,4);
             Delta_r = sqrt((NSn(1,1)-Y_e)^2+(NSn(1,2)-X_e)^2);
@@ -450,8 +450,8 @@ SB=[];
             NSn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y
             Y_e = Stem(u_sm,1);
             X_e = Stem(u_sm,2);
-            Y_o = Stem(u_sm,7);
-            X_o = Stem(u_sm,8);
+            Y_o = Stem(u_sm,8);
+            X_o = Stem(u_sm,9);
             a_1 = Stem(u_sm,3);
             b_1 = Stem(u_sm,4);
             Delta_r = sqrt((NSn(1,1)-Y_e)^2+(NSn(1,2)-X_e)^2);
