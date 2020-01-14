@@ -46,7 +46,7 @@ if b_config_plot_on
     plot(Point1(2,1),Point2(2,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
     plot(X_e,Y_e,'- om','MarkerSize', 18,'LineWidth' , 2.5)
 end
-plot(ICX,ICY,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
+%plot(ICX,ICY,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
 
 %% 
 %   R_e R_o

@@ -12,10 +12,10 @@ else
  Ctem = [C;Cr];   
 end
 u_m = 1;
-e_v = .35; % Deviation for circle velocity,
+e_v = .035; % Deviation for circle velocity,
 DeltaBeta = 18; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
-Betaconsame = 13;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
+Betaconsame = 16;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
 PercntSqComp= 40; %Minimum Overlap percentage of two squares
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles

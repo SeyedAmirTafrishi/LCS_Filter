@@ -36,12 +36,12 @@ frame = 1; %Every Sec one frame! Works
 % trust parameters
 Trs   = 4;
 Trcr  = 2;
-Trmax = 5;
+Trmax = 6;
 
 % kinematic variables (simulated)
 Dv = 0.05;
-Av = 0.001;
-Vv = 0.05;
+Av = 0.0005;
+Vv = 0.04;
 deltay = 8;
 deltaz = 8;
 
@@ -100,7 +100,7 @@ for c = 1:length(f1)
 %     if S==0
 %     S=[100 100 40 30 6 60 .1 200 160;112 134 20 20 4 30 .05 100 180];    
 %     end
-    [S] = Square(S, C, Cr, delta, Vv, Dv,psi)
+    [S] = Square(S, C, Cr, delta, Vv, Dv, psi)
     % Square() add square here
     Size(c,2) = numel(En(:,1));
     Size(c,3) = numel(Er(:,1));
