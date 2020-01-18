@@ -12,11 +12,11 @@ else
  Ctem = [C;Cr];   
 end
 u_m = 1;
-e_v = .035; % Deviation for circle velocity,
+e_v = .3; % Deviation for circle velocity,
 DeltaBeta = 18; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
 Betaconsame = 16;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
-PercntSqComp= 40; %Minimum Overlap percentage of two squares
+PercntSqComp= 30; %Minimum Overlap percentage of two squares
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
@@ -77,7 +77,9 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)];%Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
                         f = @(x) FindTangenfordm(x,REF); % function of dummy variable y
                         %fsolve doesnt give multiple solutons
-                        F = fsolve(f,x0);
+                        opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
+                        F = fsolve(f,x0,opts);
+                        %F = fsolve(f,x0);
                         Point1(1,1) = real(xd_1(1,1));
                         Point2(1,1) = real(F(1,1));
                         Point1(2,1) = real(F(1,2));
@@ -110,14 +112,22 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         if Ctem(u_mn,3)<.3 %For edge=circle with zero radius
                         Ctem(u_mn,3)=2; 
                         end
-                        REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)] %Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
-                        f = @(x) FindTangenfordm(x,REF)  % function of dummy variable y
+                        REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)]; %Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
+                        f = @(x) FindTangenfordm(x,REF);  % function of dummy variable y
                         %fsolve doesnt give multiple solutons
-                        F = fsolve(f,x0) 
-                        Point1(1,1) = real(xd_1(1,1)) 
-                        Point2(1,1) = real(F(1,1))  
-                        Point1(2,1) = real(F(1,2)) 
-                        Point2(2,1) = real(yd_2(1,1)) 
+                        %options = optimoptions('linprog','Algorithm','dual-simplex');
+%                         options.MaxIter = 1000 ;
+%                         options.MaxFunEvals = 1000000 ;
+%                         options.FunctionTolerance = 1e-4;
+%                         options.OptimalityTolerance = 1e-4;
+%                         options.StepTolerance = 1e-4;
+                        opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
+                         F = fsolve(f,x0,opts);
+                        %F = fsolve(f,x0,options); 
+                        Point1(1,1) = real(xd_1(1,1)); 
+                        Point2(1,1) = real(F(1,1));  
+                        Point1(2,1) = real(F(1,2)); 
+                        Point2(2,1) = real(yd_2(1,1));
                         AngleCtangL=asin(sqrt((Point2(1,1)-Ctem(u_mn,1))^2+(Point1(1,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2)); %Due to circular form lower and uper has same angle but you can use only one
                         AngleCtangU=asin(sqrt((Point2(2,1)-Ctem(u_mn,1))^2+(Point1(2,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2));
                         D_Ad=sqrt((Cmain(1,2)-Ctem(u_mn,2))^2+(Cmain(1,1)-Ctem(u_mn,1))^2);

@@ -26,9 +26,9 @@ delta = zeros(5, 4); %[0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0];
 alpha = [0 0 0 0 0 0 0];
 global deltay deltaz Trs Trcr Trmax Av
 global frame Vv
-Trs = 2;
-Trcr = 1;
-Trmax = 3;
+Trs = 3;
+Trcr = 2;
+Trmax = 5;
 delta = 0;
 Dv = .1;
 

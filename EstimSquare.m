@@ -20,31 +20,37 @@ global x_1 y_2 ICX ICY
 b_config_plot_on = true;
  hold on
 x0 = [0 0 0 0];
-% Solver may increase computation time, may solve it algebrically in future.
-REF = [X_e,Y_e,X_o,Y_o,a_1,b_1];
+% Solver m`y increase computation time, may solve it algebrically in future.
+REF = [X_e,Y_e,X_o,Y_o,a_1,b_1] 
 
 f = @(x) FindTangentx1(x,REF); % function of dummy variable y
 
 %fsolve doesnt give multiple solutons
-F = fsolve(f,x0);
-Point1(1,1) = real(x_1(1,1));
-Point2(1,1) = real(F(1,1));
-Point1(2,1) = real(F(1,2));
-Point2(2,1) = real(y_2(1,1));
+opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
+F = fsolve(f,x0,opts);
+Point1(1,1) = real(x_1(1,1)) 
+Point2(1,1) = real(F(1,1)) 
+Point1(2,1) = real(F(1,2)) 
+Point2(2,1) = real(y_2(1,1)) 
 
 %% Plot the results!
 if b_config_plot_on
- 
+ hold on
+ subplot(1,2,1)
     th = 0:pi/50:2*pi;%for loop for creating circle
     xunit = (a_1) * cos(th) + X_e;%equation of circle :D
     yunit = (b_1) * sin(th) + Y_e;
-    plot(xunit, yunit,'g');% Ellipse
+    plot(xunit, yunit,'y','LineWidth' , 2.5);% Ellipse
     hold on
-     plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
-    plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
+  %  plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
+   plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
+   hold on
     plot(Point1(1,1),Point2(1,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
+    hold on
     plot(Point1(2,1),Point2(2,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
     plot(X_e,Y_e,'- om','MarkerSize', 18,'LineWidth' , 2.5)
+    hold on
+    drawnow;
 end
 %plot(ICX,ICY,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
 
@@ -133,10 +139,10 @@ if b_config_plot_on
     th = 0:pi/50:2*pi;
     xunit = (abs(A_n)) * cos(th) + X_ef1;%equation of circle :D
     yunit = (abs(B_n)) * sin(th) + Y_ef1;
-    plot(xunit, yunit,'b');% Ellipse
+    plot(xunit, yunit,'b','LineWidth' , 2.5);% Ellipse
 end
  
-
+drawnow;
 
 
 

@@ -39,9 +39,9 @@ Trcr  = 2;
 Trmax = 6;
 
 % kinematic variables (simulated)
-Dv = 0.05;
-Av = 0.0005;
-Vv = 0.04;
+Dv = 0.1;
+Av = 0.01;
+Vv = 0.5;
 deltay = 8;
 deltaz = 8;
 
