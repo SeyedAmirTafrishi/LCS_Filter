@@ -12,11 +12,11 @@ else
  Ctem = [C;Cr];   
 end
 u_m = 1;
-e_v = .3; % Deviation for circle velocity,
-DeltaBeta = 18; % Deviation for beta angle
+e_v = .7; % Deviation for circle velocity,
+DeltaBeta = 20; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
-Betaconsame = 16;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
-PercntSqComp= 30; %Minimum Overlap percentage of two squares
+Betaconsame = 20;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
+PercntSqComp= 40; %Minimum Overlap percentage of two squares
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
@@ -91,7 +91,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         D_Bd=sqrt((CanswerA(u_dm,2)-Ctem(u_mn,2))^2+(CanswerA(u_dm,1)-Ctem(u_mn,1))^2);
                         Ahh=acos((D_AB^2+D_Ad^2-D_Bd^2)/(2*D_AB*D_Ad));
                         if (abs(AngleCtangL)>=abs(Ahh) || abs(AngleCtangU)>=abs(Ahh))  %+/- Deltae can be added due to pixal relations
-                            d_tem=d_tem-d_m; %decrease the distance
+                            d_tem=d_tem-D_Bd; %decrease the distance
                             Ctem = cat(1,CanswerA(u_dm,:),Ctem); %add CanswerA to begining of Ctem all arrays! we add it to begining because they are farthest circles and we dont need to re-do searching by u_nm of main loop
                             CanswerA(u_dm,:)=[];
                             ushift_mn=ushift_mn+1;
@@ -135,7 +135,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         D_Bd=sqrt((CanswerB(u_dm,2)-Ctem(u_mn,2))^2+(CanswerB(u_dm,1)-Ctem(u_mn,1))^2);
                         Ahh=acos((D_AB^2+D_Ad^2-D_Bd^2)/(2*D_AB*D_Ad));
                         if (abs(AngleCtangL)>=abs(Ahh) || abs(AngleCtangU)>=abs(Ahh))  %+/- Deltae can be added due to pixal relations
-                            d_tem=d_tem-d_m; %decrease the distance
+                            d_tem=d_tem-D_Bd; %decrease the distance
                             Ctem = cat(1,CanswerB(u_dm,:),Ctem); %%add CanswerA to begining of Ctem all arrays!
                             CanswerB(u_dm,:)=[];
                             ushift_mn=ushift_mn+1;
@@ -161,11 +161,17 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
         end
         %%
         if FlagBReak==0    %***!!!!! ATTENTION Depending Results the sum of Case A and B is not yet decided! We may assume them together if both exist!!!**
-            if ((Cmain(1,6)< Ctem(u_mn,6)+e_v) ... %CASE A
-                    && (Cmain(1,6)> Ctem(u_mn,6)-e_v)) ...
-                    && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))+Betaconstant+DeltaBeta) ...
-                    && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))+Betaconstant-DeltaBeta)) ...
-                    && d_m<d_tem %Find the match of 90^o angle and same velocity threshold with furthest distance,NOte: it checks both +/- 90
+            if (((Cmain(1,6)<= Ctem(u_mn,6)+e_v) ... %CASE A
+                    && (Cmain(1,6)>= Ctem(u_mn,6)-e_v)) ...
+                    && ((abs(Cmain(1,5)) <= abs(Ctem(u_mn,5))+Betaconstant+DeltaBeta) ...
+                    && (abs(Cmain(1,5)) >= abs(Ctem(u_mn,5))+Betaconstant-DeltaBeta)) ...
+                    && d_m<d_tem) || (((Cmain(1,6)<= Ctem(u_mn,6)+e_v) ... %CASE A
+                    && (Cmain(1,6)>= Ctem(u_mn,6)-e_v)) ...
+                    && ((abs(Cmain(1,5)) <= abs(abs(Ctem(u_mn,5))-Betaconstant)+DeltaBeta) ...
+                    && (abs(Cmain(1,5)) >= abs(abs(Ctem(u_mn,5))-Betaconstant)-DeltaBeta)) ...
+                    && d_m<d_tem)
+ 111111111111111111111111111111111111111111111111111111111
+                %Find the match of 90^o angle and same velocity threshold with furthest distance,NOte: it checks both +/- 90
                 %---------- Remove and ADD matched circles from main matrix
                 %Ctem
                 if isempty(CanswerA)
@@ -180,11 +186,14 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     CanswerA = CtT;
                     d_tem = d_m;% update distance
                 end
-            elseif ((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
+            elseif (((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
                     && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ...
                     && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))+Betaconsame+DeltaBeta) ...
-                    && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))+Betaconsame-DeltaBeta)) %Find same velocity threshold and small angle offset
-                
+                    && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))+Betaconsame-DeltaBeta))) ||...%Find same velocity threshold and small angle offset
+                    (((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
+                    && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ...
+                    && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))-Betaconsame+DeltaBeta) ...
+                    && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))-Betaconsame-DeltaBeta)))%Find same velocity threshold and small angle offset
                 if isempty(CanswerB)
                     CanswerB = Ctem(u_mn,:); %Update temporary Circle
                     d_tem = d_m;% update distance

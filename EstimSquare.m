@@ -24,7 +24,7 @@ x0 = [0 0 0 0];
 REF = [X_e,Y_e,X_o,Y_o,a_1,b_1] 
 
 f = @(x) FindTangentx1(x,REF); % function of dummy variable y
-
+555
 %fsolve doesnt give multiple solutons
 opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
 F = fsolve(f,x0,opts);

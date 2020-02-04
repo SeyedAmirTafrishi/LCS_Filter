@@ -9,9 +9,9 @@ y_2 = 0;
 %Problem in MINUS?
 
 X_e = 389;        % Elipse center coordinate
-Y_e = 240.0000;
+Y_e = 290.0000;
 X_o = 320.0000;
-Y_o= 240.0000;        % Original coordinate
+Y_o= 300.0000;        % Original coordinate
 a_1 =  60.3278 ;        % elipse minor past
 b_1 =   60.3278 ;       % elipse major past
 Delta_r = 3;  % Estimated shift on R_e
