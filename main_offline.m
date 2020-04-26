@@ -36,7 +36,7 @@ frame = 1; %Every Sec one frame! Works
 % trust parameters
 Trs   = 4;
 Trcr  = 2;
-Trmax = 6;
+Trmax = 7;
 
 % kinematic variables (simulated)
 Dv = 0.1;

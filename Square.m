@@ -418,8 +418,8 @@ SB=[];
             if flagG==1 
             if ((SA(1,7) < Stem(u_sm,7)+e_v) ...  % Comapring the Angle and Velocity 
                     && (SA(1,7) > Stem(u_sm,7)-e_v)) ...
-                    && ((abs(SA(1,6)) < abs(Stem(u_sm,6))+Betaconsame+DeltaBeta) ...
-                    && (abs(SA(1,6)) > abs(Stem(u_sm,6))+Betaconsame-DeltaBeta)) ...
+                    && ((abs(SA(1,6)) < abs(Stem(u_sm,6))+DeltaBeta) ...
+                    && (abs(SA(1,6)) > abs(Stem(u_sm,6))-DeltaBeta)) ...
                     && (overlapPrec> PercntSqComp)
               
                  Sup(countSup,1) = ((((Stem(u_sm,5)-Trcr)*(Y_ef1))+SA(1,1))/((Stem(u_sm,5)-Trcr)+1));
@@ -427,7 +427,7 @@ SB=[];
                  Sup(countSup,3)= ((((Stem(u_sm,5)-Trcr)*(B_n))+SA(1,3))/((Stem(u_sm,5)-Trcr)+1));
                  Sup(countSup,4)= ((((Stem(u_sm,5)-Trcr)*(A_n))+SA(1,4))/((Stem(u_sm,5)-Trcr)+1));
                  Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
-                 Sup(countSup,6)=Stem(u_sm,6);
+                 Sup(countSup,6)=((((Stem(u_sm,5)-Trcr)*(Stem(u_sm,6)))+SA(1,6))/((Stem(u_sm,5)-Trcr)+1));
                  Sup(countSup,7)= ((((Stem(u_sm,5)-Trcr)*(Stem(u_sm,7)))+SA(1,7))/((Stem(u_sm,5)-Trcr)+1));% Check Velocity Formula maybe better?
                  Sup(countSup,8)=Stem(u_sm,8);
                  Sup(countSup,9)=Stem(u_sm,9);
@@ -497,8 +497,8 @@ SB=[];
             if flagG==1 
             if ((SB(1,7) < Stem(u_sm,7)+e_v) ...  % Comapring the Angle and Velocity 
                     && (SB(1,7) > Stem(u_sm,7)-e_v)) ...
-                    && ((abs(SB(1,6)) < abs(Stem(u_sm,6))+Betaconsame+DeltaBeta) ...
-                    && (abs(SB(1,6)) > abs(Stem(u_sm,6))+Betaconsame-DeltaBeta)) ...
+                    && ((abs(SB(1,6)) < abs(Stem(u_sm,6))+DeltaBeta) ...
+                    && (abs(SB(1,6)) > abs(Stem(u_sm,6))-DeltaBeta)) ...
                     && (overlapPrec> PercntSqComp)
               
                  Sup(countSup,1) = ((((Stem(u_sm,5)-Trcr)*(Y_ef1))+SB(1,1))/((Stem(u_sm,5)-Trcr)+1));
@@ -506,7 +506,7 @@ SB=[];
                  Sup(countSup,3)= ((((Stem(u_sm,5)-Trcr)*(B_n))+SB(1,3))/((Stem(u_sm,5)-Trcr)+1));
                  Sup(countSup,4)= ((((Stem(u_sm,5)-Trcr)*(A_n))+SB(1,4))/((Stem(u_sm,5)-Trcr)+1));
                  Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
-                 Sup(countSup,6)=Stem(u_sm,6);
+                 Sup(countSup,6)=((((Stem(u_sm,5)-Trcr)*(Stem(u_sm,6)))+SB(1,6))/((Stem(u_sm,5)-Trcr)+1));
                  Sup(countSup,7)= ((((Stem(u_sm,5)-Trcr)*(Stem(u_sm,7)))+SB(1,7))/((Stem(u_sm,5)-Trcr)+1));% Check Velocity Formula maybe better?
                  Sup(countSup,8)=Stem(u_sm,8);
                  Sup(countSup,9)=Stem(u_sm,9);
