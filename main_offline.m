@@ -5,7 +5,7 @@ clear delta
 close all
 
 %set(0,'DefaultTextInterpreter','Latex');
-addpath('./helpers/')
+%addpath('./helpers/')
 
 %% intial conditions
 % screen parameteres
@@ -34,23 +34,23 @@ global frame Av Vv deltay deltaz
 frame = 1; %Every Sec one frame! Works
 
 % trust parameters
-Trs   = 4;
+Trs   = 3;
 Trcr  = 2;
-Trmax = 7;
+Trmax = 5;
 
 % kinematic variables (simulated)
 Dv = 0.1;
-Av = 0.01;
-Vv = 0.5;
-deltay = 8;
-deltaz = 8;
+Av = 0.0001;
+Vv = 0.03;
+deltay = 3;
+deltaz = 3;
 
 %% main code begins
 drs = './example_pictures'; % in current directory
-dr1 = dir([drs '/*.png']);  % get all png files in the folder
-f1 = {dr1.name};            % get filenames to cell
+dr1 = dir([drs '/*.jpg']);  % get all png files in the folder
+f1 = {dr1.name}            % get filenames to cell
 
-mkdir('./results')          % dir for saving results
+%mkdir('./results')          % dir for saving results
 
 % loop for each image
 for c = 1:length(f1)

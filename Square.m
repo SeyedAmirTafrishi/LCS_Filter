@@ -178,6 +178,11 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     CanswerA = Ctem(u_mn,:); %Update temporary Circle
                     d_tem = d_m;% update distance
                     Ctem(u_mn,:) = [];
+                    if u_mn>1
+                    u_mn=u_mn-1; 
+                    else
+                    u_mn=1;    
+                    end
                 else %Canswer is not empty
                     CtT = Ctem(u_mn,:); %Goes to temporary 0
                     Ctem(u_mn,:) = [];
@@ -198,6 +203,11 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     CanswerB = Ctem(u_mn,:); %Update temporary Circle
                     d_tem = d_m;% update distance
                     Ctem(u_mn,:) = [];
+                    if u_mn>1
+                    u_mn=u_mn-1; 
+                    else
+                    u_mn=1;    
+                    end
                 else %Canswer is not empty
                     CtT = Ctem(u_mn,:); %Goes to temporary 0
                     Ctem(u_mn,:) = [];
@@ -230,15 +240,24 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                             %IMPORTANT: CHeck after running Square whether condition cathes
                             CtT = Ctem(u_mn,:); %Goes to temporary 0
                             Ctem(u_mn,:) = [];
+                            if u_mn>1
+                            u_mn=u_mn-1; 
+                            else
+                            u_mn=1;    
+                            end
                             CanswerA = cat(1,CanswerA,CtT);
                             %CanswerA(numel(CanswerA(:,1))+1,:) = CtT; %works
                         end
                     end
                 end
                 if ~isempty(CanswerB) % The Minor circles for correspondin C_B CASE B
-                    MeanYO=(mean(CanswerB(:,7))+Cmain(1,7))/2;
-                    MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2;
-                    NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO);%[MODIFIED]
+                    MeanYO=(mean(CanswerB(:,7))+Cmain(1,7))/2 
+                    MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2 
+                    u_mn
+                    MeanYO
+                    Ctem
+                    Ctem(u_mn,:)
+                    NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO) %[MODIFIED]
                     Vmean=(mean(CanswerB(:,6))+Cmain(1,6))/2;
                     SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Cmain(1,1)+Cmain(1,3))]) %Sqaure boundaries are determined to see whether u_mn is inside this square
                     SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Cmain(1,1)-Cmain(1,3))])  %Y
@@ -258,6 +277,11 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                            % 2
                             CtT = Ctem(u_mn,:); %Goes to temporary 0
                             Ctem(u_mn,:) = [];
+                            if u_mn>1
+                            u_mn=u_mn-1; 
+                            else
+                            u_mn=1;    
+                            end
                             CanswerB = cat(1,CanswerB,CtT);
                             %CanswerB(numel(CanswerB(:,1))+1,:) = CtT; %works
                         end
