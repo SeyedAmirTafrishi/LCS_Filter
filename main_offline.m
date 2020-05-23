@@ -184,8 +184,9 @@ for c = 1:length(f1)
     set(gcf,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 
     %---------- Save Plot
-%   fig_filename = ['./results/fig', num2str(c),'.fig'];
-%   saveas(gca, fig_filename);
+     set(gcf, 'Position',  [100, 100, 1920, 1080])
+    fig_filename = ['./results/fig', num2str(c),'.png'];
+    saveas(gca, fig_filename);
     % %--------------------
 
     toc

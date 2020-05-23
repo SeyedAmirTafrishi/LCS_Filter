@@ -33,7 +33,7 @@ else
             beta = En(e,5);
             R = (((En(e,1)-ICY)^2) + (En(e,2)-ICX)^2)^(0.5); %The R
             x_0 = R;
-            x_1 = (En(e,6)+Vv)/2; % CHanged! :D
+            x_1 = abs(En(e,6)+Vv)/2; % CHanged! :D
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
             NEn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*beta) + (En(e,1)-ICY); %estimation of En x
             NEn(1,2) = (Y1(end,1)-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
@@ -69,9 +69,9 @@ else
                 end
                 z = z + 1;
             end
-            if (ME2==0 && ME1==0) % lonely not a single match? :\ ([issue] Maybe can be moved)
-                En(e,1) = NEn(1,1);
-                En(e,2) = NEn(1,2);
+            if (ME2==0 && ME1==0) % lonely not a single match?  ([issue] Maybe can be moved)
+                En(e,1) = NEn(1,1)+ICY; %This needed a frame center shift (added)
+                En(e,2) = NEn(1,2)+ICX;
                 En(e,4) = En(e,4) - 1;
             else % Main En and Lambda matching (Lambda 1 3 ...)
                 NBL1 = ( (abs(Vv-NVe) / det(corr(EdgeNorm(:,ME2:ME2+1)))) + En(e,3) ) / 2; % Estmated Boundary with using Eq. (4.1) (En and Edge Group)
@@ -482,7 +482,8 @@ else
                         MatchR = MatchR+1;
                         me = ((Edge(j,i)-Er(r,7))/-(Edge(j,i+1)-Er(r,8)));
                         angle = calculate_vector_angle( Edge(j,i+1), Edge(j,i), Er(r,8), Er(r,7) );
-                        %-------------Delta Er
+                        %-------------Delta Er (NOT INCLUDED IN THIS PAPER)
+                        % MAYBE REMOVE IT?
                         if (NEr(1,1)==Inf) || (NEr(1,2)==Inf) || (Er(r,1)==Inf) || (Er(r,2)==Inf) || (Er(r,6)==Inf)
                             % pass
                         else
