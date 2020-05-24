@@ -40,10 +40,10 @@ Trmax = 5;
 
 % kinematic variables (simulated)
 Dv = 0.1;
-Av = 0.0001;
-Vv = 0.03;
-deltay = 3;
-deltaz = 3;
+Av = 0.01;
+Vv = (0.03);
+deltay = 4;
+deltaz = 4;
 
 %% main code begins
 drs = './example_pictures'; % in current directory

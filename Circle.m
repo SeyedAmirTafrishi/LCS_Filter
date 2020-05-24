@@ -666,7 +666,7 @@ else
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
                             Cr(ci,2) = ((((Cr(ci,4)-Trcr)*(NCn(1,2)))+MX)/((Cr(ci,4)-Trcr)+1)); %Estimation of En, X direction
                             Cr(ci,4) = Cr(ci,4)+1; %Trust High
-                            Cr(ci,6) = Cr(ci,6)+mean(M(:,6));
+                            Cr(ci,6) = (Cr(ci,6)+mean(M(:,6)))/2;
                             u = (numel(TErM(:,1)))+1;
                             %%%----- Killer of Mother Er
                             TErM = TEr;
@@ -678,7 +678,7 @@ else
                             Cr(ci,3) = ((((Cr(ci,4)-Trcr)*(Cr(ci,3)))+MR)/((Cr(ci,4)-Trcr)+1));
                             Cr(ci,4) = Cr(ci,4)-1; %Trust Low
                             Cr(ci,5) = ((((Cr(ci,4)-Trcr)*(Cr(ci,5)))+mean(M(:,5)+M(:,3)))/((Cr(ci,4)-Trcr)+1));
-                            Cr(ci,6) = Cr(ci,6)+mean(M(:,6));
+                            Cr(ci,6) = (Cr(ci,6)+mean(M(:,6)))/2;
                             Cr(ci,7) = OY;
                             Cr(ci,8) = OX;
                             u = (numel(TErM(:,1)))+1;
@@ -829,7 +829,7 @@ else
                             C(ci,1) = ((((C(ci,4)-Trcr)*(NCn(1,1)))+MY)/((C(ci,4)-Trcr)+1));
                             C(ci,2) = ((((C(ci,4)-Trcr)*(NCn(1,2)))+MX)/((C(ci,4)-Trcr)+1)); %Estimation of En, X direction
                             C(ci,4) = C(ci,4)+1; %Trust High
-                            C(ci,6) = C(ci,6)+mean(M(:,6));
+                            C(ci,6) = (C(ci,6)+mean(M(:,6)))/2;
                             u = (numel(TEnM(:,1)))+1;
                             %%%----- Killer of Mother Er
                             TEnM = TEn;
@@ -840,7 +840,7 @@ else
                             C(ci,3) = ((((C(ci,4)-Trcr)*(C(ci,3)))+MR)/((C(ci,4)-Trcr)+1));
                             C(ci,4) = C(ci,4)-1; %Trust Low
                             C(ci,5) = ((((C(ci,4)-Trcr)*(C(ci,5)))+mean(M(:,5)+M(:,3)))/((C(ci,4)-Trcr)+1));
-                            C(ci,6) = C(ci,6)+mean(M(:,6));
+                            C(ci,6) = (C(ci,6)+mean(M(:,6)))/2;
                             u = (numel(TEnM(:,1)))+1;
                             %%%----- The TEr that lost edges which grouped is placed to mother
                             %%%TErM
