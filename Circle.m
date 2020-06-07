@@ -46,6 +46,8 @@ else
             m = tan((pi/180)*(beta + 90)); % Slope of given angle of En respect to O frame
             deltaT = sqrt(deltay^2 + deltaz^2);
             z = 1; % loop search of suitable edge in Lambda
+            FlagleftE=0; %Flag for left out edge 
+            
             while z <= (numel(lambda(:,1))) % Lambda column counter
                 if ( ((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2)) ^ 0.5) <= lambda(z,3) ) % this is Lambda Check in En ok?
                     i = 1; %Check the Edge to find related group
@@ -61,6 +63,7 @@ else
                                 i = numel(Edge(1,:)) + 1; % if there is a match, break the loop
                                 j = numel(Edge(:,1)) + 1;
                                 z = numel(lambda(:,1)) + 1;
+                                 FlagleftE=1;
                             end
                             j = j + 1;
                         end
@@ -69,6 +72,14 @@ else
                 end
                 z = z + 1;
             end
+            if FlagleftE==0 %NO MATCH E_n
+            En(e,:)=[];
+            if e<2
+             e=1;   
+            else
+             e=e-1;  
+            end
+            else
             if (ME2==0 && ME1==0) % lonely not a single match?  ([issue] Maybe can be moved)
                 En(e,1) = NEn(1,1)+ICY; %This needed a frame center shift (added)
                 En(e,2) = NEn(1,2)+ICX;
@@ -137,31 +148,40 @@ else
                     end
                     j = j + 1;
                 end %While of Edge
+                   
+                
                 if (side == 1) %Velocity update of lambda3 and lambda2
                     En(e,6) = abs((En(e,6)+((((((NEn(1,1)+ICY) - Edgetrans(1,1))^2 + (NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(time_diff)))); % lambda 2
                 elseif (side == -1)
                     En(e,6) = abs((En(e,6)-((((((NEn(1,1)+ICY) - Edgetrans(1,1))^2 + (NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(time_diff)))); % lambda 3
+                else % Failed matching the lambda edges
+%                      En(e,:)=[];
+%                     if e<2
+%                      e=1;   
+%                     else
+%                      e=e-1;  
+%                     end
                 end
                 %-------------Delta En L
-                if (d == -1)
-                    % pass
-                else
-                    if (NEn(1,1) == Inf) || (NEn(1,2) == Inf) || (En(e,1) == Inf) || (En(e,2) == Inf) || (En(e,6) == Inf)
-                        % pass
-                    else
-                        if (delta(2,1) == 0)
-                            delta(2,1) = (((NEn(1,1)+ICY-En(e,1))^2+(NEn(1,2)+ICX-En(e,2))^2)^(.5));
-                            delta(2,2) = abs(En(e,6)-Vv);
-                            delta(2,3) = abs(NBL-NBL1);
-                            delta(2,4) = delta(2,4)+1;
-                        else
-                            delta(2,4) = delta(2,4)+1;
-                            delta(2,1) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*((((NEn(1,1)+ICY)-En(e,1))^2 + ((NEn(1,2)+ICX)-En(e,2))^2)^(.5)));
-                            delta(2,2) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(En(e,6))-Vv));
-                            delta(2,3) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(NBL-NBL1)));
-                        end
-                    end
-                end
+%                 if (d == -1)
+%                     % pass
+%                 else
+%                     if (NEn(1,1) == Inf) || (NEn(1,2) == Inf) || (En(e,1) == Inf) || (En(e,2) == Inf) || (En(e,6) == Inf)
+%                         % pass
+%                     else
+%                         if (delta(2,1) == 0)
+%                             delta(2,1) = (((NEn(1,1)+ICY-En(e,1))^2+(NEn(1,2)+ICX-En(e,2))^2)^(.5));
+%                             delta(2,2) = abs(En(e,6)-Vv);
+%                             delta(2,3) = abs(NBL-NBL1);
+%                             delta(2,4) = delta(2,4)+1;
+%                         else
+%                             delta(2,4) = delta(2,4)+1;
+%                             delta(2,1) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*((((NEn(1,1)+ICY)-En(e,1))^2 + ((NEn(1,2)+ICX)-En(e,2))^2)^(.5)));
+%                             delta(2,2) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(En(e,6))-Vv));
+%                             delta(2,3) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(NBL-NBL1)));
+%                         end
+%                     end
+%                 end
                 %-----------------Delta En L
                 %---------- REBEL EDGES!
                 MAINMATCH = 0;
@@ -304,11 +324,7 @@ else
                             Edge(j,ME2) = 0;
                             Edge(j,ME2+1) = 0;
                         elseif (En(e,4) <= Trcr-1) %Good bye En
-                            En(e,:) = [];
-                            e = e - 1;
-                            if e < 1
-                                e = 1;
-                            end
+
                             %----    L construction :D
                             el1 = 1;
                             Elkiller = 0;
@@ -429,6 +445,9 @@ else
                             Edge(j,ME2) = 0;
                             Edge(j,ME2+1) = 0;
                         end
+                    else %En left out?
+ 
+                     %xxxxxx   
                     end
                     j = j + 1;
                 end %While of Edge
@@ -444,10 +463,21 @@ else
                         end
                     j = j + 1;
                     end
+                             %% En(e,:) = []; %left out en negative update
+%                             e = e - 1;
+%                             if e < 1
+%                             e = 1;
+%                             end
+                            En(e,1) = NEn(1,1)+ICY;%estimation of En x
+                            En(e,2) = NEn(1,2)+ICX;%estimation of En y%No En trust change
+                            En(e,4) = En(e,4)-1; %disipate it by time
+                            En(e,3) = NBL;
                 end
+            end % PUT HERE
             end
             e = e + 1;
         end%end of Story for En
+ 
     end %? HERE?
     %alpha
 end

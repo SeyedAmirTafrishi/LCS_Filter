@@ -170,7 +170,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     && ((abs(Cmain(1,5)) <= abs(abs(Ctem(u_mn,5))-Betaconstant)+DeltaBeta) ...
                     && (abs(Cmain(1,5)) >= abs(abs(Ctem(u_mn,5))-Betaconstant)-DeltaBeta)) ...
                     && d_m<d_tem)
- 111111111111111111111111111111111111111111111111111111111
+%111111111111111111111111111111111111111111111111111111111
                 %Find the match of 90^o angle and same velocity threshold with furthest distance,NOte: it checks both +/- 90
                 %---------- Remove and ADD matched circles from main matrix
                 %Ctem
@@ -251,18 +251,18 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     end
                 end
                 if ~isempty(CanswerB) % The Minor circles for correspondin C_B CASE B
-                    MeanYO=(mean(CanswerB(:,7))+Cmain(1,7))/2 
-                    MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2 
-                    u_mn
-                    MeanYO
-                    Ctem
-                    Ctem(u_mn,:)
-                    NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO) %[MODIFIED]
+                    MeanYO=(mean(CanswerB(:,7))+Cmain(1,7))/2;
+                    MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2; 
+             %       u_mn
+                %    MeanYO
+              %      Ctem
+                    %Ctem(u_mn,:)
+                    NbetaO=calculate_vector_angle(Ctem(u_mn,2), Ctem(u_mn,1), MeanYO, MeanXO); %[MODIFIED]
                     Vmean=(mean(CanswerB(:,6))+Cmain(1,6))/2;
-                    SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Cmain(1,1)+Cmain(1,3))]) %Sqaure boundaries are determined to see whether u_mn is inside this square
-                    SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Cmain(1,1)-Cmain(1,3))])  %Y
-                    SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Cmain(1,2)+Cmain(1,3))])  %Y
-                    SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Cmain(1,2)-Cmain(1,3))]) %Y
+                    SQYPositive=max([(CanswerB(:,1)+CanswerB(:,3));(Cmain(1,1)+Cmain(1,3))]); %Sqaure boundaries are determined to see whether u_mn is inside this square
+                    SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Cmain(1,1)-Cmain(1,3))]);  %Y
+                    SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Cmain(1,2)+Cmain(1,3))]);  %Y
+                    SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Cmain(1,2)-Cmain(1,3))]); %Y
                     Ctem(u_mn,:)
 %                     Cmain
 %                     u_mn
@@ -554,12 +554,12 @@ SB=[];
     u_m = u_m + 1;%*Done
 end
 if S==0
-S=Sup
+S=Sup;
 else
 Stem(:,5)=Stem(:,5)-1;
 Stem(:,10)=[];
-Sup = cat(1,Stem,Sup)   
-S=Sup
+Sup = cat(1,Stem,Sup); 
+S=Sup;
 end
 %After checking all the circles in Cmain, The remaining squares in Stemp
 %are estimated with T-1 if it is less than the critical trust remove them.
