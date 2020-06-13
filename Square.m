@@ -1,6 +1,6 @@
 function [S] = Square(S, C, Cr, delta, Vv, Dv, psi)
 % Subsitute C and Cr to new Ct (Temprery matrix) *Done
-global ICX ICY Trs time_diff Trcr Trmax
+global ICX ICY time_diff TrsSq TrcrSq TrmaxSq
 C(:,7) = ICY; % Make the normal circle in same dimension with rebel circle (Center is the center of image)
 C(:,8) = ICX;
 Stem = [S zeros(numel(S(:,1)),1)];
@@ -318,7 +318,7 @@ SB=[];
             SA(1,1) = Y_o; % The location
             SA(1,2) = X_o;
             SA(1,3) = a;% R of grouped Circles Y dis
-            SA(1,5) = Trs;%Standard Trust factor for new co
+            SA(1,5) = TrsSq;%Standard Trust factor for new co
             SA(1,4) = b;% R of grouped circles X dis
             SA(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean(CanswerA(:,8)), mean(CanswerA(:,7)));% beta angle of square
             SA(1,7) = mean(CanswerA(:,6));
@@ -337,7 +337,7 @@ SB=[];
             SB(1,1) = Y_o; % The location
             SB(1,2) = X_o;
             SB(1,3) = a;% R of grouped Circles Y dis
-            SB(1,5) = Trs;%Standard Trust factor for new co
+            SB(1,5) = TrsSq;%Standard Trust factor for new co
             SB(1,4) = b;% R of grouped circles X dis
             SB(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean(CanswerB(:,8)), mean(CanswerB(:,7)));% beta angle of square
             SB(1,7) = mean(CanswerB(:,6));
@@ -349,7 +349,7 @@ SB=[];
         SB(1,1) = Cmain(1,1); % The location
         SB(1,2) = Cmain(1,2);
         SB(1,3) = Cmain(1,3);% R of grouped Circles Y dis
-        SB(1,5) = Trs;%Standard Trust factor for new co
+        SB(1,5) = TrsSq;%Standard Trust factor for new co
         SB(1,4) = Cmain(1,3);% R of grouped circles X dis
         SB(1,6) = Cmain(1,5);% beta angle of square
         SB(1,7)= Cmain(1,6);
@@ -446,13 +446,13 @@ SB=[];
                     && (abs(SA(1,6)) > abs(Stem(u_sm,6))-DeltaBeta)) ...
                     && (overlapPrec> PercntSqComp)
               
-                 Sup(countSup,1) = ((((Stem(u_sm,5)-Trcr)*(Y_ef1))+SA(1,1))/((Stem(u_sm,5)-Trcr)+1));
-                 Sup(countSup,2)  = ((((Stem(u_sm,5)-Trcr)*(X_ef1))+SA(1,2))/((Stem(u_sm,5)-Trcr)+1)); %Estimation of Square, X direction
-                 Sup(countSup,3)= ((((Stem(u_sm,5)-Trcr)*(B_n))+SA(1,3))/((Stem(u_sm,5)-Trcr)+1));
-                 Sup(countSup,4)= ((((Stem(u_sm,5)-Trcr)*(A_n))+SA(1,4))/((Stem(u_sm,5)-Trcr)+1));
+                 Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SA(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
+                 Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SA(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
+                 Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SA(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
+                 Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SA(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
                  Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
-                 Sup(countSup,6)=((((Stem(u_sm,5)-Trcr)*(Stem(u_sm,6)))+SA(1,6))/((Stem(u_sm,5)-Trcr)+1));
-                 Sup(countSup,7)= ((((Stem(u_sm,5)-Trcr)*(Stem(u_sm,7)))+SA(1,7))/((Stem(u_sm,5)-Trcr)+1));% Check Velocity Formula maybe better?
+                 Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SA(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
+                 Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SA(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
                  Sup(countSup,8)=Stem(u_sm,8);
                  Sup(countSup,9)=Stem(u_sm,9);
                  Stem(u_sm,:)=[];
@@ -525,13 +525,13 @@ SB=[];
                     && (abs(SB(1,6)) > abs(Stem(u_sm,6))-DeltaBeta)) ...
                     && (overlapPrec> PercntSqComp)
               
-                 Sup(countSup,1) = ((((Stem(u_sm,5)-Trcr)*(Y_ef1))+SB(1,1))/((Stem(u_sm,5)-Trcr)+1));
-                 Sup(countSup,2)  = ((((Stem(u_sm,5)-Trcr)*(X_ef1))+SB(1,2))/((Stem(u_sm,5)-Trcr)+1)); %Estimation of Square, X direction
-                 Sup(countSup,3)= ((((Stem(u_sm,5)-Trcr)*(B_n))+SB(1,3))/((Stem(u_sm,5)-Trcr)+1));
-                 Sup(countSup,4)= ((((Stem(u_sm,5)-Trcr)*(A_n))+SB(1,4))/((Stem(u_sm,5)-Trcr)+1));
+                 Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SB(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
+                 Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SB(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
+                 Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SB(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
+                 Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SB(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
                  Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
-                 Sup(countSup,6)=((((Stem(u_sm,5)-Trcr)*(Stem(u_sm,6)))+SB(1,6))/((Stem(u_sm,5)-Trcr)+1));
-                 Sup(countSup,7)= ((((Stem(u_sm,5)-Trcr)*(Stem(u_sm,7)))+SB(1,7))/((Stem(u_sm,5)-Trcr)+1));% Check Velocity Formula maybe better?
+                 Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SB(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
+                 Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SB(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
                  Sup(countSup,8)=Stem(u_sm,8);
                  Sup(countSup,9)=Stem(u_sm,9);
                  Stem(u_sm,:)=[];
@@ -573,8 +573,8 @@ else
     while u <= (numel(S(:,1)))
         L1 = 0;
         L2 = 0;
-        if S(u,5) > Trmax
-            S(u,5) = Trmax-2;
+        if S(u,5) > TrmaxSq
+            S(u,5) = TrmaxSq-2;
             psi(numel(psi(:,1))+1,1) = S(u,1);
             psi(numel(psi(:,1)),2) = S(u,2);
             psi(numel(psi(:,1)),3) = S(u,3);
@@ -588,7 +588,7 @@ else
         if (L1==1) && (u==0)
             u = u + 1;
         end
-        if S(u,5) < Trcr
+        if S(u,5) < TrcrSq
             S(u,:)=[];
             u = u - 1;
             L2 = 1;
@@ -598,7 +598,7 @@ else
         elseif (L1==1) && (L2==1) %both active make it one
             u = u + 1;
         end
-        if S(u,5) > Trcr
+        if S(u,5) > TrcrSq
 %            lambda(numel(lambda(:,1))+1,1) = S(u,1); % change all the psi parts to 5 array square and circle! 
 %            lambda(numel(lambda(:,1)),2) = S(u,2);
 %            lambda(numel(lambda(:,1)),3) = S(u,3);

@@ -28,19 +28,23 @@ delta = zeros(5, 4); %[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
 
 %% algoritm parameters
 alpha = [0 0 0 0 0 0 0];
-global Trs Trcr Trmax
+global Trs Trcr Trmax TrsSq TrcrSq TrmaxSq
 global frame Av Vv deltay deltaz
 
 frame = 1; %Every Sec one frame! Works
 
 % trust parameters
-Trs   = 3;
-Trcr  = 2;
-Trmax = 5;
+Trs   = 2;
+Trcr  = 1;
+Trmax = 3;
+
+TrsSq=4;
+TrcrSq=2;
+TrmaxSq=6;
 
 % kinematic variables (simulated)
 Dv = 0.1;
-Av = .005;
+Av = .003;
 Vv = .03;
 deltay = 5;
 deltaz = 5;
