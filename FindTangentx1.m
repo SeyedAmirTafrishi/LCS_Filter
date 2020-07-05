@@ -40,6 +40,7 @@ global x_1 y_2 y_1 x_2
     F(2) = (a_1^2*(Y_o-y_2)*(y_2-Y_e)) + (b_1^2*(X_o-x(2))*(x(2)-X_e));  
     if isreal(x_1)==1 && isreal(y_2)==1
     elseif isreal(x_1)==1 && isreal(y_2)~=1
+        1111
         if isreal(x_1)==1 
         else
         x_1 = X_e - ((a_1/b_1)*sqrt((b_1)^2-(x(1)-Y_e)^2)); 
@@ -60,7 +61,8 @@ global x_1 y_2 y_1 x_2
         y_2 = Y_e + ((b_1/a_1)*sqrt((a_1)^2-(x(2)-X_e)^2));  
         F(2) = (a_1^2*(Y_o-y_2)*(y_2-Y_e)) + (b_1^2*(X_o-x(2))*(x(2)-X_e));  
         end
-    elseif isreal(x_1)~=1 && isreal(y_2)~=1
+    elseif isreal(x_1)==1 && isreal(y_2)~=1
+        1112
         if isreal(x_1)==1 
         else
         x_1 = X_e - ((a_1/b_1)*sqrt((b_1)^2-(x(1)-Y_e)^2)); 
@@ -82,11 +84,18 @@ global x_1 y_2 y_1 x_2
         F(2) = (a_1^2*(Y_o-y_2)*(y_2-Y_e)) + (b_1^2*(X_o-x(2))*(x(2)-X_e));  
         end  
     else
-
-    x_1 = X_e - ((a_1/b_1)*sqrt((b_1)^2-(x(1)-Y_e)^2)); 
+    11114
+    if Y_o>Y_e
+     x_1 = X_e - ((a_1/b_1)*sqrt((b_1)^2-(x(1)-Y_e)^2)); 
     F(1) = (a_1^2*(Y_o-x(1))*(x(1)-Y_e)) + (b_1^2*(X_o-x_1)*(x_1-X_e));
     y_2 = Y_e + ((b_1/a_1)*sqrt((a_1)^2-(x(2)-X_e)^2));  
-    F(2) = (a_1^2*(Y_o-y_2)*(y_2-Y_e)) + (b_1^2*(X_o-x(2))*(x(2)-X_e));    
+    F(2) = (a_1^2*(Y_o-y_2)*(y_2-Y_e)) + (b_1^2*(X_o-x(2))*(x(2)-X_e));  
+    else 
+    x_1 = X_e + ((a_1/b_1)*sqrt((b_1)^2-(x(1)-Y_e)^2)); 
+    F(1) = (a_1^2*(Y_o-x(1))*(x(1)-Y_e)) + (b_1^2*(X_o-x_1)*(x_1-X_e));
+    y_2 = Y_e - ((b_1/a_1)*sqrt((a_1)^2-(x(2)-X_e)^2));  
+    F(2) = (a_1^2*(Y_o-y_2)*(y_2-Y_e)) + (b_1^2*(X_o-x(2))*(x(2)-X_e));  
+    end
     end
 %% SAVEd
 
