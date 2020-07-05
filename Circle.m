@@ -690,7 +690,7 @@ else
                         else
                             Mangle = (mean(M(:,5)+M(:,3)));
                         end
-                        if ((Mangle-(BetaDev/5) < Cr(ci,5)) && (Mangle+(BetaDev/5) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-1000*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+1000*abs(Vv))%Proportion Match PIN and angular similarity and velocity alighnment &&
+                        if ((Mangle-(BetaDev/5) < Cr(ci,5)) && (Mangle+(BetaDev/5) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-100*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+100*abs(Vv))%Proportion Match PIN and angular similarity and velocity alighnment &&
                             %update C!
                             action = 1;
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
@@ -701,7 +701,7 @@ else
                             %%%----- Killer of Mother Er
                             TErM = TEr;
                             %%%
-                        elseif  ((Mangle-(BetaDev) < Cr(ci,5)) && (Mangle+(BetaDev) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-1000*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+1000*abs(Vv)) %Somehow Match
+                        elseif  ((Mangle-(BetaDev) < Cr(ci,5)) && (Mangle+(BetaDev) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-100*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+100*abs(Vv)) %Somehow Match
                             action = 1;
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
                             Cr(ci,2) = ((((Cr(ci,4)-Trcr)*(NCn(1,2)))+MX)/((Cr(ci,4)-Trcr)+1)); %Estimation of En, X direction

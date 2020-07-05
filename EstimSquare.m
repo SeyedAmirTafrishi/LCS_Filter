@@ -20,18 +20,21 @@ global x_1 y_2 ICX ICY
 b_config_plot_on = true;
  hold on
 x0 = [0 0 0 0];
+ 
+ 
 % Solver m`y increase computation time, may solve it algebrically in future.
-REF = [X_e,Y_e,X_o,Y_o,a_1,b_1] 
+REF = [X_e+eps,Y_e+eps,X_o+eps,Y_o+eps,a_1+eps,b_1+eps]
 
+ 
 f = @(x) FindTangentx1(x,REF); % function of dummy variable y
-555
+%555
 %fsolve doesnt give multiple solutons
 opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
 F = fsolve(f,x0,opts);
-Point1(1,1) = real(x_1(1,1)) 
-Point2(1,1) = real(F(1,1)) 
-Point1(2,1) = real(F(1,2)) 
-Point2(2,1) = real(y_2(1,1)) 
+Point1(1,1) = abs(real(x_1(1,1)))
+Point2(1,1) = abs(real(F(1,1)))
+Point1(2,1) = abs(real(F(1,2)))
+Point2(2,1) = abs(real(y_2(1,1)))
 
 %% Plot the results!
 if b_config_plot_on
@@ -40,7 +43,7 @@ if b_config_plot_on
     th = 0:pi/50:2*pi;%for loop for creating circle
     xunit = (a_1) * cos(th) + X_e;%equation of circle :D
     yunit = (b_1) * sin(th) + Y_e;
-    plot(xunit, yunit,'y','LineWidth' , 2.5);% Ellipse
+    plot(xunit, yunit,'r','LineWidth' , 2);% Ellipse
     hold on
   %  plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
    plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
@@ -48,7 +51,7 @@ if b_config_plot_on
     plot(Point1(1,1),Point2(1,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
     hold on
     plot(Point1(2,1),Point2(2,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
-    plot(X_e,Y_e,'- om','MarkerSize', 18,'LineWidth' , 2.5)
+    plot(X_e,Y_e,'- om','MarkerSize', 18,'LineWidth' , 2)
     hold on
     drawnow;
 end
@@ -95,26 +98,35 @@ m_re = ((X_e-X_o)/(Y_e-Y_o+eps)); %the slope of Re (elipse position)
 
 
 %% Solving for finding (X_n1, Y_n1) and (X_n2,Y_n2)
-if Y_o < Y_e % working Solution
-	Y_nf1 = Point2(1,1)+sqrt(DRo1^2/(m_ro1^2+1));
-	X_nf1 = Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));    
-else
-	Y_nf1 = Point2(1,1)-sqrt(DRo1^2/(m_ro1^2+1));
-	X_nf1 = Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));    
-end
-
-if Y_o < Y_e % working Solution
-	Y_nf2 = Point2(2,1)+sqrt(DRo2^2/(m_ro2^2+1));
-	X_nf2 = Point1(2,1)+m_ro2*(Y_nf2-Point2(2,1));    
-else
-	Y_nf2 = Point2(2,1)-sqrt(DRo2^2/(m_ro2^2+1));
-	X_nf2 = Point1(2,1)+m_ro2*(Y_nf2-Point2(2,1));    
-end
+    Y_nf1 = Point2(1,1)+sqrt(DRo1^2/(m_ro1^2+1));
+	X_nf1 = Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));  
+  	Y_nf2 = Point2(2,1)+sqrt(DRo2^2/(m_ro2^2+1));
+	X_nf2 = Point1(2,1)+m_ro2*(Y_nf2-Point2(2,1)); 
+ Lengtholdf1=sqrt((Point2(1,1)-Y_o)^2+(Point1(1,1)-X_o)^2);
+ Lengtholdf2=sqrt((Point2(2,1)-Y_o)^2+(Point1(2,1)-X_o)^2);
+ Lengthnewf1=sqrt((Y_nf1-Y_o)^2+(X_nf1-X_o)^2);
+ Lengthnewf2=sqrt((Y_nf2-Y_o)^2+(X_nf2-X_o)^2);
+ if Lengtholdf1<Lengthnewf1
+   
+ else
+    Y_nf1 = Point2(1,1)-sqrt(DRo1^2/(m_ro1^2+1));
+	X_nf1 = Point1(1,1)+m_ro1*(Y_nf1-Point2(1,1));  
+ end
+  if Lengtholdf2<Lengthnewf2
+     
+ else
+    Y_nf2 = Point2(2,1)-sqrt(DRo2^2/(m_ro2^2+1));
+	X_nf2 = Point1(2,1)+m_ro2*(Y_nf2-Point2(2,1));  
+ end
+%if distance (cross to origin) less then  change sign
+ 
 
 % Algebric results
 if b_config_plot_on
-    plot(X_nf1, Y_nf1,'- xy','MarkerSize', 18,'LineWidth' , 2.5) 
-    plot(X_nf2, Y_nf2,'- xy','MarkerSize', 18,'LineWidth' , 2.5)     
+    hold on
+    plot(X_nf1, Y_nf1,'- xb','MarkerSize', 18,'LineWidth' , 2.5) 
+    hold on
+    plot(X_nf2, Y_nf2,'- xb','MarkerSize', 18,'LineWidth' , 2.5)     
 end
 
 %% Solved Algebriclly
@@ -127,7 +139,8 @@ else
 end
 
 if b_config_plot_on
-    plot(X_ef1,Y_ef1,'- ok','MarkerSize', 18,'LineWidth' , 2.5)     
+    hold on
+    plot(X_ef1,Y_ef1,'- ok','MarkerSize', 18,'LineWidth' , 2)     
 end
 
 B_n = sqrt(abs((((X_o-X_nf1)*(Y_nf1-Y_ef1)^2)-((X_nf1-X_ef1)*(Y_o-Y_nf1)*(Y_nf1-Y_ef1))) / ((X_o-X_nf1+eps))));
@@ -136,10 +149,11 @@ A_n = sqrt(abs((B_n^2*(X_o-X_nf1)*(X_nf1-X_ef1)) / ((Y_o-Y_nf1+eps)*(Y_nf1-Y_ef1
 
 %% plot
 if b_config_plot_on
+    hold on
     th = 0:pi/50:2*pi;
     xunit = (abs(A_n)) * cos(th) + X_ef1;%equation of circle :D
     yunit = (abs(B_n)) * sin(th) + Y_ef1;
-    plot(xunit, yunit,'b','LineWidth' , 2.5);% Ellipse
+    plot(xunit, yunit,'b','LineWidth' , 2);% Ellipse
 end
  
 drawnow;

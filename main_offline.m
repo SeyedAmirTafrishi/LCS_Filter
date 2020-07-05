@@ -13,8 +13,8 @@ SCREEN_X = 640;
 SCREEN_Y = 480;
 
 global ICX ICY
-ICX = SCREEN_X / 2;  %2
-ICY = SCREEN_Y / 2;  %1
+ICX = SCREEN_X / 2+eps;  %2
+ICY = SCREEN_Y / 2+eps;  %1
 
 % algorithm constants
 lambda = 0;

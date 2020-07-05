@@ -416,8 +416,8 @@ SB=[];
             X_e = Stem(u_sm,2);
             Y_o = Stem(u_sm,8);
             X_o = Stem(u_sm,9);
-            a_1 = Stem(u_sm,3);
-            b_1 = Stem(u_sm,4);
+            a_1 = Stem(u_sm,3); % Means it is for X
+            b_1 = Stem(u_sm,4); % means it is for y
             Delta_r = sqrt((NSn(1,1)-Y_e)^2+(NSn(1,2)-X_e)^2);
             % Estimation of Square from Elipse_
             t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );

@@ -22,7 +22,12 @@ function [ angle ] = calculate_vector_angle( x1, y1, ICX, ICY )
         angle=180;
     end
 
-    angle2 = -atan2(y1 - ICY, (x1 - ICX)) * (180/pi);
+  %  angle2 = -atan2(y1 - ICY, (x1 - ICX)) * (180/pi);
+  if isempty(angle)
+    angle=  0;
+  else
+   angle=-angle;   
+  end
 
     %[angle, angle2, x1, y1, xo, yo];
 end
