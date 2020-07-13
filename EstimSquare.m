@@ -1,7 +1,7 @@
 function [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r) %A_n on X axis B_n on Y Axis
 % ESTIMSQUARE : this code is based on Elipse_Angle.m
 %
-global x_1 y_2 ICX ICY
+global x_1 y_2 ICX ICY Flag1 Flag2
 % Inputs:
 % X_e, Y_e : elipse center coordinate
 % X_o, Y_o : the original coordinate
@@ -19,9 +19,10 @@ global x_1 y_2 ICX ICY
 %%
 b_config_plot_on = true;
  hold on
-x0 = [0 0 0 0];
+x0 = [Y_e X_e 0 0];
  
- 
+Flag1=0; % means 0-> x_1 F(1) 1-> y_1 F(1) 
+Flag2=0; % means 0-> x_1 F(1) 1-> y_1 F(1) 
 % Solver m`y increase computation time, may solve it algebrically in future.
 REF = [X_e+eps,Y_e+eps,X_o+eps,Y_o+eps,a_1+eps,b_1+eps]
 
@@ -31,10 +32,12 @@ f = @(x) FindTangentx1(x,REF); % function of dummy variable y
 %fsolve doesnt give multiple solutons
 opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
 F = fsolve(f,x0,opts);
-Point1(1,1) = abs(real(x_1(1,1)))
-Point2(1,1) = abs(real(F(1,1)))
-Point1(2,1) = abs(real(F(1,2)))
-Point2(2,1) = abs(real(y_2(1,1)))
+
+Point1(1,1) = real(x_1(1,1))
+Point2(1,1) = real(F(1,1))    
+
+Point1(2,1) = real(F(1,2))
+Point2(2,1) = real(y_2(1,1))
 
 %% Plot the results!
 if b_config_plot_on

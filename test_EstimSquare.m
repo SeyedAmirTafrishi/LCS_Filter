@@ -10,8 +10,8 @@ y_2 = 0;
 
 X_e = 400.2;        % Elipse center coordinate
 Y_e = 364.1000;
-X_o = 440.1000;
-Y_o= 320.1000;        % Original coordinate
+X_o = 320.1000;
+Y_o= 300.1000;        % Original coordinate
 a_1 =  50.3278 ;        % elipse minor past
 b_1 =   35.3278 ;       % elipse major past
 Delta_r = 20;  % Estimated shift on R_e
