@@ -35,10 +35,10 @@ else
             x_0 = R;
             x_1 = abs(En(e,6)+Vv)/2; % CHanged! :D
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*beta) + (En(e,1)-ICY); %estimation of En x
-            NEn(1,2) = (Y1(end,1)-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
+            NEn(1,1) = -(ceil((Y1(end,1)))-R)*sin((pi/180)*beta) + (En(e,1)-ICY); %estimation of En x ceil
+            NEn(1,2) = (ceil((Y1(end,1)))-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
             hold on
-            subplot(1,2,1)
+            subplot(2,2,2)
             plot(NEn(1,2) + ICX, NEn(1,1) + ICY, 'ys')
             %hold on
             %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
@@ -278,7 +278,7 @@ else
                                             %MOHEM....!!!! far - near finder :\
                                             Er(numel(Er(:,1))+1,1) = Edge(j,ME2);
                                             Er(numel(Er(:,1)),2) = Edge(j,ME2+1);
-                                            Er(numel(Er(:,1)),4) = -1;%rebel size  L+1
+                                            Er(numel(Er(:,1)),4) = Trs+2;%rebel size  L+1
                                             angle = calculate_vector_angle(Edge(j,ME2+1), Edge(j,ME2), alpha(el1,2), alpha(el1,1)); %[MODIFIED]
                                             %---------------------------- DL calculator!
                                             mk1 = (alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
@@ -398,7 +398,7 @@ else
                                             %MOHEM....!!!! far - near finder :\
                                             Er(numel(Er(:,1))+1,1) = Edge(j,ME2);
                                             Er(numel(Er(:,1)),2) = Edge(j,ME2+1);
-                                            Er(numel(Er(:,1)),4) = -1;%rebel size  L+1
+                                            Er(numel(Er(:,1)),4) = Trs+2;%rebel size  L+1
                                             angle = calculate_vector_angle(Edge(j,ME2+1), Edge(j,ME2), alpha(el1,2), alpha(el1,1) );
                                             %---------------------------- DL calculator!
                                             mk1 = (alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
@@ -495,10 +495,10 @@ else
             betar = Er(r,5);
             R = (((Er(r,1)-Er(r,7))^2)+(Er(r,2)-Er(r,8))^2)^(0.5);%The R
             x_0 = R;
-            x_1 = En(r,6);%check velocity
+            x_1 = Er(r,6);%check velocity
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEr(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
-            NEr(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
+            NEr(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
+            NEr(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
             NBL = BLS; % WILL CHANGE
             mr = (NEr(1,1)-Er(r,7))/-(Er(r,2)-Er(r,8));
             NVe = Y1(end,2);%Estimated edge velocity
@@ -537,13 +537,13 @@ else
                         Er(r,4) = Er(r,4)+1;
                         Er(r,5) = angle;
                         hold on
-                        subplot(1,2,2)
+                        subplot(2,2,2)
                         ploti = plot(NEr(1,2),NEr(1,1),'ms');
                         hold on
-                        subplot(1,2,2)
+                        subplot(2,2,2)
                         ploti = plot(Edge(j,i+1),Edge(j,i),'y*');
                         hold on
-                        subplot(1,2,2)
+                        subplot(2,2,2)
                         ploti = plot(Er(r,2),Er(r,1),'rs');
                     end
                     j = j + 1;
@@ -557,7 +557,7 @@ else
                     Er(r,2) = NEr(1,2);%DL - Error of Edge
                     Er(r,4) = Er(r,4)-1;
                     hold on
-                    subplot(1,2,2)
+                    subplot(2,2,2)
                     ploti = plot(Er(r,2),Er(r,1),'rs');
                     %elseif ( Er(e,4) < Trs ) && ( Er(e,4) >= Trcr)
                 elseif (Er(r,4) <= Trcr-1)
@@ -635,8 +635,8 @@ else
         x_0 = R;
         x_1 = Cr(ci,6);
         [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
-        NCn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(beta))+(Cr(ci,1));%estimation of Cn x
-        NCn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(beta))+(Cr(ci,2));%estimation of Cn y
+        NCn(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(beta))+(Cr(ci,1));%estimation of Cn x
+        NCn(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(beta))+(Cr(ci,2));%estimation of Cn y
 
         u = 1;
         if Er==0
@@ -779,7 +779,7 @@ else
             Cr(numel(Cr(:,1))+1,1) = MY;
             Cr(numel(Cr(:,1)),2) = MX; %Estimation of En, X direction
             Cr(numel(Cr(:,1)),3) = MR;
-            Cr(numel(Cr(:,1)),4) = round((Trcr+Trs)/2); %Trust Low
+            Cr(numel(Cr(:,1)),4) =Trs+2; %Trust Low
             angleC = 0;
             mC = (MY-OY)/-(MX-OX);
             angleC = calculate_vector_angle( MX, MY, OX, OY );
@@ -813,8 +813,8 @@ else
         x_0 = R;
         x_1 = C(ci,6);
         [T1, Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
-        NCn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(beta))+(C(ci,1)); %estimation of Cn x
-        NCn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(beta))+(C(ci,2)); %estimation of Cn y
+        NCn(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(beta))+(C(ci,1)); %estimation of Cn x
+        NCn(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(beta))+(C(ci,2)); %estimation of Cn y
 
         u = 1;
         if En == 0

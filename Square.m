@@ -410,8 +410,8 @@ SB=[];
             x_1 = Stem(u_sm,7);
             options = odeset('RelTol',1e-3,'AbsTol',[1e-3 1e-3]);
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated S the 4 space is nutrilized to one since we want just vel
-            NSn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betaS))+(Stem(u_sm,1));%estimation of Sn x
-            NSn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y
+            NSn(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(betaS))+(Stem(u_sm,1));%estimation of Sn x
+            NSn(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y
             Y_e = Stem(u_sm,1);
             X_e = Stem(u_sm,2);
             Y_o = Stem(u_sm,8);
@@ -423,10 +423,19 @@ SB=[];
             t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
             R_al = sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
             r_eE = sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
+          if isnan(R_al)
+          Stem(u_sm,:)=[];   
+            if u_sm>1
+             u_sm=u_sm-1; 
+            else
+            u_sm=1;    
+            end    
+          else
             if a_1==0 && b_1==0 % Very small edges that transformed to circles and then to square
             a_1=2;    
             b_1=2;   
             end
+            
             if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
             elseif R_al <= r_eE % Case the (X_o,Y_o) is in of the ellipse
@@ -437,6 +446,8 @@ SB=[];
                 X_ef1 = NSn(1,2);
             end
             %% Overlap computation
+            
+            
             [flagG, overlapPrec] = Square_Intersects(X_ef1,Y_ef1, A_n,B_n, SA(1,2),SA(1,1),SA(1,3),SA(1,4));%First is estimated square, second is 
             %  obtained square by combined circles
             if flagG==1 
@@ -463,6 +474,7 @@ SB=[];
                 %T+1
             end
             end
+          end
             u_sm = u_sm+1;
         end
         if FlagSA == 0 % No match with the Squares of Stem Then put it as new Square 
@@ -489,8 +501,8 @@ SB=[];
             x_1 = Stem(u_sm,6);
             options = odeset('RelTol',1e-3,'AbsTol',[1e-3 1e-3]);
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated S the 4 space is nutrilized to one since we want just vel
-            NSn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betaS))+(Stem(u_sm,1));%estimation of Sn x
-            NSn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y
+            NSn(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(betaS))+(Stem(u_sm,1));%estimation of Sn x
+            NSn(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(betaS))+(Stem(u_sm,2));%estimation of Sn y
             Y_e = Stem(u_sm,1);
             X_e = Stem(u_sm,2);
             Y_o = Stem(u_sm,8);
@@ -502,6 +514,16 @@ SB=[];
             t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
             R_al = sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
             r_eE = sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
+          if isnan(R_al)
+          Stem(u_sm,:)=[];   
+            if u_sm>1
+             u_sm=u_sm-1; 
+            else
+            u_sm=1;    
+            end    
+          else
+            
+            
             if a_1==0 && b_1==0 % Very small edges that transformed to circles and then to square
             a_1=2;    
             b_1=2;   
@@ -542,7 +564,9 @@ SB=[];
                 %T+1
             end
             end
+          end
             u_sm = u_sm+1;
+            
         end
         if FlagSB == 0 % No match with the Squares of Stem Then put it as new Square 
         Sup(countSup,:)= SB; % The location

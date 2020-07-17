@@ -24,7 +24,7 @@ x0 = [Y_e X_e 0 0];
 Flag1=0; % means 0-> x_1 F(1) 1-> y_1 F(1) 
 Flag2=0; % means 0-> x_1 F(1) 1-> y_1 F(1) 
 % Solver m`y increase computation time, may solve it algebrically in future.
-REF = [X_e+eps,Y_e+eps,X_o+eps,Y_o+eps,a_1+eps,b_1+eps]
+REF = [X_e+eps,Y_e+eps,X_o+eps,Y_o+eps,a_1+eps,b_1+eps];
 
  
 f = @(x) FindTangentx1(x,REF); % function of dummy variable y
@@ -33,28 +33,28 @@ f = @(x) FindTangentx1(x,REF); % function of dummy variable y
 opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
 F = fsolve(f,x0,opts);
 
-Point1(1,1) = real(x_1(1,1))
-Point2(1,1) = real(F(1,1))    
+Point1(1,1) = real(x_1(1,1));
+Point2(1,1) = real(F(1,1)); 
 
-Point1(2,1) = real(F(1,2))
-Point2(2,1) = real(y_2(1,1))
+Point1(2,1) = real(F(1,2));
+Point2(2,1) = real(y_2(1,1));
 
 %% Plot the results!
 if b_config_plot_on
  hold on
- subplot(1,2,1)
+subplot(2,2,4)
     th = 0:pi/50:2*pi;%for loop for creating circle
     xunit = (a_1) * cos(th) + X_e;%equation of circle :D
     yunit = (b_1) * sin(th) + Y_e;
     plot(xunit, yunit,'r','LineWidth' , 2);% Ellipse
     hold on
   %  plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
-   plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
+   plot(X_o,Y_o,'- *b','MarkerSize', 3,'LineWidth' ,1)
    hold on
-    plot(Point1(1,1),Point2(1,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
+    plot(Point1(1,1),Point2(1,1),'- xr','MarkerSize', 10,'LineWidth' , 1)
     hold on
-    plot(Point1(2,1),Point2(2,1),'- xr','MarkerSize', 18,'LineWidth' , 2.5)
-    plot(X_e,Y_e,'- om','MarkerSize', 18,'LineWidth' , 2)
+    plot(Point1(2,1),Point2(2,1),'- xr','MarkerSize', 10,'LineWidth' , 1)
+    plot(X_e,Y_e,'- om','MarkerSize', 3,'LineWidth' , 1)
     hold on
     drawnow;
 end
@@ -123,13 +123,13 @@ m_re = ((X_e-X_o)/(Y_e-Y_o+eps)); %the slope of Re (elipse position)
  end
 %if distance (cross to origin) less then  change sign
  
-
+hold on
 % Algebric results
 if b_config_plot_on
     hold on
-    plot(X_nf1, Y_nf1,'- xb','MarkerSize', 18,'LineWidth' , 2.5) 
+    plot(X_nf1, Y_nf1,'- xb','MarkerSize', 3,'LineWidth' , 1) 
     hold on
-    plot(X_nf2, Y_nf2,'- xb','MarkerSize', 18,'LineWidth' , 2.5)     
+    plot(X_nf2, Y_nf2,'- xb','MarkerSize', 3,'LineWidth' , 1)     
 end
 
 %% Solved Algebriclly
@@ -143,7 +143,7 @@ end
 
 if b_config_plot_on
     hold on
-    plot(X_ef1,Y_ef1,'- ok','MarkerSize', 18,'LineWidth' , 2)     
+    plot(X_ef1,Y_ef1,'- ok','MarkerSize', 3,'LineWidth' , 1)     
 end
 
 B_n = sqrt(abs((((X_o-X_nf1)*(Y_nf1-Y_ef1)^2)-((X_nf1-X_ef1)*(Y_o-Y_nf1)*(Y_nf1-Y_ef1))) / ((X_o-X_nf1+eps))));
@@ -156,7 +156,7 @@ if b_config_plot_on
     th = 0:pi/50:2*pi;
     xunit = (abs(A_n)) * cos(th) + X_ef1;%equation of circle :D
     yunit = (abs(B_n)) * sin(th) + Y_ef1;
-    plot(xunit, yunit,'b','LineWidth' , 2);% Ellipse
+    plot(xunit, yunit,'b','LineWidth' , 1);% Ellipse
 end
  
 drawnow;

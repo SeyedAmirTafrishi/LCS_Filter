@@ -33,15 +33,16 @@ else
         xunit = (psi(i,3) + CB) * cos(th) + psi(i,2); % equation of circle :D
         yunit = (psi(i,3) + CB) * sin(th) + psi(i,1);
         hold on
-        subplot(1,2,1)
+        subplot(2,2,1)
         ploti = plot(xunit, yunit, 'y'); % Plot the boys :v
         xlim([1 640])
         ylim([1 480])
     end
 end
 
+
+subplot(2,2,1)
 hold on
-subplot(1,2,1)
 ploti = plot(c9(:,2), c9(:,1), 'y.'); %edges
 
 %% Edge grouper by BS of lambda
@@ -72,7 +73,7 @@ for z = 1:numel(lambda(:,1)) % Lambda Counter
         while j <= numel(c9(:,1))
             % The condition to check the boundery property
             if (((((lambda(z,1) - c9(j,1))^2) + ((lambda(z,2) - c9(j,2))^2))^(0.5)) <= lambda(z,3))
-                subplot(1,2,1)
+                subplot(2,2,1)
                 plot([lambda(z,2), c9(j,2)], [lambda(z,1), c9(j,1)], 'g'); % it plots the related lines when condition satisfied
                 DV(g,f) = c9(j,1); % include the edges to the relevant group
                 DV(g,f + 1) = c9(j,2);
