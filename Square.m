@@ -1,4 +1,4 @@
-function [S] = Square(S, C, Cr, delta, Vv, Dv, psi)
+function [S ,psi] = Square(S, C, Cr, delta, Vv, Dv, psi)
 % Subsitute C and Cr to new Ct (Temprery matrix) *Done
 global ICX ICY time_diff TrsSq TrcrSq TrmaxSq
 C(:,7) = ICY; % Make the normal circle in same dimension with rebel circle (Center is the center of image)
@@ -12,6 +12,7 @@ else
  Ctem = [C;Cr];   
 end
 u_m = 1;
+zetas=4;% Small region pixel accuracy
 e_v = .7; % Deviation for circle velocity,
 DeltaBeta = 20; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
@@ -436,9 +437,9 @@ SB=[];
             b_1=2;   
             end
             
-            if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
+            if R_al > r_eE+zetas % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
-            elseif R_al <= r_eE % Case the (X_o,Y_o) is in of the ellipse
+            elseif R_al <= r_eE+zetas % Case the (X_o,Y_o) is in of the ellipse
                 %betaang = calculate_vector_angle(X_e,Y_e ,X_o,Y_o);    %Degree unit
                 A_n = a_1+Delta_r;% Estimated Square
                 B_n = b_1+Delta_r;
@@ -528,9 +529,9 @@ SB=[];
             a_1=2;    
             b_1=2;   
             end
-            if R_al > r_eE % Case the (X_o,Y_o) is out of the ellipse
+            if R_al > r_eE+zetas % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
-            elseif R_al <= r_eE % Case the (X_o,Y_o) is in of the ellipse
+            elseif R_al <= r_eE+zetas % Case the (X_o,Y_o) is in of the ellipse
                 %betaang = calculate_vector_angle(X_e,Y_e ,X_o,Y_o);    %Degree unit
                 A_n = a_1+Delta_r;% Estimated Square
                 B_n = b_1+Delta_r;
@@ -597,12 +598,14 @@ else
     while u <= (numel(S(:,1)))
         L1 = 0;
         L2 = 0;
-        if S(u,5) > TrmaxSq
+        if S(u,5) >= TrmaxSq
             S(u,5) = TrmaxSq-2;
             psi(numel(psi(:,1))+1,1) = S(u,1);
-            psi(numel(psi(:,1)),2) = S(u,2);
-            psi(numel(psi(:,1)),3) = S(u,3);
-            psi(numel(psi(:,1)),4) = 1; %--- 2 for square 1 circle, 4 to 5th (because a and b)
+            psi(numel(psi(:,1)),2) = S(u,2);           
+            psi(numel(psi(:,1)),4) = 2; %--- 2 for square 1 circle, 4 to 5th (because a and b)
+            psi(numel(psi(:,1)),3) = 0;
+            psi(numel(psi(:,1)),5) = S(u,3); %A
+            psi(numel(psi(:,1)),6) = S(u,4);  %B
         end
         if ((S(u,1) > (2*ICY)) || (S(u,2) > (2*ICX)) || (S(u,1) < 0) || (S(u,2) < 0)) %Kill more than that :D
             S(u,:) = [];

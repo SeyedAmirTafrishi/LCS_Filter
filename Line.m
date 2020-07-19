@@ -14,6 +14,7 @@ if psi == 0
 	% skip as nothing to remove;
 else
     for i = 1:numel(psi(:,1)) % Counter for edges
+        
         if psi(i,4) == 1      % Check whether the Psi is Circle or Square
             j = 1;
             while j <= numel(c9(:,1)) % Counter for edges
@@ -24,19 +25,42 @@ else
                 end
                 j = j + 1;
             end
-        % elseif psi(:,4) == 2  %WILL BE FILLED for SQUARE
+         % can be delete pLOT
+            th = 0:pi/50:2*pi; % for loop for creating circle
+            xunit = (psi(i,3) + CB) * cos(th) + psi(i,2); % equation of circle :D
+            yunit = (psi(i,3) + CB) * sin(th) + psi(i,1);
+            hold on
+            subplot(2,2,3)
+            ploti = plot(xunit, yunit,'y','LineWidth' , 2); % Plot the boys :v
+            xlim([1 640])
+            ylim([1 480])  
+         elseif psi(i,4) == 2  %WILL BE FILLED for SQUARE
             % WILL BE FILLED
+            
+            TempYPositive= psi(i,1)+psi(i,5); % 
+            TempYNegaitive=psi(i,1)-psi(i,5); %  
+            TempXPositive=psi(i,2)+psi(i,6);% 
+            TempXNegaitive=psi(i,2)-psi(i,6);%   
+             j = 1;
+            while j <= numel(c9(:,1)) % Counter for edges
+                if c9(j,1) > TempYNegaitive && c9(j,1) < TempYPositive && c9(j,2)<TempXPositive && c9(j,2)>TempXNegaitive 
+                    % The condition to check the boundery property
+                    c9(j,:) = []; % Remove the Edge that has to be ignored
+                    j = j - 1;
+                end
+                j = j + 1;
+            end  
+            hold on
+            subplot(2,2,4)
+            plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'y','LineWidth' , 2)
+            plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'y','LineWidth' , 2)
+            plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'y','LineWidth' , 2);
+            plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'y','LineWidth' , 2); 
+            xlim([1 640])
+            ylim([1 480])      
         end
 
-        % can be delete
-        th = 0:pi/50:2*pi; % for loop for creating circle
-        xunit = (psi(i,3) + CB) * cos(th) + psi(i,2); % equation of circle :D
-        yunit = (psi(i,3) + CB) * sin(th) + psi(i,1);
-        hold on
-        subplot(2,2,1)
-        ploti = plot(xunit, yunit, 'y'); % Plot the boys :v
-        xlim([1 640])
-        ylim([1 480])
+
     end
 end
 

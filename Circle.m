@@ -39,7 +39,7 @@ else
             NEn(1,2) = (ceil((Y1(end,1)))-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
             hold on
             subplot(2,2,2)
-            plot(NEn(1,2) + ICX, NEn(1,1) + ICY, 'ys')
+            plot(NEn(1,2) + ICX, NEn(1,1) + ICY, 'ys','LineWidth' , 2.5)
             %hold on
             %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
             NVe = Y1(end,2); % Estimated edge velocity
@@ -544,7 +544,7 @@ else
                         ploti = plot(Edge(j,i+1),Edge(j,i),'y*');
                         hold on
                         subplot(2,2,2)
-                        ploti = plot(Er(r,2),Er(r,1),'rs');
+                        ploti = plot(Er(r,2),Er(r,1),'rs','LineWidth' , 2.5);
                     end
                     j = j + 1;
                 end
@@ -558,7 +558,7 @@ else
                     Er(r,4) = Er(r,4)-1;
                     hold on
                     subplot(2,2,2)
-                    ploti = plot(Er(r,2),Er(r,1),'rs');
+                    ploti = plot(Er(r,2),Er(r,1),'rs','LineWidth' , 2.5);
                     %elseif ( Er(e,4) < Trs ) && ( Er(e,4) >= Trcr)
                 elseif (Er(r,4) <= Trcr-1)
                     Er(r,:) = [];
@@ -955,7 +955,7 @@ else
     while u <= (numel(C(:,1)))
         L1 = 0;
         L2 = 0;
-        if C(u,4) > Trmax
+        if C(u,4) >= Trmax
             C(u,4) = Trmax-2;
             psi(numel(psi(:,1))+1,1) = C(u,1);
             psi(numel(psi(:,1)),2) = C(u,2);

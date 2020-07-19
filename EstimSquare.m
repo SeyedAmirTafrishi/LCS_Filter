@@ -17,14 +17,14 @@ global x_1 y_2 ICX ICY Flag1 Flag2
 % What is global variable x_1, y_2 for?
 % Do we have to change the value of x0?
 %%
-b_config_plot_on = true;
+b_config_plot_on = false;
  hold on
 x0 = [Y_e X_e 0 0];
  
 Flag1=0; % means 0-> x_1 F(1) 1-> y_1 F(1) 
 Flag2=0; % means 0-> x_1 F(1) 1-> y_1 F(1) 
 % Solver m`y increase computation time, may solve it algebrically in future.
-REF = [X_e+eps,Y_e+eps,X_o+eps,Y_o+eps,a_1+eps,b_1+eps];
+REF = [X_e+2*eps,Y_e+2*eps,X_o+2*eps,Y_o+2*eps,a_1+2*eps,b_1+2*eps];
 
  
 f = @(x) FindTangentx1(x,REF); % function of dummy variable y
@@ -42,7 +42,7 @@ Point2(2,1) = real(y_2(1,1));
 %% Plot the results!
 if b_config_plot_on
  hold on
-subplot(2,2,4)
+%subplot(2,2,4)
     th = 0:pi/50:2*pi;%for loop for creating circle
     xunit = (a_1) * cos(th) + X_e;%equation of circle :D
     yunit = (b_1) * sin(th) + Y_e;
