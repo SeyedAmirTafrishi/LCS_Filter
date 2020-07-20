@@ -141,7 +141,7 @@ for c = 1:length(f1)
             xunit = (C(i,3) + CB) * cos(th) + C(i,2);%equation of circle :D
             yunit = (C(i,3) + CB) * sin(th) + C(i,1);
             subplot(2,2,3)
-            ploti = plot(xunit, yunit,'g');%Plot the boys :v
+            ploti = plot(xunit, yunit,'g','LineWidth' , 1.5);%Plot the boys :v
             xlim([1 SCREEN_X])
             ylim([1 SCREEN_Y])
         end
@@ -154,7 +154,7 @@ for c = 1:length(f1)
             xunit = (Cr(i,3) + CB) * cos(th) + Cr(i,2);%equation of circle :D
             yunit = (Cr(i,3) + CB) * sin(th) + Cr(i,1);
             subplot(2,2,3)
-            ploti = plot(xunit, yunit,'r');%Plot the boys :v
+            ploti = plot(xunit, yunit,'r','LineWidth' , 2);%Plot the boys :v
             xlim([1 SCREEN_X])
             ylim([1 SCREEN_Y])
         end
@@ -193,17 +193,17 @@ for c = 1:length(f1)
     %txt = ['Frame ',num2str(c)];
     %title(txt,'FontSize',16)
     hold on
-    xlabel('${\chi}, {\lambda}, \psi$','FontSize',16,'Interpreter','latex')
+    xlabel('${\chi}, {\lambda}$ and $\psi$','FontSize',16,'Interpreter','latex')
     subplot(2,2,4)
     %txt = ['Frame ',num2str(c)];
     %title(txt,'FontSize',16)
     hold on
-    xlabel('${S},\psi_S$','FontSize',16,'Interpreter','latex')
+    xlabel('${S}$ and $\psi_S$','FontSize',16,'Interpreter','latex')
     subplot(2,2,3)
     %txt = ['Frame ',num2str(c)];
     %title(txt,'FontSize',16)
     hold on
-    xlabel('${C}_n,{C}_r, \psi_C$','FontSize',16,'Interpreter','latex')
+    xlabel('${C}_n,{C}_r$ and $\psi_C$','FontSize',16,'Interpreter','latex')
     
      subplot(2,2,1)
      hold on
@@ -216,18 +216,16 @@ for c = 1:length(f1)
      subplot(2,2,3)
      hold on
     % set(gca,'OuterPosition',[0.7 0.15 0.31 0.7]);
-    
-   
-  
-    set(gcf,'Units','Inches');
- 
+     
+    set(gcf,'Units','Inches','renderer','Painters');  
+   % set(gcf,'Units','Inches');
     pos = get(gcf,'Position');
-    set(gcf,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 
     %---------- Save Plot
      set(gcf, 'Position',  [100, 100, 1920, 1080])
+         set(gcf,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(2)*3.3, pos(3)*1.3])
 
-    fig_filename = ['./results/fig', num2str(c),'.png'];
+    fig_filename = ['./results/fig', num2str(c),'.pdf'];
     saveas(gca, fig_filename);
     % %--------------------
 

@@ -39,7 +39,7 @@ else
             NEn(1,2) = (ceil((Y1(end,1)))-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
             hold on
             subplot(2,2,2)
-            plot(NEn(1,2) + ICX, NEn(1,1) + ICY, 'ys','LineWidth' , 2.5)
+            plot(NEn(1,2) + ICX, NEn(1,1) + ICY, 'ys','LineWidth' , 2)
             %hold on
             %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
             NVe = Y1(end,2); % Estimated edge velocity
