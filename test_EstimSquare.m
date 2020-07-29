@@ -8,15 +8,25 @@ x_1 = 0;
 y_2 = 0;
 %Problem in MINUS?
 
-X_e = 389;        % Elipse center coordinate
-Y_e = 290.0000;
-X_o = 320.0000;
-Y_o= 300.0000;        % Original coordinate
-a_1 =  60.3278 ;        % elipse minor past
-b_1 =   60.3278 ;       % elipse major past
-Delta_r = 3;  % Estimated shift on R_e
-
+X_e = 240.2-50;        % Elipse center coordinate
+Y_e = 280.1000-50;
+X_o =170.1000;
+Y_o= 360.1000;        % Original coordinate
+a_1 =  14.3278 ;        % elipse minor past
+b_1 =  57.3278 ;       % elipse major past
+Delta_r = 20;  % Estimated shift on R_e
+X_o-X_e
+Y_o-Y_e
 % 487.0000  164.0000  320.0000  240.0000  160.3278  160.3278
 tic
 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r)
-toc
+toc     
+
+
+% % PRoblem
+% X_e = 400.2;        % Elipse center coordinate
+% Y_e = 324.1000;
+% X_o = 500.1000;
+% Y_o= 350.1000;        % Original coordinate
+% a_1 =  50.3278 ;        % elipse minor past
+% b_1 =   35.3278 ;       % elipse major past

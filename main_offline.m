@@ -5,7 +5,7 @@ clear delta
 close all
 
 %set(0,'DefaultTextInterpreter','Latex');
-addpath('./helpers/')
+%addpath('./helpers/')
 
 %% intial conditions
 % screen parameteres
@@ -13,8 +13,8 @@ SCREEN_X = 640;
 SCREEN_Y = 480;
 
 global ICX ICY
-ICX = SCREEN_X / 2;  %2
-ICY = SCREEN_Y / 2;  %1
+ICX = SCREEN_X / 2+eps;  %2
+ICY = SCREEN_Y / 2+eps;  %1
 
 % algorithm constants
 lambda = 0;
@@ -28,29 +28,33 @@ delta = zeros(5, 4); %[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
 
 %% algoritm parameters
 alpha = [0 0 0 0 0 0 0];
-global Trs Trcr Trmax
+global Trs Trcr Trmax TrsSq TrcrSq TrmaxSq
 global frame Av Vv deltay deltaz
 
 frame = 1; %Every Sec one frame! Works
 
 % trust parameters
-Trs   = 4;
+Trs   = 3;
 Trcr  = 2;
-Trmax = 7;
+Trmax = 5;
+
+TrsSq=4;
+TrcrSq=3;
+TrmaxSq=6;
 
 % kinematic variables (simulated)
 Dv = 0.1;
-Av = 0.01;
-Vv = 0.5;
-deltay = 8;
-deltaz = 8;
+Av = 0.0005;
+Vv = .031;
+deltay = 12;
+deltaz = 12;
 
 %% main code begins
 drs = './example_pictures'; % in current directory
-dr1 = dir([drs '/*.png']);  % get all png files in the folder
-f1 = {dr1.name};            % get filenames to cell
+dr1 = dir([drs '/*.jpg']);  % get all png files in the folder
+f1 = {dr1.name};           % get filenames to cell
 
-mkdir('./results')          % dir for saving results
+%mkdir('./results')          % dir for saving results
 
 % loop for each image
 for c = 1:length(f1)
@@ -77,15 +81,24 @@ for c = 1:length(f1)
     axis image
     colormap(gray)
 
-    subplot(1,2,1)
+    subplot(2,2,1)
     hold on
     imshow(im / max(im(:)));
     plot(c9(:,1),c9(:,2),'r.'); % edges
 
-    subplot(1,2,2)
+   subplot(2,2,2)
     hold on
     imshow(im / max(im(:)));
-
+    
+    subplot(2,2,3)
+    hold on
+    imshow(im / max(im(:)));
+    
+        subplot(2,2,4)
+    hold on
+    imshow(im / max(im(:)));
+    
+    
     c9 = [c9(:,2),c9(:,1)];     % swap x and y columns
     if c == 1
         Size(c,1) = numel(c9(:,1));
@@ -100,7 +113,8 @@ for c = 1:length(f1)
 %     if S==0
 %     S=[100 100 40 30 6 60 .1 200 160;112 134 20 20 4 30 .05 100 180];    
 %     end
-    [S] = Square(S, C, Cr, delta, Vv, Dv, psi)
+    [S, psi] = Square(S, C, Cr, delta, Vv, Dv, psi);
+    psi
     % Square() add square here
     Size(c,2) = numel(En(:,1));
     Size(c,3) = numel(Er(:,1));
@@ -111,7 +125,7 @@ for c = 1:length(f1)
     %delta
     %delta=[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
     hold on
-    subplot(1,2,1)
+    subplot(2,2,2)
     ploti = plot(En(:,2),En(:,1),'bs');
     xlim([1 640])
     ylim([1 480])
@@ -126,21 +140,21 @@ for c = 1:length(f1)
         for i = 1:1:(numel(C(:,1)))
             xunit = (C(i,3) + CB) * cos(th) + C(i,2);%equation of circle :D
             yunit = (C(i,3) + CB) * sin(th) + C(i,1);
-            subplot(1,2,2)
-            ploti = plot(xunit, yunit,'g');%Plot the boys :v
+            subplot(2,2,3)
+            ploti = plot(xunit, yunit,'g','LineWidth' , 1.5);%Plot the boys :v
             xlim([1 SCREEN_X])
             ylim([1 SCREEN_Y])
         end
     end
-    CB = 1;
+    CB = 10;
     if Cr == 0
         % pass
     else
         for i = 1:1:(numel(Cr(:,1)))
             xunit = (Cr(i,3) + CB) * cos(th) + Cr(i,2);%equation of circle :D
             yunit = (Cr(i,3) + CB) * sin(th) + Cr(i,1);
-            subplot(1,2,2)
-            ploti = plot(xunit, yunit,'r');%Plot the boys :v
+            subplot(2,2,3)
+            ploti = plot(xunit, yunit,'r','LineWidth' , 2);%Plot the boys :v
             xlim([1 SCREEN_X])
             ylim([1 SCREEN_Y])
         end
@@ -149,17 +163,17 @@ for c = 1:length(f1)
         % pass
         else
         for i = 1:1:(numel(S(:,1)))
-            subplot(1,2,2)
+            subplot(2,2,4)
             hold on
     TempYPositive= S(i,1)+S(i,3); % 
     TempYNegaitive=S(i,1)-S(i,3); %  
     TempXPositive=S(i,2)+S(i,4); % 
     TempXNegaitive=S(i,2)-S(i,4); %    
     %plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)  
-    plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'m')
-    plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'m')
-    plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'m')
-    plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'m')  
+    plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'m','LineWidth' , 2)
+    plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'m','LineWidth' , 2)
+    plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'m','LineWidth' , 2)
+    plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'m','LineWidth' , 2)  
             %ploti = plot(xunit, yunit,'r');%Plot the boys :v
             xlim([1 SCREEN_X])
             ylim([1 SCREEN_Y])
@@ -167,28 +181,59 @@ for c = 1:length(f1)
        end 
     
     
+       
+       
     hold on
-    subplot(1,2,2)
+    subplot(2,2,2)
+ 
+    hold on
+    xlabel('${E}_n, {E}_r$, $\tilde{E}_n$ and $\tilde{E}_r$','FontSize',16,'Interpreter','latex')
+    hold on
+    subplot(2,2,1)
+    %txt = ['Frame ',num2str(c)];
+    %title(txt,'FontSize',16)
+    hold on
+    xlabel('${\chi}, {\lambda}$ and $\psi$','FontSize',16,'Interpreter','latex')
+    subplot(2,2,4)
+    %txt = ['Frame ',num2str(c)];
+    %title(txt,'FontSize',16)
+    hold on
+    xlabel('${S}$ and $\psi_S$','FontSize',16,'Interpreter','latex')
+    subplot(2,2,3)
+    %txt = ['Frame ',num2str(c)];
+    %title(txt,'FontSize',16)
+    hold on
+    xlabel('${C}_n,{C}_r$ and $\psi_C$','FontSize',16,'Interpreter','latex')
+    
+     subplot(2,2,1)
+     hold on
     txt = ['Frame ',num2str(c)];
-    title(txt,'FontSize',16)
-    hold on
-    xlabel('C_n, E_r and C_r','FontSize',16)
-    hold on
-    subplot(1,2,1)
-    txt = ['Frame ',num2str(c)];
-    title(txt,'FontSize',16)
-    hold on
-    xlabel('E_n, Edge, \lambda and \psi','FontSize',16)
-    set(gcf,'Units','Inches');
+    text(900,600,txt,'FontSize',16)
+  %  set(gca,'OuterPosition',[0 0.15 0.31 0.7]);
+     subplot(2,2,2)
+     hold on
+   %  set(gca,'OuterPosition',[0.35 0.15 0.29 0.7]);
+     subplot(2,2,3)
+     hold on
+    % set(gca,'OuterPosition',[0.7 0.15 0.31 0.7]);
+     
+    set(gcf,'Units','Inches','renderer','Painters');  
+   % set(gcf,'Units','Inches');
     pos = get(gcf,'Position');
-    set(gcf,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 
     %---------- Save Plot
-%   fig_filename = ['./results/fig', num2str(c),'.fig'];
-%   saveas(gca, fig_filename);
+     set(gcf, 'Position',  [100, 100, 1920, 1080])
+         set(gcf,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(2)*3.3, pos(3)*1.3])
+
+    fig_filename = ['./results/fig', num2str(c),'.pdf'];
+    saveas(gca, fig_filename);
     % %--------------------
 
+     
     toc
 end
+
+
+
 
 clear figure

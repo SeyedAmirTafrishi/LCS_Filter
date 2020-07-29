@@ -33,19 +33,21 @@ else
             beta = En(e,5);
             R = (((En(e,1)-ICY)^2) + (En(e,2)-ICX)^2)^(0.5); %The R
             x_0 = R;
-            x_1 = (En(e,6)+Vv)/2; % CHanged! :D
+            x_1 = abs(En(e,6)+Vv)/2; % CHanged! :D
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*beta) + (En(e,1)-ICY); %estimation of En x
-            NEn(1,2) = (Y1(end,1)-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
+            NEn(1,1) = -(ceil((Y1(end,1)))-R)*sin((pi/180)*beta) + (En(e,1)-ICY); %estimation of En x ceil
+            NEn(1,2) = (ceil((Y1(end,1)))-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
             hold on
-            subplot(1,2,1)
-            plot(NEn(1,2) + ICX, NEn(1,1) + ICY, 'ys')
+            subplot(2,2,2)
+            plot(NEn(1,2) + ICX, NEn(1,1) + ICY, 'ys','LineWidth' , 2)
             %hold on
             %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
             NVe = Y1(end,2); % Estimated edge velocity
             m = tan((pi/180)*(beta + 90)); % Slope of given angle of En respect to O frame
             deltaT = sqrt(deltay^2 + deltaz^2);
             z = 1; % loop search of suitable edge in Lambda
+            FlagleftE=0; %Flag for left out edge 
+            
             while z <= (numel(lambda(:,1))) % Lambda column counter
                 if ( ((((lambda(z,1)-En(e,1))^2) + ((lambda(z,2)-En(e,2))^2)) ^ 0.5) <= lambda(z,3) ) % this is Lambda Check in En ok?
                     i = 1; %Check the Edge to find related group
@@ -61,6 +63,7 @@ else
                                 i = numel(Edge(1,:)) + 1; % if there is a match, break the loop
                                 j = numel(Edge(:,1)) + 1;
                                 z = numel(lambda(:,1)) + 1;
+                                 FlagleftE=1;
                             end
                             j = j + 1;
                         end
@@ -69,9 +72,17 @@ else
                 end
                 z = z + 1;
             end
-            if (ME2==0 && ME1==0) % lonely not a single match? :\ ([issue] Maybe can be moved)
-                En(e,1) = NEn(1,1);
-                En(e,2) = NEn(1,2);
+            if FlagleftE==0 %NO MATCH E_n
+            En(e,:)=[];
+            if e<2
+             e=1;   
+            else
+             e=e-1;  
+            end
+            else
+            if (ME2==0 && ME1==0) % lonely not a single match?  ([issue] Maybe can be moved)
+                En(e,1) = NEn(1,1)+ICY; %This needed a frame center shift (added)
+                En(e,2) = NEn(1,2)+ICX;
                 En(e,4) = En(e,4) - 1;
             else % Main En and Lambda matching (Lambda 1 3 ...)
                 NBL1 = ( (abs(Vv-NVe) / det(corr(EdgeNorm(:,ME2:ME2+1)))) + En(e,3) ) / 2; % Estmated Boundary with using Eq. (4.1) (En and Edge Group)
@@ -137,31 +148,40 @@ else
                     end
                     j = j + 1;
                 end %While of Edge
+                   
+                
                 if (side == 1) %Velocity update of lambda3 and lambda2
                     En(e,6) = abs((En(e,6)+((((((NEn(1,1)+ICY) - Edgetrans(1,1))^2 + (NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(time_diff)))); % lambda 2
                 elseif (side == -1)
                     En(e,6) = abs((En(e,6)-((((((NEn(1,1)+ICY) - Edgetrans(1,1))^2 + (NEn(1,2)+ICX)-Edgetrans(1,2))^2)^(0.5))/(time_diff)))); % lambda 3
+                else % Failed matching the lambda edges
+%                      En(e,:)=[];
+%                     if e<2
+%                      e=1;   
+%                     else
+%                      e=e-1;  
+%                     end
                 end
                 %-------------Delta En L
-                if (d == -1)
-                    % pass
-                else
-                    if (NEn(1,1) == Inf) || (NEn(1,2) == Inf) || (En(e,1) == Inf) || (En(e,2) == Inf) || (En(e,6) == Inf)
-                        % pass
-                    else
-                        if (delta(2,1) == 0)
-                            delta(2,1) = (((NEn(1,1)+ICY-En(e,1))^2+(NEn(1,2)+ICX-En(e,2))^2)^(.5));
-                            delta(2,2) = abs(En(e,6)-Vv);
-                            delta(2,3) = abs(NBL-NBL1);
-                            delta(2,4) = delta(2,4)+1;
-                        else
-                            delta(2,4) = delta(2,4)+1;
-                            delta(2,1) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*((((NEn(1,1)+ICY)-En(e,1))^2 + ((NEn(1,2)+ICX)-En(e,2))^2)^(.5)));
-                            delta(2,2) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(En(e,6))-Vv));
-                            delta(2,3) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(NBL-NBL1)));
-                        end
-                    end
-                end
+%                 if (d == -1)
+%                     % pass
+%                 else
+%                     if (NEn(1,1) == Inf) || (NEn(1,2) == Inf) || (En(e,1) == Inf) || (En(e,2) == Inf) || (En(e,6) == Inf)
+%                         % pass
+%                     else
+%                         if (delta(2,1) == 0)
+%                             delta(2,1) = (((NEn(1,1)+ICY-En(e,1))^2+(NEn(1,2)+ICX-En(e,2))^2)^(.5));
+%                             delta(2,2) = abs(En(e,6)-Vv);
+%                             delta(2,3) = abs(NBL-NBL1);
+%                             delta(2,4) = delta(2,4)+1;
+%                         else
+%                             delta(2,4) = delta(2,4)+1;
+%                             delta(2,1) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*((((NEn(1,1)+ICY)-En(e,1))^2 + ((NEn(1,2)+ICX)-En(e,2))^2)^(.5)));
+%                             delta(2,2) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(En(e,6))-Vv));
+%                             delta(2,3) = ((delta(2,4)-1)/delta(2,4))*delta(2,1)+((1/delta(2,4))*(abs(NBL-NBL1)));
+%                         end
+%                     end
+%                 end
                 %-----------------Delta En L
                 %---------- REBEL EDGES!
                 MAINMATCH = 0;
@@ -258,7 +278,7 @@ else
                                             %MOHEM....!!!! far - near finder :\
                                             Er(numel(Er(:,1))+1,1) = Edge(j,ME2);
                                             Er(numel(Er(:,1)),2) = Edge(j,ME2+1);
-                                            Er(numel(Er(:,1)),4) = -1;%rebel size  L+1
+                                            Er(numel(Er(:,1)),4) = Trs+2;%rebel size  L+1
                                             angle = calculate_vector_angle(Edge(j,ME2+1), Edge(j,ME2), alpha(el1,2), alpha(el1,1)); %[MODIFIED]
                                             %---------------------------- DL calculator!
                                             mk1 = (alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
@@ -304,11 +324,7 @@ else
                             Edge(j,ME2) = 0;
                             Edge(j,ME2+1) = 0;
                         elseif (En(e,4) <= Trcr-1) %Good bye En
-                            En(e,:) = [];
-                            e = e - 1;
-                            if e < 1
-                                e = 1;
-                            end
+
                             %----    L construction :D
                             el1 = 1;
                             Elkiller = 0;
@@ -382,7 +398,7 @@ else
                                             %MOHEM....!!!! far - near finder :\
                                             Er(numel(Er(:,1))+1,1) = Edge(j,ME2);
                                             Er(numel(Er(:,1)),2) = Edge(j,ME2+1);
-                                            Er(numel(Er(:,1)),4) = -1;%rebel size  L+1
+                                            Er(numel(Er(:,1)),4) = Trs+2;%rebel size  L+1
                                             angle = calculate_vector_angle(Edge(j,ME2+1), Edge(j,ME2), alpha(el1,2), alpha(el1,1) );
                                             %---------------------------- DL calculator!
                                             mk1 = (alpha(el1,3)-alpha(el1,1))/-(alpha(el1,4)-alpha(el1,2));
@@ -429,6 +445,9 @@ else
                             Edge(j,ME2) = 0;
                             Edge(j,ME2+1) = 0;
                         end
+                    else %En left out?
+ 
+                     %xxxxxx   
                     end
                     j = j + 1;
                 end %While of Edge
@@ -444,10 +463,21 @@ else
                         end
                     j = j + 1;
                     end
+                             %% En(e,:) = []; %left out en negative update
+%                             e = e - 1;
+%                             if e < 1
+%                             e = 1;
+%                             end
+                            En(e,1) = NEn(1,1)+ICY;%estimation of En x
+                            En(e,2) = NEn(1,2)+ICX;%estimation of En y%No En trust change
+                            En(e,4) = En(e,4)-1; %disipate it by time
+                            En(e,3) = NBL;
                 end
+            end % PUT HERE
             end
             e = e + 1;
         end%end of Story for En
+ 
     end %? HERE?
     %alpha
 end
@@ -465,10 +495,10 @@ else
             betar = Er(r,5);
             R = (((Er(r,1)-Er(r,7))^2)+(Er(r,2)-Er(r,8))^2)^(0.5);%The R
             x_0 = R;
-            x_1 = En(r,6);%check velocity
+            x_1 = Er(r,6);%check velocity
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEr(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
-            NEr(1,2) = (Y1(end,1)-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
+            NEr(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
+            NEr(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
             NBL = BLS; % WILL CHANGE
             mr = (NEr(1,1)-Er(r,7))/-(Er(r,2)-Er(r,8));
             NVe = Y1(end,2);%Estimated edge velocity
@@ -482,7 +512,8 @@ else
                         MatchR = MatchR+1;
                         me = ((Edge(j,i)-Er(r,7))/-(Edge(j,i+1)-Er(r,8)));
                         angle = calculate_vector_angle( Edge(j,i+1), Edge(j,i), Er(r,8), Er(r,7) );
-                        %-------------Delta Er
+                        %-------------Delta Er (NOT INCLUDED IN THIS PAPER)
+                        % MAYBE REMOVE IT?
                         if (NEr(1,1)==Inf) || (NEr(1,2)==Inf) || (Er(r,1)==Inf) || (Er(r,2)==Inf) || (Er(r,6)==Inf)
                             % pass
                         else
@@ -506,14 +537,14 @@ else
                         Er(r,4) = Er(r,4)+1;
                         Er(r,5) = angle;
                         hold on
-                        subplot(1,2,2)
+                        subplot(2,2,2)
                         ploti = plot(NEr(1,2),NEr(1,1),'ms');
                         hold on
-                        subplot(1,2,2)
+                        subplot(2,2,2)
                         ploti = plot(Edge(j,i+1),Edge(j,i),'y*');
                         hold on
-                        subplot(1,2,2)
-                        ploti = plot(Er(r,2),Er(r,1),'rs');
+                        subplot(2,2,2)
+                        ploti = plot(Er(r,2),Er(r,1),'rs','LineWidth' , 2.5);
                     end
                     j = j + 1;
                 end
@@ -526,8 +557,8 @@ else
                     Er(r,2) = NEr(1,2);%DL - Error of Edge
                     Er(r,4) = Er(r,4)-1;
                     hold on
-                    subplot(1,2,2)
-                    ploti = plot(Er(r,2),Er(r,1),'rs');
+                    subplot(2,2,2)
+                    ploti = plot(Er(r,2),Er(r,1),'rs','LineWidth' , 2.5);
                     %elseif ( Er(e,4) < Trs ) && ( Er(e,4) >= Trcr)
                 elseif (Er(r,4) <= Trcr-1)
                     Er(r,:) = [];
@@ -604,8 +635,8 @@ else
         x_0 = R;
         x_1 = Cr(ci,6);
         [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
-        NCn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(beta))+(Cr(ci,1));%estimation of Cn x
-        NCn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(beta))+(Cr(ci,2));%estimation of Cn y
+        NCn(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(beta))+(Cr(ci,1));%estimation of Cn x
+        NCn(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(beta))+(Cr(ci,2));%estimation of Cn y
 
         u = 1;
         if Er==0
@@ -659,25 +690,25 @@ else
                         else
                             Mangle = (mean(M(:,5)+M(:,3)));
                         end
-                        if ((Mangle-(BetaDev/5) < Cr(ci,5)) && (Mangle+(BetaDev/5) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-1000*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+1000*abs(Vv))%Proportion Match PIN and angular similarity and velocity alighnment &&
+                        if ((Mangle-(BetaDev/5) < Cr(ci,5)) && (Mangle+(BetaDev/5) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-100*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+100*abs(Vv))%Proportion Match PIN and angular similarity and velocity alighnment &&
                             %update C!
                             action = 1;
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
                             Cr(ci,2) = ((((Cr(ci,4)-Trcr)*(NCn(1,2)))+MX)/((Cr(ci,4)-Trcr)+1)); %Estimation of En, X direction
                             Cr(ci,4) = Cr(ci,4)+1; %Trust High
-                            Cr(ci,6) = Cr(ci,6)+mean(M(:,6));
+                            Cr(ci,6) = (Cr(ci,6)+mean(M(:,6)))/2;
                             u = (numel(TErM(:,1)))+1;
                             %%%----- Killer of Mother Er
                             TErM = TEr;
                             %%%
-                        elseif  ((Mangle-(BetaDev) < Cr(ci,5)) && (Mangle+(BetaDev) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-1000*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+1000*abs(Vv)) %Somehow Match
+                        elseif  ((Mangle-(BetaDev) < Cr(ci,5)) && (Mangle+(BetaDev) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-100*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+100*abs(Vv)) %Somehow Match
                             action = 1;
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
                             Cr(ci,2) = ((((Cr(ci,4)-Trcr)*(NCn(1,2)))+MX)/((Cr(ci,4)-Trcr)+1)); %Estimation of En, X direction
                             Cr(ci,3) = ((((Cr(ci,4)-Trcr)*(Cr(ci,3)))+MR)/((Cr(ci,4)-Trcr)+1));
                             Cr(ci,4) = Cr(ci,4)-1; %Trust Low
                             Cr(ci,5) = ((((Cr(ci,4)-Trcr)*(Cr(ci,5)))+mean(M(:,5)+M(:,3)))/((Cr(ci,4)-Trcr)+1));
-                            Cr(ci,6) = Cr(ci,6)+mean(M(:,6));
+                            Cr(ci,6) = (Cr(ci,6)+mean(M(:,6)))/2;
                             Cr(ci,7) = OY;
                             Cr(ci,8) = OX;
                             u = (numel(TErM(:,1)))+1;
@@ -748,7 +779,7 @@ else
             Cr(numel(Cr(:,1))+1,1) = MY;
             Cr(numel(Cr(:,1)),2) = MX; %Estimation of En, X direction
             Cr(numel(Cr(:,1)),3) = MR;
-            Cr(numel(Cr(:,1)),4) = round((Trcr+Trs)/2); %Trust Low
+            Cr(numel(Cr(:,1)),4) =Trs+2; %Trust Low
             angleC = 0;
             mC = (MY-OY)/-(MX-OX);
             angleC = calculate_vector_angle( MX, MY, OX, OY );
@@ -782,8 +813,8 @@ else
         x_0 = R;
         x_1 = C(ci,6);
         [T1, Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated C the 4 space is nutrilized to one since we want just vel
-        NCn(1,1) = -(Y1(end,1)-R)*sin((pi/180)*(beta))+(C(ci,1)); %estimation of Cn x
-        NCn(1,2) = (Y1(end,1)-R)*cos((pi/180)*(beta))+(C(ci,2)); %estimation of Cn y
+        NCn(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(beta))+(C(ci,1)); %estimation of Cn x
+        NCn(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(beta))+(C(ci,2)); %estimation of Cn y
 
         u = 1;
         if En == 0
@@ -828,7 +859,7 @@ else
                             C(ci,1) = ((((C(ci,4)-Trcr)*(NCn(1,1)))+MY)/((C(ci,4)-Trcr)+1));
                             C(ci,2) = ((((C(ci,4)-Trcr)*(NCn(1,2)))+MX)/((C(ci,4)-Trcr)+1)); %Estimation of En, X direction
                             C(ci,4) = C(ci,4)+1; %Trust High
-                            C(ci,6) = C(ci,6)+mean(M(:,6));
+                            C(ci,6) = (C(ci,6)+mean(M(:,6)))/2;
                             u = (numel(TEnM(:,1)))+1;
                             %%%----- Killer of Mother Er
                             TEnM = TEn;
@@ -839,7 +870,7 @@ else
                             C(ci,3) = ((((C(ci,4)-Trcr)*(C(ci,3)))+MR)/((C(ci,4)-Trcr)+1));
                             C(ci,4) = C(ci,4)-1; %Trust Low
                             C(ci,5) = ((((C(ci,4)-Trcr)*(C(ci,5)))+mean(M(:,5)+M(:,3)))/((C(ci,4)-Trcr)+1));
-                            C(ci,6) = C(ci,6)+mean(M(:,6));
+                            C(ci,6) = (C(ci,6)+mean(M(:,6)))/2;
                             u = (numel(TEnM(:,1)))+1;
                             %%%----- The TEr that lost edges which grouped is placed to mother
                             %%%TErM
@@ -924,7 +955,7 @@ else
     while u <= (numel(C(:,1)))
         L1 = 0;
         L2 = 0;
-        if C(u,4) > Trmax
+        if C(u,4) >= Trmax
             C(u,4) = Trmax-2;
             psi(numel(psi(:,1))+1,1) = C(u,1);
             psi(numel(psi(:,1)),2) = C(u,2);
