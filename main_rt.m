@@ -74,21 +74,21 @@ while(1)
     imshow(im / max(im(:)));
     plot(c9(:,1),c9(:,2),'r.'); % edges
 
-   subplot(2,2,2)
+    subplot(2,2,2)
     hold on
     imshow(im / max(im(:)));
-    
+
     subplot(2,2,3)
     hold on
     imshow(im / max(im(:)));
-    
-        subplot(2,2,4)
+
+    subplot(2,2,4)
     hold on
     imshow(im / max(im(:)));
-    
-    
+
+
     c9 = [c9(:,2),c9(:,1)];     % swap x and y columns
- 
+
     Edge = c9;
 
     %%
@@ -103,15 +103,15 @@ while(1)
 %     Vv = Vv(end,1);
 %     deltay = abs(180-abs(o(end,1))) + 2;
 %     deltaz = abs(o(end,3)) + 2;
-Av = 0.0005;
-Vv = .03;
-deltay = 12;
-deltaz = 12;
+    Av = 0.0005;
+    Vv = .03;
+    deltay = 12;
+    deltaz = 12;
 
-     [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
-     [S, psi] = Square(S, C, Cr, delta, Vv, Dv, psi);
+    [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
+    [S, psi] = Square(S, C, Cr, delta, Vv, Dv, psi);
     %delta
-       hold on
+    hold on
     subplot(2,2,2)
     ploti = plot(En(:,2),En(:,1),'bs');
     xlim([1 640])
@@ -152,29 +152,28 @@ deltaz = 12;
         for i = 1:1:(numel(S(:,1)))
             subplot(2,2,4)
             hold on
-    TempYPositive= S(i,1)+S(i,3); % 
-    TempYNegaitive=S(i,1)-S(i,3); %  
-    TempXPositive=S(i,2)+S(i,4); % 
-    TempXNegaitive=S(i,2)-S(i,4); %    
-    %plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)  
+    TempYPositive= S(i,1)+S(i,3); %
+    TempYNegaitive=S(i,1)-S(i,3); %
+    TempXPositive=S(i,2)+S(i,4); %
+    TempXNegaitive=S(i,2)-S(i,4); %
+    %plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
     plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'m','LineWidth' , 2)
     hold on
     plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'m','LineWidth' , 2)
     plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'m','LineWidth' , 2)
-    plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'m','LineWidth' , 2)  
+    plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'m','LineWidth' , 2)
     hold on
             %ploti = plot(xunit, yunit,'r');%Plot the boys :v
             xlim([1 SCREEN_X])
             ylim([1 SCREEN_Y])
         end
-       end 
+       end
     drawnow
-    
-       
-       
+
+
     hold on
     subplot(2,2,2)
- 
+
     hold on
     xlabel('${E}_n, {E}_r$, $\tilde{E}_n$ and $\tilde{E}_r$','FontSize',16,'Interpreter','latex')
     hold on
@@ -193,17 +192,16 @@ deltaz = 12;
     %title(txt,'FontSize',16)
     hold on
     xlabel('${C}_n,{C}_r, \psi_C$','FontSize',16,'Interpreter','latex')
-    
-
 
     clear figure
     delta = [0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0];
 end % end of while: dont touch while !!!
+
 %----------
 clear(cam)
 
 
-% 
+%
 %     hold on
 %     subplot(1,2,1)
 %     plot(En(:,2),En(:,1),'bs')
