@@ -38,17 +38,17 @@ Trs   = 3;
 Trcr  = 2;
 Trmax = 5;
 
-TrsSq=4;
+TrsSq=5;
 TrcrSq=3;
-TrmaxSq=6;
+TrmaxSq=7;
 
 % kinematic variables (simulated)
 Dv = 0.1;
 Av = 0.0005;
-Vv = .031;
-deltay = 12;
-deltaz = 12;
-
+Vv = .03;
+deltay = 9;
+deltaz = 9;
+Fcount=1;
 %% main code begins
 drs = './example_pictures'; % in current directory
 dr1 = dir([drs '/*.jpg']);  % get all png files in the folder
@@ -74,7 +74,7 @@ for c = 1:length(f1)
     end
 
     %c9 = fast9(im, 30, 1);      % run fast9 edge detection
-    c9 = detectFASTFeatures(rgb2gray(i),'MinContrast',0.2);
+    c9 = detectFASTFeatures(rgb2gray(i),'MinContrast',0.18);
     c9 = c9.Location;
     %c9 = corner(rgb2gray(i), 'MinimumEigenvalue');
 
@@ -114,12 +114,22 @@ for c = 1:length(f1)
 %     S=[100 100 40 30 6 60 .1 200 160;112 134 20 20 4 30 .05 100 180];    
 %     end
     [S, psi] = Square(S, C, Cr, delta, Vv, Dv, psi);
-    psi
+    
     % Square() add square here
     Size(c,2) = numel(En(:,1));
     Size(c,3) = numel(Er(:,1));
     Size(c,4) = numel(C(:,1));
     Size(c,5) = numel(Cr(:,1));
+    Size(c,6) = numel(S(:,1));
+    if Fcount<6 % 5 Frame Sum
+     Ptemp(Fcount)= numel(c9(:,1));
+     Size(c,7) = sum(Ptemp);
+     Fcount=Fcount+1;
+    else
+     Fcount=1;
+     Ptemp(Fcount)= numel(c9(:,1));
+     Size(c,7) = sum(Ptemp);
+    end
     %***************************************************! Add step k
     %velocity to C and S and Subtract the vel. of k-1*!
     %delta
@@ -187,23 +197,23 @@ for c = 1:length(f1)
     subplot(2,2,2)
  
     hold on
-    xlabel('${E}_n, {E}_r$, $\tilde{E}_n$ and $\tilde{E}_r$','FontSize',16,'Interpreter','latex')
+    xlabel('$\bf{E}_n, \bf{E}_r$, $\bf{\tilde{E}}_n$ and $\bf{\tilde{E}}_r$','FontSize',16,'Interpreter','latex')
     hold on
     subplot(2,2,1)
     %txt = ['Frame ',num2str(c)];
     %title(txt,'FontSize',16)
     hold on
-    xlabel('${\chi}, {\lambda}$ and $\psi$','FontSize',16,'Interpreter','latex')
+    xlabel('\boldmath${\chi}$, \boldmath${\lambda}$ and \boldmath${\psi}$','FontSize',16,'Interpreter','latex')
     subplot(2,2,4)
     %txt = ['Frame ',num2str(c)];
     %title(txt,'FontSize',16)
     hold on
-    xlabel('${S}$ and $\psi_S$','FontSize',16,'Interpreter','latex')
+    xlabel('$\bf{S}$ and \boldmath${\psi}_S$','FontSize',16,'Interpreter','latex')
     subplot(2,2,3)
     %txt = ['Frame ',num2str(c)];
     %title(txt,'FontSize',16)
     hold on
-    xlabel('${C}_n,{C}_r$ and $\psi_C$','FontSize',16,'Interpreter','latex')
+    xlabel('$\bf{C}_n,\bf{C}_r$ and \boldmath${\psi}_C$','FontSize',16,'Interpreter','latex')
     
      subplot(2,2,1)
      hold on
@@ -225,7 +235,7 @@ for c = 1:length(f1)
      set(gcf, 'Position',  [100, 100, 1920, 1080])
          set(gcf,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(2)*3.3, pos(3)*1.3])
 
-    fig_filename = ['./results/fig', num2str(c),'.pdf'];
+    fig_filename = ['./results/fig', num2str(c),'.png'];
     saveas(gca, fig_filename);
     % %--------------------
 

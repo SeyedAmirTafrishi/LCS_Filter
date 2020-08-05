@@ -12,12 +12,12 @@ else
  Ctem = [C;Cr];   
 end
 u_m = 1;
-zetas=4;% Small region pixel accuracy
-e_v = .7; % Deviation for circle velocity,
-DeltaBeta = 20; % Deviation for beta angle
+zetas=25;% Small region pixel accuracy
+e_v = .1; % Deviation for circle velocity,
+DeltaBeta = 15; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
-Betaconsame = 20;  % Angle offset for case B when there is no 90+/- angle matches of couple circles
-PercntSqComp= 40; %Minimum Overlap percentage of two squares
+Betaconsame = 30;  % Angle offset for case B when there is no 90+/- angle matches of couple circles %Best 15-20
+PercntSqComp= 40; %Minimum Overlap percentage of two squares %Best 35-45
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
@@ -30,6 +30,11 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
     d_tem = ICY*2; %temprorary distance, large  (Must be the maximum pixel)
     Cmain = Ctem(u_m,:); %Main Circle C_A of our Loop
     Ctem(u_m,:) = []; % Remove the chosen circle
+      if u_m>1 %counter 
+       u_m=u_m-1; 
+      else
+       u_m=1;    
+      end
     CanswerA = []; %Case A Matrix
     CanswerB = []; %CAse B Matrix
     CtT = []; %Stupid matrix
@@ -60,7 +65,8 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
         Ctem(u_mn,5) = atan2(B,A)*(180/pi);
         %----- Angle refinment
         d_m = Ctem(u_mn,9); % Check !
-       
+
+        
         if ~isempty(CanswerA) || ~isempty(CanswerB) % if we have potential C_B from previous iterations (Case A and B of C_B)
             %% Calculate the whether D_m removes cooresponding C_B and add it back to loop for all previous Circles
             %The order, i change, update CanswerA/B and Ctem!!!% make it in line for easiness
@@ -195,10 +201,10 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
             elseif (((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
                     && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ...
                     && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))+Betaconsame+DeltaBeta) ...
-                    && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))+Betaconsame-DeltaBeta))) ||...%Find same velocity threshold and small angle offset
+                    && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))-Betaconsame-DeltaBeta))) ||...%Find same velocity threshold and small angle offset
                     (((Cmain(1,6) < Ctem(u_mn,6)+e_v) ... %CASE B
                     && (Cmain(1,6) > Ctem(u_mn,6)-e_v)) ...
-                    && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))-Betaconsame+DeltaBeta) ...
+                    && ((abs(Cmain(1,5)) < abs(Ctem(u_mn,5))+Betaconsame+DeltaBeta) ...
                     && (abs(Cmain(1,5)) > abs(Ctem(u_mn,5))-Betaconsame-DeltaBeta)))%Find same velocity threshold and small angle offset
                 if isempty(CanswerB)
                     CanswerB = Ctem(u_mn,:); %Update temporary Circle
@@ -295,16 +301,38 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
             FlagBReak = 0;
         end
     end %NOTE: Matrix Computation is possible for future work
-    
+
     % D_D = 0 distance of further (Maybe maximum value initiation)
     % Same while loop for Ct (1)
     % if condition (furthest distance) && (Angle and velocity) Match CASE A
     % WE have couple C(A) and C(B)
     % Apply Unified Circle to the two circles
+
 SA=[];
 SB=[];
     %% Construcst the Square from Collected Circles
-    if ~isempty(CanswerA) || ~isempty(CanswerB)
+    if ~isempty(CanswerA) && ~isempty(CanswerB) % We have both cases
+        
+     %xxxxxxxx   
+            TempYPositive = max(max(CanswerA(:,1)+CanswerA(:,3)),max(CanswerB(:,1)+CanswerB(:,3))); % Position of summed Circles
+            TempYNegaitive = min(min(CanswerA(:,1)-CanswerA(:,3)),min(CanswerB(:,1)-CanswerB(:,3))); %Y
+            TempXPositive = max(max(CanswerA(:,2)+CanswerA(:,3)),max(CanswerB(:,2)+CanswerB(:,3))); %Y
+            TempXNegaitive = min(min(CanswerA(:,2)-CanswerA(:,3)),min(CanswerB(:,2)-CanswerB(:,3))); %Y
+            Y_o = ((TempYPositive+TempYNegaitive)/2);% The new center of construsted square by sum of circles
+            X_o = ((TempXPositive+TempXNegaitive)/2);
+            a = abs(TempYPositive-TempYNegaitive)/2; %Y direction major
+            b = abs(TempXPositive-TempXNegaitive)/2; %X direction major
+            SA(1,1) = Y_o; % The location
+            SA(1,2) = X_o;
+            SA(1,3) = a;% R of grouped Circles Y dis
+            SA(1,5) = TrsSq;%Standard Trust factor for new co
+            SA(1,4) = b;% R of grouped circles X dis
+            SA(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean([mean(CanswerA(:,8)),mean(CanswerB(:,8))]),mean([mean(CanswerA(:,7)),mean(CanswerB(:,7))]));% beta angle of square
+            SA(1,7) = mean([mean(CanswerA(:,6)),mean(CanswerB(:,6))]);
+            SA(1,8) = mean([mean(CanswerA(:,7)),mean(CanswerB(:,7))]); % Center of Frame for moving Square
+            SA(1,9) = mean([mean(CanswerA(:,8)),mean(CanswerB(:,8))]); % Center of Frame for moving Square    
+            
+    elseif ~isempty(CanswerA) || ~isempty(CanswerB)
         if ~isempty(CanswerA) %Case A
             % Cv_Y = round(mean(CanswerA(:,1))); % Virtual Center of Y for Square
             % Cv_X = round(mean(CanswerA(:,2))); %Virtual Center of Y for Square
@@ -344,7 +372,7 @@ SB=[];
             SB(1,7) = mean(CanswerB(:,6));
             SB(1,8) = mean(CanswerB(:,7)); % Center of Frame for moving Square
             SB(1,9) = mean(CanswerB(:,8)); % Center of Frame for moving Square
-        end
+        end           
     else % Case Lonely
         %Lonely Square
         SB(1,1) = Cmain(1,1); % The location
@@ -578,6 +606,32 @@ SB=[];
     %%
     u_m = u_m + 1;%*Done
 end
+
+%% Left out Ctem (Circles)
+% ux=1;
+% Ctem
+% while  ux <= (numel(Ctem(:,1)))  
+% Sup((numel(Sup(:,1)))+1,1)=Ctem(ux,1);
+% Sup((numel(Sup(:,1))),2)=Ctem(ux,2);
+% Sup((numel(Sup(:,1))),3)=Ctem(ux,3);
+% Sup((numel(Sup(:,1))),4)=Ctem(ux,3);
+% Sup((numel(Sup(:,1))),5)=TrsSq;
+% Sup((numel(Sup(:,1))),6)=Ctem(ux,5);
+% Sup((numel(Sup(:,1))),7)=Ctem(ux,6);
+% Sup((numel(Sup(:,1))),8)=Ctem(ux,7);
+% Sup((numel(Sup(:,1))),9)=Ctem(ux,8);
+% % Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SB(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
+% % Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SB(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
+% % Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SB(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
+% % Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SB(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
+% % Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
+% % Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SB(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
+% % Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SB(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
+% % Sup(countSup,8)=Stem(u_sm,8);
+% % Sup(countSup,9)=Stem(u_sm,9); 
+% ux=ux+1;   
+% end
+%%
 if S==0
 S=Sup;
 else
@@ -611,6 +665,7 @@ else
             S(u,:) = [];
             u = u - 1;
             L1 = 1;
+ 
         end
         if (L1==1) && (u==0)
             u = u + 1;
