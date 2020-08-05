@@ -7,9 +7,9 @@ Stem = [S zeros(numel(S(:,1)),1)];
 Sup=[];
 countSup=1;
 if Cr==0
- Ctem=C;   
+    Ctem=C;
 else
- Ctem = [C;Cr];   
+    Ctem = [C;Cr];
 end
 u_m = 1;
 zetas=25;% Small region pixel accuracy
@@ -30,11 +30,11 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
     d_tem = ICY*2; %temprorary distance, large  (Must be the maximum pixel)
     Cmain = Ctem(u_m,:); %Main Circle C_A of our Loop
     Ctem(u_m,:) = []; % Remove the chosen circle
-      if u_m>1 %counter 
-       u_m=u_m-1; 
-      else
-       u_m=1;    
-      end
+    if u_m>1 %counter
+        u_m=u_m-1;
+    else
+        u_m=1;
+    end
     CanswerA = []; %Case A Matrix
     CanswerB = []; %CAse B Matrix
     CtT = []; %Stupid matrix
@@ -49,7 +49,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
         Ctem(u_mn,9) = d_m;
         u_mn = u_mn + 1;
     end
-    
+
     % Now we have the circle matrix argumented with a distance (as the final column)
     % let's sort it:
     Ctem  = sortrows(Ctem, 9, 'descend'); %from far to near
@@ -66,21 +66,22 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
         %----- Angle refinment
         d_m = Ctem(u_mn,9); % Check !
 
-        
+
         if ~isempty(CanswerA) || ~isempty(CanswerB) % if we have potential C_B from previous iterations (Case A and B of C_B)
             %% Calculate the whether D_m removes cooresponding C_B and add it back to loop for all previous Circles
             %The order, i change, update CanswerA/B and Ctem!!!% make it in line for easiness
             if (d_m<d_tem && (( Ctem(u_mn,6) < Cmain(1,6))))
-                
                 if ~isempty(CanswerA)
                     u_dm=1;
                     while u_dm<=(numel(CanswerA(:,1))) %X_B Y_B
                         x0 = [0 0 0 0];
                         xd_1=0;
                         yd_2=0;
-                        if Ctem(u_mn,3)<.3
-                        Ctem(u_mn,3)=2; 
+
+                        if Ctem(u_mn,3) < .3
+                            Ctem(u_mn,3)=2;
                         end
+
                         REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)];%Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
                         f = @(x) FindTangenfordm(x,REF); % function of dummy variable y
                         %fsolve doesnt give multiple solutons
@@ -97,6 +98,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         D_AB=sqrt((Cmain(1,2)-CanswerA(u_dm,2))^2+(Cmain(1,1)-CanswerA(u_dm,1))^2);
                         D_Bd=sqrt((CanswerA(u_dm,2)-Ctem(u_mn,2))^2+(CanswerA(u_dm,1)-Ctem(u_mn,1))^2);
                         Ahh=acos((D_AB^2+D_Ad^2-D_Bd^2)/(2*D_AB*D_Ad));
+
                         if (abs(AngleCtangL)>=abs(Ahh) || abs(AngleCtangU)>=abs(Ahh))  %+/- Deltae can be added due to pixal relations
                             d_tem=d_tem-D_Bd; %decrease the distance
                             Ctem = cat(1,CanswerA(u_dm,:),Ctem); %add CanswerA to begining of Ctem all arrays! we add it to begining because they are farthest circles and we dont need to re-do searching by u_nm of main loop
@@ -104,20 +106,20 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                             ushift_mn=ushift_mn+1;
                             FlagBReak=1;
                         end
-                        
+
                         u_dm=u_dm+1;
                     end
                 end
-                
-                
+
+
                 if ~isempty(CanswerB)
                     u_dm=1;
-                    while u_dm<=(numel(CanswerB(:,1))) %X_B Y_B
+                    while u_dm <= (numel(CanswerB(:,1))) %X_B Y_B
                         x0 = [0 0 0 0];
                         xd_1=0;
                         yd_2=0;
                         if Ctem(u_mn,3)<.3 %For edge=circle with zero radius
-                        Ctem(u_mn,3)=2; 
+                            Ctem(u_mn,3)=2;
                         end
                         REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)]; %Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
                         f = @(x) FindTangenfordm(x,REF);  % function of dummy variable y
@@ -129,11 +131,11 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
 %                         options.OptimalityTolerance = 1e-4;
 %                         options.StepTolerance = 1e-4;
                         opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
-                         F = fsolve(f,x0,opts);
-                        %F = fsolve(f,x0,options); 
-                        Point1(1,1) = real(xd_1(1,1)); 
-                        Point2(1,1) = real(F(1,1));  
-                        Point1(2,1) = real(F(1,2)); 
+                        F = fsolve(f,x0,opts);
+                        %F = fsolve(f,x0,options);
+                        Point1(1,1) = real(xd_1(1,1));
+                        Point2(1,1) = real(F(1,1));
+                        Point1(2,1) = real(F(1,2));
                         Point2(2,1) = real(yd_2(1,1));
                         AngleCtangL=asin(sqrt((Point2(1,1)-Ctem(u_mn,1))^2+(Point1(1,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2)); %Due to circular form lower and uper has same angle but you can use only one
                         AngleCtangU=asin(sqrt((Point2(2,1)-Ctem(u_mn,1))^2+(Point1(2,1)-Ctem(u_mn,2))^2)/sqrt((Ctem(u_mn,1)-Cmain(1,1))^2+(Ctem(u_mn,2)-Cmain(1,2))^2));
@@ -148,10 +150,10 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                             ushift_mn=ushift_mn+1;
                             FlagBReak=1;
                         end
-                        
+
                         u_dm=u_dm+1;
                     end
-                    
+
                 end
                 % if d_m<d_tem && (( Ctem(u_mn,6) < Cmain(1,6))) %Case for exceptional circles with low velocity between two potentially matched circles
                 % % Failiur OBject exists with in C_A and C_B
@@ -186,9 +188,9 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     d_tem = d_m;% update distance
                     Ctem(u_mn,:) = [];
                     if u_mn>1
-                    u_mn=u_mn-1; 
+                    u_mn=u_mn-1;
                     else
-                    u_mn=1;    
+                    u_mn=1;
                     end
                 else %Canswer is not empty
                     CtT = Ctem(u_mn,:); %Goes to temporary 0
@@ -211,9 +213,9 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     d_tem = d_m;% update distance
                     Ctem(u_mn,:) = [];
                     if u_mn>1
-                    u_mn=u_mn-1; 
+                    u_mn=u_mn-1;
                     else
-                    u_mn=1;    
+                    u_mn=1;
                     end
                 else %Canswer is not empty
                     CtT = Ctem(u_mn,:); %Goes to temporary 0
@@ -248,9 +250,9 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                             CtT = Ctem(u_mn,:); %Goes to temporary 0
                             Ctem(u_mn,:) = [];
                             if u_mn>1
-                            u_mn=u_mn-1; 
+                                u_mn=u_mn-1;
                             else
-                            u_mn=1;    
+                                u_mn=1;
                             end
                             CanswerA = cat(1,CanswerA,CtT);
                             %CanswerA(numel(CanswerA(:,1))+1,:) = CtT; %works
@@ -259,7 +261,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                 end
                 if ~isempty(CanswerB) % The Minor circles for correspondin C_B CASE B
                     MeanYO=(mean(CanswerB(:,7))+Cmain(1,7))/2;
-                    MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2; 
+                    MeanXO=(mean(CanswerB(:,8))+Cmain(1,8))/2;
              %       u_mn
                 %    MeanYO
               %      Ctem
@@ -285,9 +287,9 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                             CtT = Ctem(u_mn,:); %Goes to temporary 0
                             Ctem(u_mn,:) = [];
                             if u_mn>1
-                            u_mn=u_mn-1; 
+                                u_mn=u_mn-1;
                             else
-                            u_mn=1;    
+                                u_mn=1;
                             end
                             CanswerB = cat(1,CanswerB,CtT);
                             %CanswerB(numel(CanswerB(:,1))+1,:) = CtT; %works
@@ -312,8 +314,8 @@ SA=[];
 SB=[];
     %% Construcst the Square from Collected Circles
     if ~isempty(CanswerA) && ~isempty(CanswerB) % We have both cases
-        
-     %xxxxxxxx   
+
+     %xxxxxxxx
             TempYPositive = max(max(CanswerA(:,1)+CanswerA(:,3)),max(CanswerB(:,1)+CanswerB(:,3))); % Position of summed Circles
             TempYNegaitive = min(min(CanswerA(:,1)-CanswerA(:,3)),min(CanswerB(:,1)-CanswerB(:,3))); %Y
             TempXPositive = max(max(CanswerA(:,2)+CanswerA(:,3)),max(CanswerB(:,2)+CanswerB(:,3))); %Y
@@ -330,8 +332,8 @@ SB=[];
             SA(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean([mean(CanswerA(:,8)),mean(CanswerB(:,8))]),mean([mean(CanswerA(:,7)),mean(CanswerB(:,7))]));% beta angle of square
             SA(1,7) = mean([mean(CanswerA(:,6)),mean(CanswerB(:,6))]);
             SA(1,8) = mean([mean(CanswerA(:,7)),mean(CanswerB(:,7))]); % Center of Frame for moving Square
-            SA(1,9) = mean([mean(CanswerA(:,8)),mean(CanswerB(:,8))]); % Center of Frame for moving Square    
-            
+            SA(1,9) = mean([mean(CanswerA(:,8)),mean(CanswerB(:,8))]); % Center of Frame for moving Square
+
     elseif ~isempty(CanswerA) || ~isempty(CanswerB)
         if ~isempty(CanswerA) %Case A
             % Cv_Y = round(mean(CanswerA(:,1))); % Virtual Center of Y for Square
@@ -372,7 +374,7 @@ SB=[];
             SB(1,7) = mean(CanswerB(:,6));
             SB(1,8) = mean(CanswerB(:,7)); % Center of Frame for moving Square
             SB(1,9) = mean(CanswerB(:,8)); % Center of Frame for moving Square
-        end           
+        end
     else % Case Lonely
         %Lonely Square
         SB(1,1) = Cmain(1,1); % The location
@@ -385,7 +387,7 @@ SB=[];
         SB(1,8) = Cmain(1,7); % Center of Frame for moving Square
         SB(1,9) = Cmain(1,8); % Center of Frame for moving Square
     end
-    
+
     %%    Create Square S(k) and estimated with any matched S'(k-1)
   if S==0
       if ~isempty(SA)
@@ -453,18 +455,18 @@ SB=[];
             R_al = sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
             r_eE = sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
           if isnan(R_al)
-          Stem(u_sm,:)=[];   
+          Stem(u_sm,:)=[];
             if u_sm>1
-             u_sm=u_sm-1; 
+                u_sm=u_sm-1;
             else
-            u_sm=1;    
-            end    
+                u_sm=1;
+            end
           else
             if a_1==0 && b_1==0 % Very small edges that transformed to circles and then to square
-            a_1=2;    
-            b_1=2;   
+                a_1=2;
+                b_1=2;
             end
-            
+
             if R_al > r_eE+zetas % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
             elseif R_al <= r_eE+zetas % Case the (X_o,Y_o) is in of the ellipse
@@ -475,38 +477,38 @@ SB=[];
                 X_ef1 = NSn(1,2);
             end
             %% Overlap computation
-            
-            
-            [flagG, overlapPrec] = Square_Intersects(X_ef1,Y_ef1, A_n,B_n, SA(1,2),SA(1,1),SA(1,3),SA(1,4));%First is estimated square, second is 
+
+
+            [flagG, overlapPrec] = Square_Intersects(X_ef1,Y_ef1, A_n,B_n, SA(1,2),SA(1,1),SA(1,3),SA(1,4));%First is estimated square, second is
             %  obtained square by combined circles
-            if flagG==1 
-            if ((SA(1,7) < Stem(u_sm,7)+e_v) ...  % Comapring the Angle and Velocity 
-                    && (SA(1,7) > Stem(u_sm,7)-e_v)) ...
-                    && ((abs(SA(1,6)) < abs(Stem(u_sm,6))+DeltaBeta) ...
-                    && (abs(SA(1,6)) > abs(Stem(u_sm,6))-DeltaBeta)) ...
-                    && (overlapPrec> PercntSqComp)
-              
-                 Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SA(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
-                 Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SA(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
-                 Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SA(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
-                 Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SA(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
-                 Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
-                 Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SA(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
-                 Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SA(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
-                 Sup(countSup,8)=Stem(u_sm,8);
-                 Sup(countSup,9)=Stem(u_sm,9);
-                 Stem(u_sm,:)=[];
-                 FlagSA=1;
-                countSup=countSup+1;
-                %Update the final Square and put it to the Sready and remove it from Stemp
-                u_sm = (numel(Stem(:,1))); %break the looop! :D
-                %T+1
-            end
+            if flagG==1
+                if ((SA(1,7) < Stem(u_sm,7)+e_v) ...  % Comapring the Angle and Velocity
+                        && (SA(1,7) > Stem(u_sm,7)-e_v)) ...
+                        && ((abs(SA(1,6)) < abs(Stem(u_sm,6))+DeltaBeta) ...
+                        && (abs(SA(1,6)) > abs(Stem(u_sm,6))-DeltaBeta)) ...
+                        && (overlapPrec> PercntSqComp)
+
+                     Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SA(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SA(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
+                     Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SA(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SA(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
+                     Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SA(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SA(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
+                     Sup(countSup,8)=Stem(u_sm,8);
+                     Sup(countSup,9)=Stem(u_sm,9);
+                     Stem(u_sm,:)=[];
+                     FlagSA=1;
+                    countSup=countSup+1;
+                    %Update the final Square and put it to the Sready and remove it from Stemp
+                    u_sm = (numel(Stem(:,1))); %break the looop! :D
+                    %T+1
+                end
             end
           end
             u_sm = u_sm+1;
         end
-        if FlagSA == 0 % No match with the Squares of Stem Then put it as new Square 
+        if FlagSA == 0 % No match with the Squares of Stem Then put it as new Square
         Sup(countSup,:)= SA; % The location
         countSup=countSup+1;
         end
@@ -544,18 +546,18 @@ SB=[];
             R_al = sqrt((X_o-X_e)^2+(Y_o-Y_e)^2);
             r_eE = sqrt((a_1^2*(cos(t_al*(pi/180)))^2)+(b_1^2*(sin(t_al*(pi/180)))^2));
           if isnan(R_al)
-          Stem(u_sm,:)=[];   
+            Stem(u_sm,:)=[];
             if u_sm>1
-             u_sm=u_sm-1; 
+                u_sm=u_sm-1;
             else
-            u_sm=1;    
-            end    
+                u_sm=1;
+            end
           else
-            
-            
+
+
             if a_1==0 && b_1==0 % Very small edges that transformed to circles and then to square
-            a_1=2;    
-            b_1=2;   
+                a_1=2;
+                b_1=2;
             end
             if R_al > r_eE+zetas % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
@@ -567,39 +569,39 @@ SB=[];
                 X_ef1 = NSn(1,2);
             end
             %% Overlap computation
-            [flagG, overlapPrec] = Square_Intersects(X_ef1,Y_ef1, A_n,B_n, SB(1,2),SB(1,1),SB(1,3),SB(1,4));%First is estimated square, second is 
+            [flagG, overlapPrec] = Square_Intersects(X_ef1,Y_ef1, A_n,B_n, SB(1,2),SB(1,1),SB(1,3),SB(1,4));%First is estimated square, second is
             %  obtained square by combined circles
-            if flagG==1 
-            if ((SB(1,7) < Stem(u_sm,7)+e_v) ...  % Comapring the Angle and Velocity 
-                    && (SB(1,7) > Stem(u_sm,7)-e_v)) ...
-                    && ((abs(SB(1,6)) < abs(Stem(u_sm,6))+DeltaBeta) ...
-                    && (abs(SB(1,6)) > abs(Stem(u_sm,6))-DeltaBeta)) ...
-                    && (overlapPrec> PercntSqComp)
-              
-                 Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SB(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
-                 Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SB(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
-                 Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SB(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
-                 Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SB(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
-                 Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
-                 Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SB(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
-                 Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SB(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
-                 Sup(countSup,8)=Stem(u_sm,8);
-                 Sup(countSup,9)=Stem(u_sm,9);
-                 Stem(u_sm,:)=[];
-                countSup=countSup+1;
-                 FlagSB=1;
-                %Update the final Square and put it to the Sready and remove it from Stemp
-                u_sm = (numel(Stem(:,1))); %break the looop! :D
-                %T+1
-            end
+            if flagG==1
+                if ((SB(1,7) < Stem(u_sm,7)+e_v) ...  % Comapring the Angle and Velocity
+                        && (SB(1,7) > Stem(u_sm,7)-e_v)) ...
+                        && ((abs(SB(1,6)) < abs(Stem(u_sm,6))+DeltaBeta) ...
+                        && (abs(SB(1,6)) > abs(Stem(u_sm,6))-DeltaBeta)) ...
+                        && (overlapPrec> PercntSqComp)
+
+                     Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SB(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SB(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
+                     Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SB(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SB(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
+                     Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SB(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SB(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
+                     Sup(countSup,8)=Stem(u_sm,8);
+                     Sup(countSup,9)=Stem(u_sm,9);
+                     Stem(u_sm,:)=[];
+                    countSup=countSup+1;
+                     FlagSB=1;
+                    %Update the final Square and put it to the Sready and remove it from Stemp
+                    u_sm = (numel(Stem(:,1))); %break the looop! :D
+                    %T+1
+                end
             end
           end
             u_sm = u_sm+1;
-            
+
         end
-        if FlagSB == 0 % No match with the Squares of Stem Then put it as new Square 
-        Sup(countSup,:)= SB; % The location
-        countSup=countSup+1;
+        if FlagSB == 0 % No match with the Squares of Stem Then put it as new Square
+            Sup(countSup,:)= SB; % The location
+            countSup=countSup+1;
         end
     end
   end
@@ -610,7 +612,7 @@ end
 %% Left out Ctem (Circles)
 % ux=1;
 % Ctem
-% while  ux <= (numel(Ctem(:,1)))  
+% while  ux <= (numel(Ctem(:,1)))
 % Sup((numel(Sup(:,1)))+1,1)=Ctem(ux,1);
 % Sup((numel(Sup(:,1))),2)=Ctem(ux,2);
 % Sup((numel(Sup(:,1))),3)=Ctem(ux,3);
@@ -628,21 +630,21 @@ end
 % % Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SB(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
 % % Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SB(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
 % % Sup(countSup,8)=Stem(u_sm,8);
-% % Sup(countSup,9)=Stem(u_sm,9); 
-% ux=ux+1;   
+% % Sup(countSup,9)=Stem(u_sm,9);
+% ux=ux+1;
 % end
 %%
 if S==0
-S=Sup;
+    S=Sup;
 else
-Stem(:,5)=Stem(:,5)-1;
-Stem(:,10)=[];
-Sup = cat(1,Stem,Sup); 
-S=Sup;
+    Stem(:,5)=Stem(:,5)-1;
+    Stem(:,10)=[];
+    Sup = cat(1,Stem,Sup);
+    S=Sup;
 end
 %After checking all the circles in Cmain, The remaining squares in Stemp
 %are estimated with T-1 if it is less than the critical trust remove them.
-%Psi and trust cleaner! :D 
+%Psi and trust cleaner! :D
 u = 1;
 if S==0
     S = 0;
@@ -655,7 +657,7 @@ else
         if S(u,5) >= TrmaxSq
             S(u,5) = TrmaxSq-2;
             psi(numel(psi(:,1))+1,1) = S(u,1);
-            psi(numel(psi(:,1)),2) = S(u,2);           
+            psi(numel(psi(:,1)),2) = S(u,2);
             psi(numel(psi(:,1)),4) = 2; %--- 2 for square 1 circle, 4 to 5th (because a and b)
             psi(numel(psi(:,1)),3) = 0;
             psi(numel(psi(:,1)),5) = S(u,3); %A
@@ -665,7 +667,7 @@ else
             S(u,:) = [];
             u = u - 1;
             L1 = 1;
- 
+
         end
         if (L1==1) && (u==0)
             u = u + 1;
@@ -681,7 +683,7 @@ else
             u = u + 1;
         end
         if S(u,5) > TrcrSq
-%            lambda(numel(lambda(:,1))+1,1) = S(u,1); % change all the psi parts to 5 array square and circle! 
+%            lambda(numel(lambda(:,1))+1,1) = S(u,1); % change all the psi parts to 5 array square and circle!
 %            lambda(numel(lambda(:,1)),2) = S(u,2);
 %            lambda(numel(lambda(:,1)),3) = S(u,3);
         end
