@@ -31,7 +31,7 @@ else
             yunit = (psi(i,3) + CB) * sin(th) + psi(i,1);
             hold on
             subplot(2,2,3)
-            ploti = plot(xunit, yunit,'y','LineWidth' , 2); % Plot the boys :v
+            ploti = plot(xunit, yunit,'y','LineWidth' , 4); % Plot the boys :v
             xlim([1 640])
             ylim([1 480])  
          elseif psi(i,4) == 2  %WILL BE FILLED for SQUARE
@@ -52,10 +52,12 @@ else
             end  
             hold on
             subplot(2,2,4)
-            plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'y','LineWidth' , 2)
-            plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'y','LineWidth' , 2)
-            plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'y','LineWidth' , 2);
-            plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'y','LineWidth' , 2); 
+            plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'y','LineWidth' , 4)
+            plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'y','LineWidth' , 4)
+            plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'y','LineWidth' , 4);
+            plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'y','LineWidth' , 4);
+            hold on
+
             xlim([1 640])
             ylim([1 480])      
         end

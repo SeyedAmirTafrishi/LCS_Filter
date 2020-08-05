@@ -104,7 +104,7 @@ while(1)
 %     deltay = abs(180-abs(o(end,1))) + 2;
 %     deltaz = abs(o(end,3)) + 2;
 Av = 0.0005;
-Vv = .031;
+Vv = .03;
 deltay = 12;
 deltaz = 12;
 
