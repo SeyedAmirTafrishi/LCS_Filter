@@ -32,15 +32,15 @@ Trcr = 2;
 Trmax = 5;
 delta = 0;
 Dv = .1;
-Trs   = 3;
-Trcr  = 2;
-Trmax = 5;
+Trs   = 3; %Circle Expert Trust
+Trcr  = 2; %Circle Expert Critical Trust
+Trmax = 5; % Circle Expert Maximum Trust
 
-TrsSq=4;
-TrcrSq=3;
-TrmaxSq=6;
-SCREEN_X = 640;
-SCREEN_Y = 480;
+TrsSq=4; %Square Expert Trust
+TrcrSq=3; %Square Expert Critical Trust
+TrmaxSq=6; % Square Expert Maximum Trust
+SCREEN_X = 640; %Image Dim.
+SCREEN_Y = 480; % Image Dim.
 
 global ICX ICY
 ICX = SCREEN_X / 2+eps;  %2
@@ -96,6 +96,10 @@ while(1)
     hold on
     Edge = Line(lambda,psi,Edge);
     frame = toc;
+    
+
+    %% IMU Sensor Data
+%-------Trail With IMU
 %     [a, t] = accellog(m);
 %     [o, t] = orientlog(m);
 %     Av = a(end,1) - a(end-10,1);
@@ -103,11 +107,43 @@ while(1)
 %     Vv = Vv(end,1);
 %     deltay = abs(180-abs(o(end,1))) + 2;
 %     deltaz = abs(o(end,3)) + 2;
-    Av = 0.0005;
-    Vv = .03;
-    deltay = 12;
-    deltaz = 12;
+% 
+%     wf = 1;
+%     wm = 1;
+%     quest = QUEST(fb, mb, fn, mn, wf, wm); % Quest Filter Observer (IMU)
+%     [Quest1, Quest2, Quest3] = ... %Angles
 
+%------ Trail without IMU
+    Av = 0.0005; % Accelertion in Direction of motion
+    Vv = .03; % Velocity in direction of motion
+    deltay = 9; % Calculated Angular error along y axis
+    deltaz = 9; % Calculated Angular error along z axis
+    
+        %% Kinematic Rotation of Location/Angles Parameters
+    %The locations, angles and origins are updated 
+    if En==0
+        
+    else
+DAngy=deltay; %angular differences
+DAngx=deltax;
+Rx=[1 0 0;0 cos(DAngx) -sin(DAngx);0 sin(DAngx) cos(DAngx)];
+Ry=[cos(DAngy) 0 sin(DAngy);0 1 0;-sin(DAngy) 0 cos(DAngy)];
+R=Ry*Rx;
+LEn=[En(:,1),En(:,2),zeros(numel(En(:,1)),1)]*R;
+En(:,1:2)=[LEn(:,1:2)];
+LEr=[Er(:,1),Er(:,2),zeros(numel(Er(:,1)),1)]*R;
+Er(:,1:2)=[LEr(:,1:2)];
+LCn=[C(:,1),C(:,2),zeros(numel(C(:,1)),1)]*R;
+C(:,1:2)=[LCn(:,1:2)];
+LCr=[Cr(:,1),Cr(:,2),zeros(numel(Cr(:,1)),1)]*R;
+Cr(:,1:2)=[LCr(:,1:2)];
+LS=[S(:,1),S(:,2),zeros(numel(S(:,1)),1)]*R;
+S(:,1:2)=[LS(:,1:2)];
+
+
+    end
+
+%%
     [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
     [S, psi] = Square(S, C, Cr, delta, Vv, Dv, psi);
     %delta

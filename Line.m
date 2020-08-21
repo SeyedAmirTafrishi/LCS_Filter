@@ -1,6 +1,6 @@
 function [Edge] = Line(lambda,psi,Edge)%lambda(L,BS) , psi(L,R,Ty)
 
-global ploti
+global ploti b_config_plot_on
 set(0,'DefaultTextInterpreter','Latex');
 c9 = Edge;
 CB = 0;
@@ -25,6 +25,7 @@ else
                 j = j + 1;
             end
          % can be delete pLOT
+         if b_config_plot_on
             th = 0:pi/50:2*pi; % for loop for creating circle
             xunit = (psi(i,3) + CB) * cos(th) + psi(i,2); % equation of circle :D
             yunit = (psi(i,3) + CB) * sin(th) + psi(i,1);
@@ -33,6 +34,7 @@ else
             ploti = plot(xunit, yunit,'y','LineWidth' , 4); % Plot the boys :v
             xlim([1 640])
             ylim([1 480])
+         end
          elseif psi(i,4) == 2  %WILL BE FILLED for SQUARE
             % WILL BE FILLED
 
@@ -49,6 +51,7 @@ else
                 end
                 j = j + 1;
             end
+            if b_config_plot_on
             hold on
             subplot(2,2,4)
             plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'y','LineWidth' , 4)
@@ -59,15 +62,16 @@ else
 
             xlim([1 640])
             ylim([1 480])
+            end
         end
     end
 end
 
-
+if b_config_plot_on
 subplot(2,2,1)
 hold on
 ploti = plot(c9(:,2), c9(:,1), 'y.'); %edges
-
+end
 %% Edge grouper by BS of lambda
 % step 2. to collect information in a better way
 % try to group the edges roughly
@@ -96,8 +100,10 @@ for z = 1:numel(lambda(:,1)) % Lambda Counter
         while j <= numel(c9(:,1))
             % The condition to check the boundery property
             if (((((lambda(z,1) - c9(j,1))^2) + ((lambda(z,2) - c9(j,2))^2))^(0.5)) <= lambda(z,3))
+                if b_config_plot_on
                 subplot(2,2,1)
                 plot([lambda(z,2), c9(j,2)], [lambda(z,1), c9(j,1)], 'g'); % it plots the related lines when condition satisfied
+                end
                 DV(g,f) = c9(j,1); % include the edges to the relevant group
                 DV(g,f + 1) = c9(j,2);
                 c9(j,:) = [];

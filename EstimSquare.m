@@ -154,9 +154,10 @@ if b_config_plot_on
     xunit = (abs(A_n)) * cos(th) + X_ef1;%equation of circle :D
     yunit = (abs(B_n)) * sin(th) + Y_ef1;
     plot(xunit, yunit,'b','LineWidth' , 1);% Ellipse
+    drawnow;
 end
 
-drawnow;
+
 
 
 end

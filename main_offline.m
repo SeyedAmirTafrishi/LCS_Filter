@@ -3,7 +3,6 @@ clc
 clear lambda psi En Er C alpha Trs Trcr Cr ploti
 clear delta
 close all
-
 %set(0,'DefaultTextInterpreter','Latex');
 %addpath('./helpers/')
 
@@ -11,8 +10,8 @@ close all
 % screen parameteres
 SCREEN_X = 640;
 SCREEN_Y = 480;
-
-global ICX ICY
+global ICX ICY b_config_plot_on
+b_config_plot_on = true; %Ploting Graph
 ICX = SCREEN_X / 2+eps;  %2
 ICY = SCREEN_Y / 2+eps;  %1
 
@@ -58,7 +57,7 @@ f1 = {dr1.name};           % get filenames to cell
 
 % loop for each image
 for c = 1:length(f1)
-    tic
+ %   tic
 
     % read one image
     i = imread([drs '/' f1{c}]);
@@ -66,7 +65,9 @@ for c = 1:length(f1)
     %BL=100; %boundery layer Cylindrical-tin
 
     % convert image into greyscale
+    if b_config_plot_on
     figure(c)
+    end
     if length(size(i)) == 3
         im = double(i(:,:,2));
     else
@@ -77,7 +78,7 @@ for c = 1:length(f1)
     c9 = detectFASTFeatures(rgb2gray(i),'MinContrast',0.18);
     c9 = c9.Location;
     %c9 = corner(rgb2gray(i), 'MinimumEigenvalue');
-
+if b_config_plot_on
     axis image
     colormap(gray)
 
@@ -97,7 +98,7 @@ for c = 1:length(f1)
         subplot(2,2,4)
     hold on
     imshow(im / max(im(:)));
-
+end
 
     c9 = [c9(:,2),c9(:,1)];     % swap x and y columns
     if c == 1
@@ -121,6 +122,7 @@ for c = 1:length(f1)
     Size(c,4) = numel(C(:,1));
     Size(c,5) = numel(Cr(:,1));
     Size(c,6) = numel(S(:,1));
+  %  Size(c,9) = toc;
     if Fcount<6 % 5 Frame Sum
         Ptemp(Fcount)= numel(c9(:,1));
         Size(c,7) = sum(Ptemp);
@@ -134,6 +136,7 @@ for c = 1:length(f1)
     %velocity to C and S and Subtract the vel. of k-1*!
     %delta
     %delta=[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
+  if b_config_plot_on  
     hold on
     subplot(2,2,2)
     ploti = plot(En(:,2),En(:,1),'bs');
@@ -236,8 +239,8 @@ for c = 1:length(f1)
     fig_filename = ['./results/fig', num2str(c),'.png'];
     saveas(gca, fig_filename);
     % %--------------------
-
-    toc
+  end
+  %  toc
 end
 
 clear figure

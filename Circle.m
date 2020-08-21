@@ -2,7 +2,7 @@ function [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,
 %%
 set(0,'DefaultTextInterpreter','Latex');
 %---General
-global beta
+global beta b_config_plot_on
 global deltay deltaz Trs Trcr Trmax ploti
 global time_diff frame
 global ICX ICY
@@ -37,9 +37,11 @@ else
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
             NEn(1,1) = -(ceil((Y1(end,1)))-R)*sin((pi/180)*beta) + (En(e,1)-ICY); %estimation of En x ceil
             NEn(1,2) = (ceil((Y1(end,1)))-R)*cos((pi/180)*beta) + (En(e,2)-ICX); %estimation of En y
+            if b_config_plot_on
             hold on
             subplot(2,2,2)
             plot(NEn(1,2) + ICX, NEn(1,1) + ICY, 'ys','LineWidth' , 2)
+            end
             %hold on
             %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
             NVe = Y1(end,2); % Estimated edge velocity
@@ -441,7 +443,7 @@ else
 
                                 %end BL SAME AS OTHER En
                                 el1 = el1 + 1;
-                            end
+                            end     
                             Edge(j,ME2) = 0;
                             Edge(j,ME2+1) = 0;
                         end
@@ -536,6 +538,7 @@ else
                         Er(r,3) = (Er(r,3)+(angle-(betar+Er(r,3)))); %DL - Error of Edge
                         Er(r,4) = Er(r,4)+1;
                         Er(r,5) = angle;
+                        if b_config_plot_on
                         hold on
                         subplot(2,2,2)
                         ploti = plot(NEr(1,2),NEr(1,1),'ms');
@@ -545,6 +548,7 @@ else
                         hold on
                         subplot(2,2,2)
                         ploti = plot(Er(r,2),Er(r,1),'rs','LineWidth' , 2.5);
+                        end
                     end
                     j = j + 1;
                 end
@@ -556,10 +560,12 @@ else
                     Er(r,1) = NEr(1,1);
                     Er(r,2) = NEr(1,2);%DL - Error of Edge
                     Er(r,4) = Er(r,4)-1;
+                    if b_config_plot_on
                     hold on
                     subplot(2,2,2)
                     ploti = plot(Er(r,2),Er(r,1),'rs','LineWidth' , 2.5);
                     %elseif ( Er(e,4) < Trs ) && ( Er(e,4) >= Trcr)
+                    end
                 elseif (Er(r,4) <= Trcr-1)
                     Er(r,:) = [];
                     r = r - 1;
@@ -1004,5 +1010,5 @@ else
         r = r + 1;
     end
 end
-size(En)
+%size(En)
 end % end of function

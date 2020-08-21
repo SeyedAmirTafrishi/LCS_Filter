@@ -1,6 +1,6 @@
 function [S ,psi] = Square(S, C, Cr, delta, Vv, Dv, psi)
 % Subsitute C and Cr to new Ct (Temprery matrix) *Done
-global ICX ICY time_diff TrsSq TrcrSq TrmaxSq
+global ICX ICY time_diff TrsSq TrcrSq TrmaxSq b_config_plot_on
 C(:,7) = ICY; % Make the normal circle in same dimension with rebel circle (Center is the center of image)
 C(:,8) = ICX;
 Stem = [S zeros(numel(S(:,1)),1)];
