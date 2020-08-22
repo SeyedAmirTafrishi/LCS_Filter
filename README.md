@@ -11,7 +11,7 @@ Compared with other related filters in the literature, the proposed LCS filter (
 
 To use the code, run the script `main_offline.m` from the MATLAB command line. This will run the filter with some example pictures in offline mode. 
 
-LCS filter also supports to run in real-time. To use the real-time version of the filter, use the script `main_rt.m`.
+LCS filter also supports to run in real-time. To use the real-time version of the filter, use the script `main_rt.m`(Underdevelopment and debugging stage).
 
 ## Dependencies
 
@@ -32,5 +32,5 @@ This project depends on the *fast9* edge detection algorithm, which is developed
 - **Vahid E. Kandjani**, University College of Nabi Akram, Iran
 
 ##  Publications
-
-- Tafrishi, S.A. and Kandjani, V.E., 2017, October. Line-Circle: A Geometric Filter for Single Camera Edge-Based Object Detection. In *2017 5th RSI International Conference on Robotics and Mechatronics (ICRoM)* (pp. 588-594). IEEE.
+- Tafrishi, S.A., Xiaotian, D., Kandjani, V.E., 2020.  Line-Circle-Square (LCS): A Multilayered Geometric Filter for Edge-Based Detection. ArXiv. 
+- Tafrishi, S.A. and Kandjani, V.E., 2017, October. Line-Circle: A Geometric Filter for Single Camera Edge-Based Object Detection. In *2017 5th RSI International Conference on Robotics and Mechatronics (ICRoM)* (pp. 588-594). 
