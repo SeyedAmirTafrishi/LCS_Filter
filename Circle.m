@@ -3,7 +3,7 @@ function [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,
 set(0,'DefaultTextInterpreter','Latex');
 %---General
 global beta b_config_plot_on
-global deltay deltaz Trs Trcr Trmax ploti
+global deltay deltax Trs Trcr Trmax ploti
 global time_diff frame
 global ICX ICY
 
@@ -46,7 +46,7 @@ else
             %plot(NEn(1,2)+ICX,NEn(1,1)+ICY,'y*')
             NVe = Y1(end,2); % Estimated edge velocity
             m = tan((pi/180)*(beta + 90)); % Slope of given angle of En respect to O frame
-            deltaT = sqrt(deltay^2 + deltaz^2);
+            deltaT = sqrt(deltay^2 + deltax^2);
             z = 1; % loop search of suitable edge in Lambda
             FlagleftE=0; %Flag for left out edge 
             
@@ -504,7 +504,7 @@ else
             NBL = BLS; % WILL CHANGE
             mr = (NEr(1,1)-Er(r,7))/-(Er(r,2)-Er(r,8));
             NVe = Y1(end,2);%Estimated edge velocity
-            deltaTr = sqrt(deltay^2+deltaz^2);
+            deltaTr = sqrt(deltay^2+deltax^2);
             i = 1; %Check the Edge to find related group
             while (i<=(numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
                 j = 1;

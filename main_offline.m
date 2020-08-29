@@ -28,7 +28,7 @@ delta = zeros(5, 4); %[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
 %% algoritm parameters
 alpha = [0 0 0 0 0 0 0];
 global Trs Trcr Trmax TrsSq TrcrSq TrmaxSq
-global frame Av Vv deltay deltaz
+global frame Av Vv deltay deltax
 
 frame = 1; %Every Sec one frame! Works
 
@@ -46,7 +46,7 @@ Dv = 0.1;
 Av = 0.0005;
 Vv = .03;
 deltay = 9;
-deltaz = 9;
+deltax = 9;
 Fcount=1;
 %% main code begins
 drs = './example_pictures'; % in current directory

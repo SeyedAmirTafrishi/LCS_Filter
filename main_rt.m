@@ -1,6 +1,17 @@
+%% 
+% Notes: 
+% 1. To use camera in this filter, please install the "MATLAB Support
+% Package for USB Webcams".
+% 2. The current filter uses the constant values for angular errors
+% (deltay and deltax), if you want to change/improve these default values
+% please refere to IMU section. Also, the velocity (Vv) and 
+% acceleration (Av) are assumed constant. One can change it to desired 
+% values or use a real-time IMU sensor. 
+ 
+
 clc
 clear m cam lambda psi En Er C alpha Trs Trcr Cr
-addpath('./helpers/')
+%addpath('./helpers/')
 
 %--------------------------- Parameters
 CAM_WIDTH = 640;
@@ -26,7 +37,8 @@ delta = zeros(5, 4); %[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
 %----------------------------
 alpha = [0 0 0 0 0 0 0];
 global Trs Trcr Trmax TrsSq TrcrSq TrmaxSq
-global frame Av Vv deltay deltaz
+global frame Av Vv deltay deltax b_config_plot_on
+b_config_plot_on = true; %Ploting Graph
 Trs = 3;
 Trcr = 2;
 Trmax = 5;
@@ -91,14 +103,21 @@ while(1)
 
     Edge = c9;
 
-    %%
-    % Transision V
-    hold on
-    Edge = Line(lambda,psi,Edge);
-    frame = toc;
-    
 
-    %% IMU Sensor Data
+  %% IMU Sensor Data
+%  Instructions: 1. deltay and deltax are parameters that can be found in
+%  different ways as follows:
+% Option A: Consecetive experiments can be taken place for determining the 
+% angular errors (deltay and deltax) that occur. It will be the difference
+% between the desired real angles with respect to the obtained IMU angular
+% data. 
+% Option B: The angular errors (deltay and deltax) can be changing values 
+% which are functions of the covariance matrix if the IMU is observed 
+% through the Kalman Filter. 
+% 2. When there is no IMU sensor, the filter only works for straight motion
+% of the camera; Hence, the angular rotations (DAngy and DAngx) are assumed
+% approximately zero. 
+
 %-------Trail With IMU
 %     [a, t] = accellog(m);
 %     [o, t] = orientlog(m);
@@ -106,47 +125,102 @@ while(1)
 %     Vv = abs(cumtrapz(a(end-2:end,1) - a(end-10,1)));
 %     Vv = Vv(end,1);
 %     deltay = abs(180-abs(o(end,1))) + 2;
-%     deltaz = abs(o(end,3)) + 2;
+%     deltax = abs(o(end,3)) + 2;
 % 
 %     wf = 1;
 %     wm = 1;
 %     quest = QUEST(fb, mb, fn, mn, wf, wm); % Quest Filter Observer (IMU)
 %     [Quest1, Quest2, Quest3] = ... %Angles
-
+%DAngy=Quest2; % Angular Rotation 
+%DAngx=Quest1; % Angular Rotation 
 %------ Trail without IMU
     Av = 0.0005; % Accelertion in Direction of motion
     Vv = .03; % Velocity in direction of motion
     deltay = 9; % Calculated Angular error along y axis
-    deltaz = 9; % Calculated Angular error along z axis
+    deltax = 9; % Calculated Angular error along x axis
+    DAngy=0; % No Rotational difference data (straight motion) in default 
+    DAngx=0;
     
-        %% Kinematic Rotation of Location/Angles Parameters
+ %% Kinematic Rotation of Location/Angles Parameters
     %The locations, angles and origins are updated 
-    if En==0
-        
+    if DAngy<.1 && DAngx<.1 % No angular rotation along x and y axes
     else
-DAngy=deltay; %angular differences
-DAngx=deltax;
+    if En==0       
+    else
 Rx=[1 0 0;0 cos(DAngx) -sin(DAngx);0 sin(DAngx) cos(DAngx)];
 Ry=[cos(DAngy) 0 sin(DAngy);0 1 0;-sin(DAngy) 0 cos(DAngy)];
 R=Ry*Rx;
-LEn=[En(:,1),En(:,2),zeros(numel(En(:,1)),1)]*R;
-En(:,1:2)=[LEn(:,1:2)];
-LEr=[Er(:,1),Er(:,2),zeros(numel(Er(:,1)),1)]*R;
-Er(:,1:2)=[LEr(:,1:2)];
-LCn=[C(:,1),C(:,2),zeros(numel(C(:,1)),1)]*R;
-C(:,1:2)=[LCn(:,1:2)];
-LCr=[Cr(:,1),Cr(:,2),zeros(numel(Cr(:,1)),1)]*R;
-Cr(:,1:2)=[LCr(:,1:2)];
-LS=[S(:,1),S(:,2),zeros(numel(S(:,1)),1)]*R;
-S(:,1:2)=[LS(:,1:2)];
 
-
+if max(sum(En))~=0 && (~isempty(En))
+LEn=[En(:,2),En(:,1),zeros(numel(En(:,1)),1)]*R;
+En(:,1:2)=[LEn(:,2) LEn(:,1)]; %Location Update
+end
+if max(sum(Er))~=0 && ~isempty(Er) 
+LEr=[Er(:,2),Er(:,1),zeros(numel(Er(:,1)),1)]*R;
+Er(:,1:2)=[LEr(:,2) LEr(:,1)]; %Location Update
+LEr=[Er(:,8),Er(:,7),zeros(numel(Er(:,1)),1)]*R;
+Er(:,7:8)=[LEr(:,2) LEr(:,1)];% Origin Update
+end
+if max(sum(C))~=0 && ~isempty(C) 
+LCn=[C(:,2),C(:,1),zeros(numel(C(:,1)),1)]*R;
+C(:,1:2)=[LCn(:,2) LCn(:,1)]; %Location Update
+end
+if max(sum(Cr))~=0 && ~isempty(Cr) 
+LCr=[Cr(:,2),Cr(:,1),zeros(numel(Cr(:,1)),1)]*R;
+Cr(:,1:2)=[LCr(:,2) LCr(:,1)]; %Location Update
+LCr=[Cr(:,8),Cr(:,7),zeros(numel(Cr(:,1)),1)]*R;
+Cr(:,7:8)=[LCr(:,2) LCr(:,1)];% Origin Update
+end
+if max(sum(S))~=0 && ~isempty(S) 
+LS=[S(:,2),S(:,1),zeros(numel(S(:,1)),1)]*R;
+S(:,1:2)=[LS(:,2) LS(:,1)]; %Location Update
+LS=[S(:,9),S(:,8),zeros(numel(S(:,1)),1)]*R;
+S(:,8:9)=[LS(:,2) LS(:,1)]; % Origin Update
+end
+if max(sum(alpha))~=0 && ~isempty(alpha) %Alpha (Rebel Landmarks Alignmnet)
+Lalp1=[alpha(:,2),alpha(:,1),zeros(numel(alpha(:,1)),1)]*R;
+alpha(:,1:2)=[Lalp1(:,2) Lalp1(:,1)];
+Lalp2=[alpha(:,4),alpha(:,3),zeros(numel(alpha(:,3)),1)]*R;
+alpha(:,3:4)=[Lalp2(:,2) Lalp2(:,1)];
+Lalp3=[alpha(:,6),alpha(:,5),zeros(numel(alpha(:,5)),1)]*R;
+alpha(:,5:6)=[Lalp3(:,2) Lalp3(:,1)];
+end
+%Update of Angles
+kc=1;
+while kc <= max([numel(En(:,1)) numel(Er(:,1)) numel(C(:,1)) numel(Cr(:,1)) numel(S(:,1))])
+    if kc <= numel(En(:,1)) && max(sum(En))~=0 && (~isempty(En))
+En(kc,5) = calculate_vector_angle( En(kc,2), En(kc,1), ICX, ICY ) ;
+    end 
+    if kc <= numel(Er(:,1)) && max(sum(Er))~=0 && (~isempty(Er))
+Er(kc,5) = calculate_vector_angle( Er(kc,2), Er(kc,1), Er(kc,8), Er(kc,7) ) ;
+    end    
+    if kc <= numel(C(:,1)) && max(sum(C))~=0 && (~isempty(C))
+C(kc,5) = calculate_vector_angle( C(kc,2), C(kc,1), ICX, ICY ) ;
+    end  
+    if kc <= numel(Cr(:,1)) && max(sum(Cr))~=0 && (~isempty(Cr))
+Cr(kc,5) = calculate_vector_angle( Cr(kc,2), Cr(kc,1), Cr(kc,8), Cr(kc,7) ) ;
+    end     
+    if kc <= numel(S(:,1)) && max(sum(S))~=0 && (~isempty(S))
+S(kc,6) = calculate_vector_angle( S(kc,2), S(kc,1), S(kc,9), S(kc,8) ) ;
+    end        
+kc=kc+1;
+end
     end
+    end
+%% Line Expert
+    hold on
+    Edge = Line(lambda,psi,Edge);
+    frame = toc;
 
-%%
+%% Circle Expert 
     [En,Er,C,Cr,psi,lambda,alpha,delta] = Circle(Edge,C,Cr,En,Er,psi,delta,Vv,Dv,lambda,alpha);
+ 
+    
+%% Square Expert     
     [S, psi] = Square(S, C, Cr, delta, Vv, Dv, psi);
-    %delta
+    
+%% Plotting
+if b_config_plot_on  
     hold on
     subplot(2,2,2)
     ploti = plot(En(:,2),En(:,1),'bs');
@@ -209,7 +283,6 @@ S(:,1:2)=[LS(:,1:2)];
 
     hold on
     subplot(2,2,2)
-
     hold on
     xlabel('${E}_n, {E}_r$, $\tilde{E}_n$ and $\tilde{E}_r$','FontSize',16,'Interpreter','latex')
     hold on
@@ -228,7 +301,7 @@ S(:,1:2)=[LS(:,1:2)];
     %title(txt,'FontSize',16)
     hold on
     xlabel('${C}_n,{C}_r, \psi_C$','FontSize',16,'Interpreter','latex')
-
+end
     clear figure
     delta = [0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0];
 end % end of while: dont touch while !!!
