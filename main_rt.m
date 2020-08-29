@@ -39,9 +39,9 @@ alpha = [0 0 0 0 0 0 0];
 global Trs Trcr Trmax TrsSq TrcrSq TrmaxSq
 global frame Av Vv deltay deltax b_config_plot_on
 b_config_plot_on = true; %Ploting Graph
-Trs = 3;
-Trcr = 2;
-Trmax = 5;
+Trs = 3; % Circle expert's standard trust factor
+Trcr = 2; % Circle expert's critical trust factor
+Trmax = 5; % Circle expert's maximum trust factor
 delta = 0;
 Dv = .1;
 Trs   = 3; %Circle Expert Trust
