@@ -1,4 +1,27 @@
 %% 
+% If you use this in published work, please cite:
+%       Tafrishi, S.A., Xiaotian, D., Kandjani, V.E., 2020. Line-Circle-Square (LCS): A Multilayered Geometric Filter for Edge-Based Detection,
+%arXiv:2008.09315.
+%     The Bibtex entries are:
+%     
+%@misc{tafrishi2020linecirclesquare,
+%    title={Line-Circle-Square (LCS): A Multilayered Geometric Filter for Edge-Based Detection},
+%    author={Seyed Amir Tafrishi and Xiaotian Dai and Vahid Esmaeilzadeh Kandjani},
+%    year={2020},
+%    eprint={2008.09315},
+%    archivePrefix={arXiv},
+%    primaryClass={cs.RO}
+%    }
+% @inproceedings{tafrishi2017line,
+%  title={Line-Circle: A Geometric Filter for Single Camera Edge-Based Object Detection},
+%   author={Tafrishi, Seyed Amir and Kandjani, Vahid E},
+%   booktitle={2017 5th RSI International Conference on Robotics and Mechatronics (ICRoM)},
+%   pages={588--594},
+%   year={2017},
+%   organization={IEEE}
+% }
+
+
 % Notes: 
 % 1. To use camera in this filter, please install the "MATLAB Support
 % Package for USB Webcams".
