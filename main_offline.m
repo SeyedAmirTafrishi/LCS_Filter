@@ -1,10 +1,32 @@
-% main_offline.m
+%% Line-Cirle-Square Filter
+% If you use this in published work, please cite:
+%       Tafrishi, S.A., Xiaotian, D., Kandjani, V.E., 2020. Line-Circle-Square (LCS): A Multilayered Geometric Filter for Edge-Based Detection,
+%arXiv:2008.09315.
+%     The Bibtex entries are:
+%
+%@misc{tafrishi2020linecirclesquare,
+%    title={Line-Circle-Square (LCS): A Multilayered Geometric Filter for Edge-Based Detection},
+%    author={Seyed Amir Tafrishi and Xiaotian Dai and Vahid Esmaeilzadeh Kandjani},
+%    year={2020},
+%    eprint={2008.09315},
+%    archivePrefix={arXiv},
+%    primaryClass={cs.RO}
+%    }
+% @inproceedings{tafrishi2017line,
+%  title={Line-Circle: A Geometric Filter for Single Camera Edge-Based Object Detection},
+%   author={Tafrishi, Seyed Amir and Kandjani, Vahid E},
+%   booktitle={2017 5th RSI International Conference on Robotics and Mechatronics (ICRoM)},
+%   pages={588--594},
+%   year={2017},
+%   organization={IEEE}
+% }
+
+
 clc
 clear lambda psi En Er C alpha Trs Trcr Cr ploti
 clear delta
 close all
 %set(0,'DefaultTextInterpreter','Latex');
-%addpath('./helpers/')
 
 %% intial conditions
 % screen parameteres
@@ -17,12 +39,14 @@ ICY = SCREEN_Y / 2+eps;  %1
 
 % algorithm constants
 lambda = 0;
-psi = 0; %first is x next is y? O_
-En = 0;
-Er = 0;
-C  = 0;
-Cr = 0;
-S = 0;
+psi = 0;
+
+En = 0; % Normal edges
+Er = 0; % Rebel edges
+C  = 0; % Normal circles
+Cr = 0; % Rebel circles
+S = 0;  % squares
+
 delta = zeros(5, 4); %[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
 
 %% algoritm parameters
@@ -33,13 +57,13 @@ global frame Av Vv deltay deltax
 frame = 1; %Every Sec one frame! Works
 
 % trust parameters
-Trs   = 3;
-Trcr  = 2;
-Trmax = 5;
+Trs = 3;   % Circle Expert Trust
+Trcr = 2;  % Circle Expert Critical Trust
+Trmax = 5; % Circle Expert Maximum Trust
 
-TrsSq=5;
-TrcrSq=3;
-TrmaxSq=7;
+TrsSq = 5;   % Square Expert Trust
+TrcrSq = 3;  % Square Expert Critical Trust
+TrmaxSq = 7; % Square Expert Maximum Trust
 
 % kinematic variables (simulated)
 Dv = 0.1;
@@ -48,6 +72,7 @@ Vv = .03;
 deltay = 9;
 deltax = 9;
 Fcount=1;
+
 %% main code begins
 drs = './example_pictures'; % in current directory
 dr1 = dir([drs '/*.jpg']);  % get all png files in the folder
@@ -136,7 +161,7 @@ end
     %velocity to C and S and Subtract the vel. of k-1*!
     %delta
     %delta=[0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0;0 0 0 0];
-  if b_config_plot_on  
+  if b_config_plot_on
     hold on
     subplot(2,2,2)
     ploti = plot(En(:,2),En(:,1),'bs');
