@@ -1,5 +1,5 @@
 %% Line-Cirle-Square Filter
-% This code is an offline program with a series of captured images when
+% This code is an offline code with a series of captured images when
 % the camera on the robot was moving in constant velocity. 
 
 % If you use this in published work, please cite:
