@@ -11,7 +11,7 @@ Compared with other related filters in the literature, the proposed LCS filter (
 
 To use the code, run the script `main_offline.m` from the MATLAB command line. This will run the filter with some example pictures in offline mode. 
 
-LCS filter also supports to run in real-time. To use the real-time version of the filter, use the script `main_rt.m`(Underdevelopment and debugging stage).
+LCS filter also supports to run in real-time. To use the real-time version of the filter, use the script `main_rt.m` (debugging stage).
 
 ## Dependencies
 
