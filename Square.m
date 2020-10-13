@@ -1,6 +1,7 @@
 function [S ,psi] = Square(S, C, Cr, delta, Vv, Dv, psi)
 % Subsitute C and Cr to new Ct (Temprery matrix) *Done
 global ICX ICY time_diff TrsSq TrcrSq TrmaxSq b_config_plot_on
+ 
 C(:,7) = ICY; % Make the normal circle in same dimension with rebel circle (Center is the center of image)
 C(:,8) = ICX;
 Stem = [S zeros(numel(S(:,1)),1)];
@@ -12,12 +13,12 @@ else
     Ctem = [C;Cr];
 end
 u_m = 1;
-zetas=25;% Small region pixel accuracy
-e_v = .1; % Deviation for circle velocity,
-DeltaBeta = 15; % Deviation for beta angle
+zetas=20;% Small region pixel accuracy
+e_v = .12; % Deviation for circle velocity,
+DeltaBeta = 35 ; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
-Betaconsame = 30;  % Angle offset for case B when there is no 90+/- angle matches of couple circles %Best 15-20
-PercntSqComp= 40; %Minimum Overlap percentage of two squares %Best 35-45
+Betaconsame = 40;  % Angle offset for case B when there is no 90+/- angle matches of couple circles %Best 15-20
+PercntSqComp= 18; %Minimum Overlap percentage of two squares %Best 35-45
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
@@ -79,13 +80,13 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         yd_2=0;
 
                         if Ctem(u_mn,3) < .3
-                            Ctem(u_mn,3)=2;
+                            Ctem(u_mn,3)=4;
                         end
 
                         REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)];%Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
                         f = @(x) FindTangenfordm(x,REF); % function of dummy variable y
                         %fsolve doesnt give multiple solutons
-                        opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
+                        opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt', 'Display', 'none' );
                         F = fsolve(f,x0,opts);
                         %F = fsolve(f,x0);
                         Point1(1,1) = real(xd_1(1,1));
@@ -119,9 +120,9 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                         xd_1=0;
                         yd_2=0;
                         if Ctem(u_mn,3)<.3 %For edge=circle with zero radius
-                            Ctem(u_mn,3)=2;
+                            Ctem(u_mn,3)=4;
                         end
-                        REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)]; %Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
+                        REF = [Ctem(u_mn,2),Ctem(u_mn,1),Cmain(1,2),Cmain(1,1),Ctem(u_mn,3)];  %Cmain(1,1)=C_A X_d,Y_d,X_A,Y_A,R
                         f = @(x) FindTangenfordm(x,REF);  % function of dummy variable y
                         %fsolve doesnt give multiple solutons
                         %options = optimoptions('linprog','Algorithm','dual-simplex');
@@ -130,7 +131,7 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
 %                         options.FunctionTolerance = 1e-4;
 %                         options.OptimalityTolerance = 1e-4;
 %                         options.StepTolerance = 1e-4;
-                        opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
+                        opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt', 'Display', 'none');
                         F = fsolve(f,x0,opts);
                         %F = fsolve(f,x0,options);
                         Point1(1,1) = real(xd_1(1,1));
@@ -272,12 +273,13 @@ while u_m <= (numel(Ctem(:,1)))  %*Done Circle Counter
                     SQYNegaitive=min([(CanswerB(:,1)-CanswerB(:,3));(Cmain(1,1)-Cmain(1,3))]);  %Y
                     SQXPositive=max([(CanswerB(:,2)+CanswerB(:,3));(Cmain(1,2)+Cmain(1,3))]);  %Y
                     SQXNegaitive=min([(CanswerB(:,2)-CanswerB(:,3));(Cmain(1,2)-Cmain(1,3))]); %Y
-                    Ctem(u_mn,:)
+                    %Ctem(u_mn,:)
 %                     Cmain
 %                     u_mn
-%                     3
+
                     if Ctem(u_mn,1) > SQYNegaitive && Ctem(u_mn,1) < SQYPositive && Ctem(u_mn,2)<SQXPositive && Ctem(u_mn,2)>SQXNegaitive
                        % 1
+                       %                     3
                         if  abs(NbetaO)+Betaconsame> abs(Cmain(1,5)) && abs(NbetaO)-Betaconsame< abs(Cmain(1,5)) && ((Vmean < Ctem(u_mn,6)+e_v) ... %CASE B
                                 && (Vmean > Ctem(u_mn,6)-e_v)) ...  % add the minor circle if it follows a circular array with
                             % collected couple C_A \SumC_B
@@ -646,6 +648,7 @@ end
 %are estimated with T-1 if it is less than the critical trust remove them.
 %Psi and trust cleaner! :D
 u = 1;
+tik=0;
 if S==0
     S = 0;
 else
@@ -655,15 +658,16 @@ else
         L1 = 0;
         L2 = 0;
         if S(u,5) >= TrmaxSq
-            S(u,5) = TrmaxSq-2;
+            S(u,5) = TrsSq+1;
             psi(numel(psi(:,1))+1,1) = S(u,1);
             psi(numel(psi(:,1)),2) = S(u,2);
             psi(numel(psi(:,1)),4) = 2; %--- 2 for square 1 circle, 4 to 5th (because a and b)
             psi(numel(psi(:,1)),3) = 0;
             psi(numel(psi(:,1)),5) = S(u,3); %A
             psi(numel(psi(:,1)),6) = S(u,4);  %B
+            tik=1;
         end
-        if ((S(u,1) > (2*ICY)) || (S(u,2) > (2*ICX)) || (S(u,1) < 0) || (S(u,2) < 0)) %Kill more than that :D
+        if ((S(u,1) > (2*ICY)) || (S(u,2) > (2*ICX)) || (S(u,1) < 0) || (S(u,2) < 0)) || (isnan(sum(S(u,:)))==1) || (isinf(sum(S(u,:)))==1) %Kill more than that :D
             S(u,:) = [];
             u = u - 1;
             L1 = 1;
@@ -672,7 +676,7 @@ else
         if (L1==1) && (u==0)
             u = u + 1;
         end
-        if S(u,5) < TrcrSq
+        if S(u,5) < TrcrSq && tik==0
             S(u,:)=[];
             u = u - 1;
             L2 = 1;

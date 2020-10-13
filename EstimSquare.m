@@ -17,6 +17,7 @@ global x_1 y_2 ICX ICY Flag1 Flag2
 % What is global variable x_1, y_2 for?
 % Do we have to change the value of x0?
 %%
+ 
 b_config_plot_on = false;
  hold on
 x0 = [Y_e X_e 0 0];
@@ -30,7 +31,7 @@ REF = [X_e+2*eps,Y_e+2*eps,X_o+2*eps,Y_o+2*eps,a_1+2*eps,b_1+2*eps];
 f = @(x) FindTangentx1(x,REF); % function of dummy variable y
 %555
 %fsolve doesnt give multiple solutons
-opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
+opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt', 'Display', 'none');
 F = fsolve(f,x0,opts);
 
 Point1(1,1) = real(x_1(1,1));
