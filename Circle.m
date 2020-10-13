@@ -6,9 +6,9 @@ global beta b_config_plot_on
 global deltay deltax Trs Trcr Trmax ploti
 global time_diff frame
 global ICX ICY
-
+ 
 % VeS=2;%Standard Edge Velocity
-BLS = 25; %Standard Boundery layer Initialization Constant
+BLS = 12; %Standard Boundery layer Initialization Constant H
 L = 3; %The el of rebel edge alignment, Step of accuracy to have rebel edges
 options = odeset('RelTol',1e-3,'AbsTol',[1e-3 1e-3]);
 
@@ -22,7 +22,8 @@ k = 1; %counter of En %%REMOVE
 if En == 0 %CHANGE!
     %REMOVE
 else
-    if lambda == 0
+ 
+    if (numel(lambda(:,1))< 2) || (numel(Edge(1,:))< 2) || isempty(Edge)==1
         %pass
     else
         %Edge couple counter
@@ -96,8 +97,14 @@ else
                 side = 0; % flag for choosing either Lambda 1 or 2
                 while ( j <= (numel(Edge(:,1))) ) % loop check for classifications ME1, Edge,
                     % --- Lambda 2 and 3 condition check
-                    if (((((NEn(1,1)-(Edge(j,ME2)-ICY))^2) + ((NEn(1,2)-(Edge(j,ME2+1)-ICX))^2))^(0.5)) <= NBL) && ~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) % Circle with NBL size AND deltay delta x error and zero remover,  yEdge=Edge(j,ME2) first parameter
-                        if ((NEn(1,1)/abs(NEn(1,1))) == ((Edge(j,ME2)-ICY)/abs((Edge(j,ME2)-ICY)))  && ~(NEn(1,2)/abs(NEn(1,2))) == ((Edge(j,ME2+1)-ICX)/abs((Edge(j,ME2+1)-ICX)))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) <= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) %Sign check and magnitude check which is far, lambda_2
+                    Enx=NEn(1,2) + ICX;
+                    Eny=NEn(1,1) + ICY;
+                    Dispoint=abs(((Enx-ICX)*(ICY-Edge(j,ME2)))-((ICX-Edge(j,ME2+1))*(Eny-ICY)))/(sqrt((Enx-ICX)^2+(Eny-ICY)^2));
+                    %((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2))
+ 
+                    if (((((NEn(1,1)-(Edge(j,ME2)-ICY))^2) + ((NEn(1,2)-(Edge(j,ME2+1)-ICX))^2))^(0.5)) <= NBL) && ~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0) && (Dispoint < deltaT) % Circle with NBL size AND deltay delta x error and zero remover,  yEdge=Edge(j,ME2) first parameter
+ 
+                        if (((NEn(1,1)+eps)/abs(NEn(1,1)+eps)) == (((Edge(j,ME2)-ICY)+eps)/abs((Edge(j,ME2)-ICY)+eps))  && ~((NEn(1,2)+eps)/abs(NEn(1,2)+eps)) == (((Edge(j,ME2+1)-ICX)+eps)/abs((Edge(j,ME2+1)-ICX)+eps))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) <= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) %Sign check and magnitude check which is far, lambda_2
                             En(e,1) = (((En(e,4)-Trcr)*(NEn(1,1)+ICY)) + Edge(j,ME2)) / ((En(e,4)-Trcr) + 1);
                             En(e,2) = (((En(e,4)-Trcr)*(NEn(1,2)+ICX)) + Edge(j,ME2+1)) / ((En(e,4)-Trcr) + 1); %Estimation of En, X direction
                             En(e,3) = NBL;
@@ -105,7 +112,7 @@ else
                             %hold on
                             %plot(En(e,2),En(e,1),'r*')
                             if (((Edgetrans(1,1)-ICY)^2+(Edgetrans(1,2)-ICX)^2)^(0.5) > (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5))) && (~(Edgetrans(1,1)==0 && Edgetrans(1,2)==0))%Edge Remmover and modifier
-                                d = (abs((-(Edge(j,ME2+1)-ICX)) + m*(Edge(j,ME2)-ICY))) / sqrt(1 + m^2);
+                                d = abs(((Enx-ICX)*(ICY-Edge(j,ME2)))-((ICX-Edge(j,ME2+1))*(Eny-ICY)))/(sqrt((Enx-ICX)^2+(Eny-ICY)^2));
                                 a = Edgetrans(1,1);
                                 b = Edgetrans(1,2);
                                 Edgetrans(1,1) = Edge(j,ME2); % Update the nearest point to the estimated En
@@ -114,7 +121,7 @@ else
                                 Edge(j,ME2+1) = b;
                                 side = 1;
                             elseif (Edgetrans(1,1) == 0 && Edgetrans(1,2) == 0)
-                                d = (abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2);
+                                d = abs(((Enx-ICX)*(ICY-Edge(j,ME2)))-((ICX-Edge(j,ME2+1))*(Eny-ICY)))/(sqrt((Enx-ICX)^2+(Eny-ICY)^2));
                                 Edgetrans(1,1) = Edge(j,ME2); % The nearest finder
                                 Edgetrans(1,2) = Edge(j,ME2+1);
                                 Edge(j,ME2) = 0;
@@ -122,7 +129,7 @@ else
                                 En(e,4) = En(e,4) + 1; % CHECK THIS? right?
                                 side = 1; % front
                             end
-                        elseif ((NEn(1,1)/abs(NEn(1,1))) == ((Edge(j,ME2)-ICY)/abs((Edge(j,ME2)-ICY)))  && (NEn(1,2)/abs(NEn(1,2))) == ((Edge(j,ME2+1)-ICX)/abs((Edge(j,ME2+1)-ICX)))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) >= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5)))%lambda*_3
+                        elseif (((NEn(1,1)+eps)/abs(NEn(1,1)+eps)) == (((Edge(j,ME2)-ICY)+eps)/abs((Edge(j,ME2)-ICY)+eps))  && ((NEn(1,2)+eps)/abs((NEn(1,2)+eps))) == (((Edge(j,ME2+1)-ICX)+eps)/abs((Edge(j,ME2+1)-ICX)+eps))) && (((NEn(1,1)^2+NEn(1,2)^2)^(0.5)) >= (((Edge(j,ME2)-ICY)^2+(Edge(j,ME2+1)-ICX)^2)^(0.5)))%lambda*_3
                             En(e,1) = ((((En(e,4)-Trcr)*(NEn(1,1)+ICY))+Edge(j,ME2))/((En(e,4)-Trcr)+1));
                             En(e,2) = ((((En(e,4)-Trcr)*(NEn(1,2)+ICX))+Edge(j,ME2+1))/((En(e,4)-Trcr)+1)); %Estimation of En, X direction
                             En(e,3) = NBL;
@@ -189,8 +196,12 @@ else
                 MAINMATCH = 0;
                 j = 1;
                 match = 0;
+                 Enx=NEn(1,2) + ICX;
+                 Eny=NEn(1,1) + ICY;
+                 Dispoint=abs(((Enx-ICX)*(ICY-Edge(j,ME2)))-((ICX-Edge(j,ME2+1))*(Eny-ICY)))/(sqrt((Enx-ICX)^2+(Eny-ICY)^2));
                 while ( j <= (numel(Edge(:,1))) ) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5
-                    if (((abs(((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2)))^(0.5)) <= NBL) && (~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (((abs((-(Edge(j,ME2+1)-ICX))+m*(Edge(j,ME2)-ICY)))/sqrt(1+m^2)) < deltaT) && (d==-1)%% boundery another % Rebel classification
+                    if (((abs(((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2)))^(0.5)) <= NBL) && (~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (Dispoint < deltaT) && (d==-1)%% boundery another % Rebel classification
+                       
                         if ( En(e,4) >= Trs ) % for case d=-1 no match, Er
                             En(e,1) = NEn(1,1)+ICY;%estimation of En x
                             En(e,2) = NEn(1,2)+ICX;%estimation of En y%No En trust change
@@ -275,8 +286,13 @@ else
                                         end
                                     elseif alpha(el1,7) == 2
                                         MAINMATCH=MAINMATCH+1;
-                                        ml = ((Edge(j,ME2)-alpha(el1,1))/-(Edge(j,ME2+1)-alpha(el1,2)));
-                                        if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) < deltaT) && ~(Elkiller==1)
+                                        %ml = ((Edge(j,ME2)-alpha(el1,1))/-(Edge(j,ME2+1)-alpha(el1,2)));
+                                        %alpha(el1,1) is origin, alpha(,4)
+                                        %is second point and edge is last
+                                        DispointR=abs(((Edge(j,ME2+1)-alpha(el1,2))*(alpha(el1,1)-alpha(el1,3)))-((alpha(el1,2)-alpha(el1,4))*(Edge(j,ME2)-alpha(el1,1))))/(sqrt((Edge(j,ME2+1)-alpha(el1,2))^2+(Edge(j,ME2)-alpha(el1,1))^2));
+                                        %((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) 
+
+                                        if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL)  && (DispointR < 12*deltaT) &&  ~(Elkiller==1)
                                             %MOHEM....!!!! far - near finder :\
                                             Er(numel(Er(:,1))+1,1) = Edge(j,ME2);
                                             Er(numel(Er(:,1)),2) = Edge(j,ME2+1);
@@ -396,7 +412,9 @@ else
                                     elseif alpha(el1,7)==2
                                         MAINMATCH = MAINMATCH+1;
                                         ml = ((Edge(j,ME2)-alpha(el1,1))/-(Edge(j,ME2+1)-alpha(el1,2)));
-                                        if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && (((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2)) < deltaT) && ~(Elkiller==1)
+                                        DispointR=abs(((Edge(j,ME2+1)-alpha(el1,2))*(alpha(el1,1)-alpha(el1,3)))-((alpha(el1,2)-alpha(el1,4))*(Edge(j,ME2)-alpha(el1,1))))/(sqrt((Edge(j,ME2+1)-alpha(el1,2))^2+(Edge(j,ME2)-alpha(el1,1))^2));
+                                        %((abs((-(alpha(el1,4)-ICX))+ml*(alpha(el1,3)-ICY)))/sqrt(1+ml^2))
+                                        if (((((alpha(el1,3)-Edge(j,ME2))^2) + ((alpha(el1,4)-Edge(j,ME2+1))^2))^(0.5)) <= NBL)  && DispointR < 15*deltaT  && ~(Elkiller==1)
                                             %MOHEM....!!!! far - near finder :\
                                             Er(numel(Er(:,1))+1,1) = Edge(j,ME2);
                                             Er(numel(Er(:,1)),2) = Edge(j,ME2+1);
@@ -455,8 +473,9 @@ else
                 end %While of Edge
                 if  match == 0 % new comer? :D G o i n t o f i r s t :D
                     j = 1;
-                    while (j<=(numel(Edge(:,1)))) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5
-                        if (((((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && ((~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0)) && (((abs((-(Edge(j,ME2+1)-ICX)) + m * (Edge(j,ME2)-ICY))) / sqrt(1+m^2)) < deltaT) && (d==-1)) %% boundery another % Rebel classification
+                    while (j<=(numel(Edge(:,1)))) %Loop for failed En in boundry/ lambda_1,lambda_4 and lambda_5 
+                        %&& (((abs((-(Edge(j,ME2+1)-ICX)) + m * (Edge(j,ME2)-ICY))) / sqrt(1+m^2)) < deltaT)
+                        if (((((En(e,1)-Edge(j,ME2))^2) + ((En(e,2)-Edge(j,ME2+1))^2))^(0.5)) <= NBL) && ((~(Edge(j,ME2)==0 && Edge(j,ME2+1)==0))  && (d==-1)) %% boundery another % Rebel classification
                             alpha((numel(alpha(:,1)))+1,1) = Edge(j,ME2);
                             alpha((numel(alpha(:,1))),2) = Edge(j,ME2+1);
                             alpha((numel(alpha(:,1))),7) = 1;
@@ -499,18 +518,21 @@ else
             x_0 = R;
             x_1 = Er(r,6);%check velocity
             [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated E the 4 space is nutrilized to one since we want just vel
-            NEr(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En x Without removal of center ICX and ICY
-            NEr(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En y
+            NEr(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(betar+Er(r,3)))+(Er(r,1));%estimation of En y Without removal of center ICX and ICY
+            NEr(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(betar+Er(r,3)))+(Er(r,2));%estimation of En x
             NBL = BLS; % WILL CHANGE
             mr = (NEr(1,1)-Er(r,7))/-(Er(r,2)-Er(r,8));
             NVe = Y1(end,2);%Estimated edge velocity
             deltaTr = sqrt(deltay^2+deltax^2);
             i = 1; %Check the Edge to find related group
+        if (numel(Edge(1,:))> 2) && isempty(Edge)==0
             while (i<=(numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
                 j = 1;
                 while (j<=(numel(Edge(:,1))))%Column counter
                     %----------- Matching of REbel?
-                    if (((((NEr(1,1)-(Edge(j,i)))^2) + ((NEr(1,2)-(Edge(j,i+1)))^2))^(0.5)) <= NBL) && ~(Edge(j,i)==0 && Edge(j,i+1)==0) && (((abs((-(Edge(j,i+1)))+mr*(Edge(j,i))))/sqrt(1+mr^2)) < deltaTr) && (MatchR==0)% I DO NOT PUT !!!! The zeroes in the Er omittion so! NO!!! ~(Er(r,1)==0 && Er(r,2)==0)
+                 DispointRR=abs(((NEr(1,2)-Er(r,8))*(Er(r,7)-Edge(j,i)))-((Er(r,8)-Edge(j,i+1))*(NEr(1,1)-Er(r,7))))/(sqrt((NEr(1,2)-Er(r,8))^2+(NEr(1,1)-Er(r,7))^2));
+                 %((abs((-(Edge(j,i+1)))+mr*(Edge(j,i))))/sqrt(1+mr^2))
+                    if (((((NEr(1,1)-(Edge(j,i)))^2) + ((NEr(1,2)-(Edge(j,i+1)))^2))^(0.5)) <= NBL) && ~(Edge(j,i)==0 && Edge(j,i+1)==0) && (DispointRR < 15*deltaTr ) && (MatchR==0)% I DO NOT PUT !!!! The zeroes in the Er omittion so! NO!!! ~(Er(r,1)==0 && Er(r,2)==0)
                         MatchR = MatchR+1;
                         me = ((Edge(j,i)-Er(r,7))/-(Edge(j,i+1)-Er(r,8)));
                         angle = calculate_vector_angle( Edge(j,i+1), Edge(j,i), Er(r,8), Er(r,7) );
@@ -554,6 +576,7 @@ else
                 end
                 i = i + 2;
             end
+        end
             if MatchR==0 % No match for Er :\
                 % pass
                 if (Er(r,4) >= Trcr ) % update what? last point?
@@ -582,6 +605,7 @@ end
 %% LEFT EDGEs with En + Initiation of En
         k = (numel(En(:,1)))+1; % The size of latest En matrix (REMOVE)
         i = 1; %Check the Edge to find related group
+        if (numel(Edge(1,:))> 2) && isempty(Edge)==0
         while (i<=(numel(Edge(1,:)))) %finder of lambda and Edge Match / row counter
             j = 1;
             while (j<=(numel(Edge(:,1))))%Column counter
@@ -603,9 +627,11 @@ end
             end
             i = i + 2;
         end
+        end
 %-----------------------------------------------------------------------------
 %% En infinity ones remover
 u = 1;
+if (numel(En(:,1)))>1
 while u <= (numel(En(:,1)))
     if En(u,4) > Trmax
         En(u,4) = Trmax;
@@ -613,21 +639,21 @@ while u <= (numel(En(:,1)))
     if En(u,4) < 0          %if trust of exsting edges goes to minus, has to be removed
         En(u,:) = [];
         u = u-1;
-        if u < 1
+        if u < 12
             u = 1;
         end
     end
-    if ((En(u,1) > (2*ICY)) || (En(u,2) > (2*ICX)) || (En(u,1) < 0) || (En(u,2) < 0)) %remove edges that are out of screen
+    if ((En(u,1) > (2*ICY)) || (En(u,2) > (2*ICX)) || (En(u,1) < 0) || (En(u,2) < 0)) || (isnan(sum(En(u,:)))==1) || (isinf(sum(En(u,:)))==1)  %remove edges that are out of screen
         En(u,:) = [];
         u = u - 1;
     end
     u = u + 1;
 end
-
+end
 %% match circle with rebel edges (estimating the rebel circle)
 %------------Ciculing Er This must be first :))
-PIN = 20; %In percentage
-BetaDev = 50;
+PIN = 50; %In percentage
+BetaDev = 27;
 TEr = Er;
 TErM = Er;
 action = 0;
@@ -664,7 +690,7 @@ else
                     else
                         AngleEXTEr = EXTEr(1,5)+EXTEr(1,3);
                     end
-                    if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-40*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+40*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
+                    if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-17*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+17*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
                         M(Mk,1:8) = TEr(i,:);%Our Circule Mother! :D
                         Mk = Mk + 1;
                         TEr(i,:) = [];
@@ -696,7 +722,7 @@ else
                         else
                             Mangle = (mean(M(:,5)+M(:,3)));
                         end
-                        if ((Mangle-(BetaDev/5) < Cr(ci,5)) && (Mangle+(BetaDev/5) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-100*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+100*abs(Vv))%Proportion Match PIN and angular similarity and velocity alighnment &&
+                        if ((Mangle-(BetaDev/5) < Cr(ci,5)) && (Mangle+(BetaDev/5) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-17*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+17*abs(Vv))%Proportion Match PIN and angular similarity and velocity alighnment &&
                             %update C!
                             action = 1;
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
@@ -707,7 +733,7 @@ else
                             %%%----- Killer of Mother Er
                             TErM = TEr;
                             %%%
-                        elseif  ((Mangle-(BetaDev) < Cr(ci,5)) && (Mangle+(BetaDev) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-100*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+100*abs(Vv)) %Somehow Match
+                        elseif  ((Mangle-(BetaDev) < Cr(ci,5)) && (Mangle+(BetaDev) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-17*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+17*abs(Vv)) %Somehow Match
                             action = 1;
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
                             Cr(ci,2) = ((((Cr(ci,4)-Trcr)*(NCn(1,2)))+MX)/((Cr(ci,4)-Trcr)+1)); %Estimation of En, X direction
@@ -765,7 +791,7 @@ else
             else
                 AngleEXTEr = EXTEr(1,5)+EXTEr(1,3);
             end
-            if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-40*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+40*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
+            if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-17*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+17*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
                 M(Mk,1:8) = TEr(i,:);%Our Circule Mother! :D
                 Mk = Mk + 1;
                 TEr(i,:) = [];
@@ -805,8 +831,8 @@ end
 
 %% normal circles
 %-----------Circuling En
-PIN = 40; %In percentage
-BetaDev = 20;
+PIN = 80; %In percentage
+BetaDev = 12;
 TEn = En;
 TEnM = En;
 if (C == 0)
@@ -860,7 +886,7 @@ else
                     R1 = (((M(:,1)-MY).^2)+((M(:,2)-MX).^2)).^(.5);
                     MR = max(R1(:,1));
                     if ((countin/(numel(M(:,1)))) > PIN/100)
-                        if ((mean(M(:,5))-(BetaDev/5) < C(ci,5)) && (mean(M(:,5))+(BetaDev/5) > C(ci,5))) && (C(ci,6) >= mean(M(:,6))-100*abs(Vv)) &&  (C(ci,6) <= mean(M(:,6))+100*abs(Vv)) %update C!
+                        if ((mean(M(:,5))-(BetaDev/5) < C(ci,5)) && (mean(M(:,5))+(BetaDev/5) > C(ci,5))) && (C(ci,6) >= mean(M(:,6))-6*abs(Vv)) &&  (C(ci,6) <= mean(M(:,6))+6*abs(Vv)) %update C!
                             action = 1;
                             C(ci,1) = ((((C(ci,4)-Trcr)*(NCn(1,1)))+MY)/((C(ci,4)-Trcr)+1));
                             C(ci,2) = ((((C(ci,4)-Trcr)*(NCn(1,2)))+MX)/((C(ci,4)-Trcr)+1)); %Estimation of En, X direction
@@ -870,7 +896,7 @@ else
                             %%%----- Killer of Mother Er
                             TEnM = TEn;
                             %%%
-                        elseif  ((mean(M(:,5))-(BetaDev) < C(ci,5)) && (mean(M(:,5))+(BetaDev) > C(ci,5))) && (C(ci,6) >= mean(M(:,6))-100*abs(Vv)) &&  (C(ci,6) <= mean(M(:,6))+100*abs(Vv)) %update C!%Somehow Match       action=1;
+                        elseif  ((mean(M(:,5))-(BetaDev) < C(ci,5)) && (mean(M(:,5))+(BetaDev) > C(ci,5))) && (C(ci,6) >= mean(M(:,6))-6*abs(Vv)) &&  (C(ci,6) <= mean(M(:,6))+6*abs(Vv)) %update C!%Somehow Match       action=1;
                             C(ci,1) = ((((C(ci,4)-Trcr)*(NCn(1,1)))+MY)/((C(ci,4)-Trcr)+1));
                             C(ci,2) = ((((C(ci,4)-Trcr)*(NCn(1,2)))+MX)/((C(ci,4)-Trcr)+1)); %Estimation of En, X direction
                             C(ci,3) = ((((C(ci,4)-Trcr)*(C(ci,3)))+MR)/((C(ci,4)-Trcr)+1));
@@ -915,7 +941,7 @@ else
             %B=EXTEn(1,5)-BetaDev
             %C=abs(TEn(i,6))
             %D=abs(3*Vv)
-            if (TEn(i,5) >= EXTEn(1,5)-BetaDev) && ((TEn(i,5) <= EXTEn(1,5)+BetaDev)) && (abs(TEn(i,6)) < abs(3*Vv)) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
+            if (TEn(i,5) >= EXTEn(1,5)-BetaDev) && ((TEn(i,5) <= EXTEn(1,5)+BetaDev)) && (abs(TEn(i,6)) < abs(6*Vv)) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
                 M(Mk,1:6)=TEn(i,:);%Our Circule Mother! :D
                 Mk = Mk + 1;
                 TEn(i,:) = [];
@@ -968,7 +994,7 @@ else
             psi(numel(psi(:,1)),3) = C(u,3);
             psi(numel(psi(:,1)),4) = 1;
         end
-        if ((C(u,1) > (2*ICY)) || (C(u,2) > (2*ICX)) || (C(u,1) < 0) || (C(u,2) < 0)) %Kill more than that :D
+        if ((C(u,1) > (2*ICY)) || (C(u,2) > (2*ICX)) || (C(u,1) < 0) || (C(u,2) < 0)) || (isnan(sum(C(u,:)))==1) || (isinf(sum(C(u,:)))==1)  %Kill more than that :D
             C(u,:) = [];
             u = u - 1;
             L1 = 1;
@@ -1000,6 +1026,7 @@ if Cr == 0
     Cr = 0;
 else
     while r <= (numel(Cr(:,1)))
+        if isempty(Cr)==0
         if Cr(r,4) < Trcr
             Cr(r,:) = [];
             r = r-1;
@@ -1007,8 +1034,19 @@ else
                 r = 1;
             end
         end
+        if isempty(Cr)==0
+        if ((Cr(r,1) > (2*ICY)) || (Cr(r,2) > (2*ICX)) || (Cr(r,1) < 0) || (Cr(r,2) < 0)) || (isnan(sum(Cr(r,:)))==1) || (isinf(sum(Cr(r,:)))==1) 
+            Cr(r,:) = [];
+            r = r-1;
+            if r < 1
+                r = 1;
+            end
+        end
+        end
+        end
         r = r + 1;
     end
 end
 %size(En)
+ 
 end % end of function

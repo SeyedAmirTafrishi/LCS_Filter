@@ -1,2 +1,4 @@
 *.fig
 *.asv
+SLAM/Matlab_Oxford_Car/dataset/
+example_pictures/

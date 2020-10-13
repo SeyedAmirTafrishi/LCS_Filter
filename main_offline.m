@@ -33,8 +33,8 @@ close all
 
 %% intial conditions
 % screen parameteres
-SCREEN_X = 640;
-SCREEN_Y = 480;
+SCREEN_X = 1280;
+SCREEN_Y = 960;
 global ICX ICY b_config_plot_on
 b_config_plot_on = true; %Ploting Graph
 ICX = SCREEN_X / 2+eps;  %2
@@ -70,15 +70,15 @@ TrmaxSq = 7; % Square Expert Maximum Trust
 
 % kinematic variables (simulated)
 Dv = 0.1;
-Av = 0.0005;
-Vv = .03;
-deltay = 9;
-deltax = 9;
+Av = 0.02;
+Vv = .8;
+deltay = 7;
+deltax = 7;
 Fcount=1;
 
 %% main code begins
 drs = './example_pictures'; % in current directory
-dr1 = dir([drs '/*.jpg']);  % get all png files in the folder
+dr1 = dir([drs '/*.png']);  % get all png files in the folder
 f1 = {dr1.name};           % get filenames to cell
 
 %mkdir('./results')          % dir for saving results
@@ -103,7 +103,7 @@ for c = 1:length(f1)
     end
 
     %c9 = fast9(im, 30, 1);      % run fast9 edge detection
-    c9 = detectFASTFeatures(rgb2gray(i),'MinContrast',0.18);
+  c9 = detectFASTFeatures(i,'MinContrast',0.54);
     c9 = c9.Location;
     %c9 = corner(rgb2gray(i), 'MinimumEigenvalue');
 if b_config_plot_on
@@ -168,8 +168,8 @@ end
     hold on
     subplot(2,2,2)
     ploti = plot(En(:,2),En(:,1),'bs');
-    xlim([1 640])
-    ylim([1 480])
+            xlim([1 SCREEN_X])
+            ylim([1 SCREEN_Y])
     hold on
     th = 0:pi/50:2*pi;%for loop for creating circle
     CB = 1;
@@ -241,13 +241,14 @@ end
     subplot(2,2,3)
     %txt = ['Frame ',num2str(c)];
     %title(txt,'FontSize',16)
+    
     hold on
     xlabel('$\bf{C}_n,\bf{C}_r$ and \boldmath${\psi}_C$','FontSize',16,'Interpreter','latex')
 
     subplot(2,2,1)
     hold on
     txt = ['Frame ',num2str(c)];
-    text(900,600,txt,'FontSize',16)
+    text(SCREEN_X+400,SCREEN_Y+200,txt,'FontSize',16)
   %  set(gca,'OuterPosition',[0 0.15 0.31 0.7]);
     subplot(2,2,2)
     hold on
