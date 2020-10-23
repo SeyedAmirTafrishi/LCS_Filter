@@ -5,13 +5,9 @@ Line-Circle-Square (LCS) filter applies detection, tracking and learning to each
 
 Compared with other related filters in the literature, the proposed LCS filter (and the LC filter) has the following unique advantages: (1) it reduces computation demand; (2) it has the ability to minimize the problem of overconfidence during detection; (3) real-time process for detecting abnormal behaviors at outside world such as partial detection of incoming objects toward the camera/moving vehicle; (4) primary detection with geometrical computation which creates different level of information, i.e., low (edges) to high (layers) for mapping and localization; (5) the multi-layer nature makes it suitable for real-time processing with potential to be executed in parallel.
 
-![](results/LCS_demo.gif)
-
 ## Usage
 
-To use the code, run the script `main_offline.m` from the MATLAB command line. This will run the filter with some example pictures in offline mode. 
-
-LCS filter also supports to run in real-time. To use the real-time version of the filter, use the script `main_rt.m` (debugging stage).
+To use the code, run the script `main_offline.m` from the MATLAB command line. This will run the filter with some example pictures in offline mode.  LCS filter also supports to run in real-time. To use the real-time version of the filter, use the script `main_rt.m` (debugging stage).
 
 ## Dependencies
 
@@ -20,6 +16,10 @@ There is no dependencies for the offline code. However, in order to run the real
 - MATLAB `mobiledev` package
 - MATLAB `webcam` package
 - Requires a web camera and an IMU sensor. 
+
+## Dataset
+
+This repo is based on the Oxford RoboCar dataset: https://robotcar-dataset.robots.ox.ac.uk/.
 
 ## Credits
 
