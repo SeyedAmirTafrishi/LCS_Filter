@@ -38,10 +38,10 @@ else
          elseif psi(i,4) == 2  %WILL BE FILLED for SQUARE
             % WILL BE FILLED
 
-            TempYPositive= psi(i,1)+psi(i,5); %
-            TempYNegaitive=psi(i,1)-psi(i,5); %
-            TempXPositive=psi(i,2)+psi(i,6);%
-            TempXNegaitive=psi(i,2)-psi(i,6);%
+            TempYPositive= psi(i,1)+psi(i,6); %
+            TempYNegaitive=psi(i,1)-psi(i,6); %
+            TempXPositive=psi(i,2)+psi(i,5);%
+            TempXNegaitive=psi(i,2)-psi(i,5);%
              j = 1;
             while j <= numel(c9(:,1)) % Counter for edges
                 if c9(j,1) > TempYNegaitive && c9(j,1) < TempYPositive && c9(j,2)<TempXPositive && c9(j,2)>TempXNegaitive
