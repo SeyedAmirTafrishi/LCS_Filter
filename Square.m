@@ -13,12 +13,12 @@ else
     Ctem = [C;Cr];
 end
 u_m = 1;
-zetas=20;% Small region pixel accuracy
-e_v = .12; % Deviation for circle velocity,
-DeltaBeta = 35 ; % Deviation for beta angle
+zetas=33;% Small region pixel accuracy
+e_v = Vv+.1; % Deviation for circle velocity,
+DeltaBeta = 38 ; % Deviation for beta angle
 Betaconstant = 90; % Angle of two circle from each other
-Betaconsame = 40;  % Angle offset for case B when there is no 90+/- angle matches of couple circles %Best 15-20
-PercntSqComp= 18; %Minimum Overlap percentage of two squares %Best 35-45
+Betaconsame = 35;  % Angle offset for case B when there is no 90+/- angle matches of couple circles %Best 15-20
+PercntSqComp= 15; %Minimum Overlap percentage of two squares %Best 35-45
 % Take a normal circle *Done
 global xd_1 yd_2 % temporory global variables in solution of tangential points on circles
 %%
@@ -324,13 +324,13 @@ SB=[];
             TempXNegaitive = min(min(CanswerA(:,2)-CanswerA(:,3)),min(CanswerB(:,2)-CanswerB(:,3))); %Y
             Y_o = ((TempYPositive+TempYNegaitive)/2);% The new center of construsted square by sum of circles
             X_o = ((TempXPositive+TempXNegaitive)/2);
-            a = abs(TempYPositive-TempYNegaitive)/2; %Y direction major
-            b = abs(TempXPositive-TempXNegaitive)/2; %X direction major
+            a = abs(TempXPositive-TempXNegaitive)/2; %X direction major
+            b = abs(TempYPositive-TempYNegaitive)/2; %Y direction major
             SA(1,1) = Y_o; % The location
             SA(1,2) = X_o;
-            SA(1,3) = a;% R of grouped Circles Y dis
+            SA(1,3) = a+4;% R of grouped Circles x dis
             SA(1,5) = TrsSq;%Standard Trust factor for new co
-            SA(1,4) = b;% R of grouped circles X dis
+            SA(1,4) = b+4;% R of grouped circles y dis
             SA(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean([mean(CanswerA(:,8)),mean(CanswerB(:,8))]),mean([mean(CanswerA(:,7)),mean(CanswerB(:,7))]));% beta angle of square
             SA(1,7) = mean([mean(CanswerA(:,6)),mean(CanswerB(:,6))]);
             SA(1,8) = mean([mean(CanswerA(:,7)),mean(CanswerB(:,7))]); % Center of Frame for moving Square
@@ -346,13 +346,13 @@ SB=[];
             TempXNegaitive = min(CanswerA(:,2)-CanswerA(:,3)); %Y
             Y_o = ((TempYPositive+TempYNegaitive)/2);% The new center of construsted square by sum of circles
             X_o = ((TempXPositive+TempXNegaitive)/2);
-            a = abs(TempYPositive-TempYNegaitive)/2; %Y direction major
-            b = abs(TempXPositive-TempXNegaitive)/2; %X direction major
+            a = abs(TempXPositive-TempXNegaitive)/2; %Y direction major
+            b = abs(TempYPositive-TempYNegaitive)/2; %X direction major
             SA(1,1) = Y_o; % The location
             SA(1,2) = X_o;
-            SA(1,3) = a;% R of grouped Circles Y dis
+            SA(1,3) = a+4;% R of grouped Circles x dis
             SA(1,5) = TrsSq;%Standard Trust factor for new co
-            SA(1,4) = b;% R of grouped circles X dis
+            SA(1,4) = b+4;% R of grouped circles y dis
             SA(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean(CanswerA(:,8)), mean(CanswerA(:,7)));% beta angle of square
             SA(1,7) = mean(CanswerA(:,6));
             SA(1,8) = mean(CanswerA(:,7)); % Center of Frame for moving Square
@@ -365,13 +365,13 @@ SB=[];
             TempXNegaitive = min(CanswerB(:,2)-CanswerB(:,3)); %Y
             Y_o = ((TempYPositive+TempYNegaitive)/2);% The new center of construsted square by sum of circles
             X_o = ((TempXPositive+TempXNegaitive)/2);
-            a = abs(TempYPositive-TempYNegaitive)/2; %Y direction major
-            b = abs(TempXPositive-TempXNegaitive)/2; %X direction major
+            a = abs(TempXPositive-TempXNegaitive)/2; %X direction major
+            b = abs(TempYPositive-TempYNegaitive)/2; %Y direction major
             SB(1,1) = Y_o; % The location
             SB(1,2) = X_o;
-            SB(1,3) = a;% R of grouped Circles Y dis
+            SB(1,3) = a+4;% R of grouped Circles x dis
             SB(1,5) = TrsSq;%Standard Trust factor for new co
-            SB(1,4) = b;% R of grouped circles X dis
+            SB(1,4) = b+4;% R of grouped circles y dis
             SB(1,6) = calculate_vector_angle(((TempYPositive+TempYNegaitive)/2),((TempXPositive+TempXNegaitive)/2), mean(CanswerB(:,8)), mean(CanswerB(:,7)));% beta angle of square
             SB(1,7) = mean(CanswerB(:,6));
             SB(1,8) = mean(CanswerB(:,7)); % Center of Frame for moving Square
@@ -381,9 +381,9 @@ SB=[];
         %Lonely Square
         SB(1,1) = Cmain(1,1); % The location
         SB(1,2) = Cmain(1,2);
-        SB(1,3) = Cmain(1,3);% R of grouped Circles Y dis
+        SB(1,3) = Cmain(1,3)+5;% R of grouped Circles Y dis
         SB(1,5) = TrsSq;%Standard Trust factor for new co
-        SB(1,4) = Cmain(1,3);% R of grouped circles X dis
+        SB(1,4) = Cmain(1,3)+5;% R of grouped circles X dis
         SB(1,6) = Cmain(1,5);% beta angle of square
         SB(1,7)= Cmain(1,6);
         SB(1,8) = Cmain(1,7); % Center of Frame for moving Square
@@ -465,16 +465,16 @@ SB=[];
             end
           else
             if a_1==0 && b_1==0 % Very small edges that transformed to circles and then to square
-                a_1=2;
-                b_1=2;
+                a_1=5;
+                b_1=5;
             end
 
             if R_al > r_eE+zetas % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
             elseif R_al <= r_eE+zetas % Case the (X_o,Y_o) is in of the ellipse
                 %betaang = calculate_vector_angle(X_e,Y_e ,X_o,Y_o);    %Degree unit
-                A_n = a_1+Delta_r;% Estimated Square
-                B_n = b_1+Delta_r;
+                A_n = a_1+Delta_r;% R_X Estimated Square
+                B_n = b_1+Delta_r;% R_Y Estimated Square
                 Y_ef1 = NSn(1,1);
                 X_ef1 = NSn(1,2);
             end
@@ -492,8 +492,8 @@ SB=[];
 
                      Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SA(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
                      Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SA(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
-                     Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SA(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
-                     Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SA(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SA(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SA(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
                      Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
                      Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SA(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
                      Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SA(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
@@ -540,8 +540,8 @@ SB=[];
             X_e = Stem(u_sm,2);
             Y_o = Stem(u_sm,8);
             X_o = Stem(u_sm,9);
-            a_1 = Stem(u_sm,3);
-            b_1 = Stem(u_sm,4);
+            a_1 = Stem(u_sm,3); % R_x
+            b_1 = Stem(u_sm,4); % R_y
             Delta_r = sqrt((NSn(1,1)-Y_e)^2+(NSn(1,2)-X_e)^2);
             % Estimation of Square from Elipse_
             t_al = calculate_vector_angle( X_o, Y_o, X_e, Y_e );
@@ -558,8 +558,8 @@ SB=[];
 
 
             if a_1==0 && b_1==0 % Very small edges that transformed to circles and then to square
-                a_1=2;
-                b_1=2;
+                a_1=5;
+                b_1=5;
             end
             if R_al > r_eE+zetas % Case the (X_o,Y_o) is out of the ellipse
                 [Y_ef1,X_ef1,A_n,B_n] = EstimSquare(X_e,Y_e,X_o,Y_o,a_1,b_1,Delta_r); %A_n on X axis B_n on Y Axis
@@ -582,8 +582,8 @@ SB=[];
 
                      Sup(countSup,1) = ((((Stem(u_sm,5)-TrcrSq)*(Y_ef1))+SB(1,1))/((Stem(u_sm,5)-TrcrSq)+1));
                      Sup(countSup,2)  = ((((Stem(u_sm,5)-TrcrSq)*(X_ef1))+SB(1,2))/((Stem(u_sm,5)-TrcrSq)+1)); %Estimation of Square, X direction
-                     Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SB(1,3))/((Stem(u_sm,5)-TrcrSq)+1));
-                     Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SB(1,4))/((Stem(u_sm,5)-TrcrSq)+1));
+                     Sup(countSup,3)= ((((Stem(u_sm,5)-TrcrSq)*(A_n))+SB(1,3))/((Stem(u_sm,5)-TrcrSq)+1)); % R_x
+                     Sup(countSup,4)= ((((Stem(u_sm,5)-TrcrSq)*(B_n))+SB(1,4))/((Stem(u_sm,5)-TrcrSq)+1)); % R_y
                      Sup(countSup,5) = Stem(u_sm,5)+1; %Trust Low
                      Sup(countSup,6)=((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,6)))+SB(1,6))/((Stem(u_sm,5)-TrcrSq)+1));
                      Sup(countSup,7)= ((((Stem(u_sm,5)-TrcrSq)*(Stem(u_sm,7)))+SB(1,7))/((Stem(u_sm,5)-TrcrSq)+1));% Check Velocity Formula maybe better?
@@ -640,6 +640,22 @@ if S==0
     S=Sup;
 else
     Stem(:,5)=Stem(:,5)-1;
+    u_su=1;
+    while  u_su <= (numel(Stem(:,1)))
+     betaS = Stem(u_su,6);
+     R = (((Stem(u_su,1)-Stem(u_su,7))^2)+(Stem(u_su,2)-Stem(u_su,8))^2)^(0.5);%The R
+     x_0 = R;
+     x_1 = Stem(u_su,7);
+     options = odeset('RelTol',1e-3,'AbsTol',[1e-3 1e-3]);
+     [T1,Y1] = ode45(@EdgeTR,[0 time_diff],[x_0 x_1],options); %location of estimated S the 4 space is nutrilized to one since we want just vel
+     NSn(1,1) = -(ceil(Y1(end,1))-R)*sin((pi/180)*(betaS))+(Stem(u_su,1));%estimation of Sn x
+     NSn(1,2) = (ceil(Y1(end,1))-R)*cos((pi/180)*(betaS))+(Stem(u_su,2));%estimation of Sn y
+     Stem(u_su,1)=NSn(1,1); % Y
+     Stem(u_su,2)=NSn(1,2); % X
+     u_su=u_su+1;
+    end  
+      
+      
     Stem(:,10)=[];
     Sup = cat(1,Stem,Sup);
     S=Sup;

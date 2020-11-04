@@ -8,7 +8,7 @@ global time_diff frame
 global ICX ICY
  
 % VeS=2;%Standard Edge Velocity
-BLS = 12; %Standard Boundery layer Initialization Constant H
+BLS = 13; %Standard Boundery layer Initialization Constant H
 L = 3; %The el of rebel edge alignment, Step of accuracy to have rebel edges
 options = odeset('RelTol',1e-3,'AbsTol',[1e-3 1e-3]);
 
@@ -652,8 +652,8 @@ end
 end
 %% match circle with rebel edges (estimating the rebel circle)
 %------------Ciculing Er This must be first :))
-PIN = 50; %In percentage
-BetaDev = 27;
+PIN = 75; %In percentage
+BetaDev = 12;
 TEr = Er;
 TErM = Er;
 action = 0;
@@ -690,7 +690,7 @@ else
                     else
                         AngleEXTEr = EXTEr(1,5)+EXTEr(1,3);
                     end
-                    if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-17*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+17*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
+                    if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-12*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+12*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
                         M(Mk,1:8) = TEr(i,:);%Our Circule Mother! :D
                         Mk = Mk + 1;
                         TEr(i,:) = [];
@@ -712,7 +712,7 @@ else
                     MX = round(mean(M(:,2))); %center of X max(A)
                     DLAVE = round(mean(M(:,3)));
                     R1 = (((M(:,1)-MY).^2)+((M(:,2)-MX).^2)).^(.5);
-                    MR = max(R1(:,1));
+                    MR = max(R1(:,1))+4;
                     OY = round(mean(M(:,7)));
                     OX = round(mean(M(:,8)));
 
@@ -722,7 +722,7 @@ else
                         else
                             Mangle = (mean(M(:,5)+M(:,3)));
                         end
-                        if ((Mangle-(BetaDev/5) < Cr(ci,5)) && (Mangle+(BetaDev/5) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-17*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+17*abs(Vv))%Proportion Match PIN and angular similarity and velocity alighnment &&
+                        if ((Mangle-(BetaDev/5) < Cr(ci,5)) && (Mangle+(BetaDev/5) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-12*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+12*abs(Vv))%Proportion Match PIN and angular similarity and velocity alighnment &&
                             %update C!
                             action = 1;
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
@@ -733,7 +733,7 @@ else
                             %%%----- Killer of Mother Er
                             TErM = TEr;
                             %%%
-                        elseif  ((Mangle-(BetaDev) < Cr(ci,5)) && (Mangle+(BetaDev) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-17*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+17*abs(Vv)) %Somehow Match
+                        elseif  ((Mangle-(BetaDev) < Cr(ci,5)) && (Mangle+(BetaDev) > Cr(ci,5))) && (Cr(ci,6) >= mean(M(:,6))-12*abs(Vv)) && (Cr(ci,6) <= mean(M(:,6))+12*abs(Vv)) %Somehow Match
                             action = 1;
                             Cr(ci,1) = ((((Cr(ci,4)-Trcr)*(NCn(1,1)))+MY)/((Cr(ci,4)-Trcr)+1));
                             Cr(ci,2) = ((((Cr(ci,4)-Trcr)*(NCn(1,2)))+MX)/((Cr(ci,4)-Trcr)+1)); %Estimation of En, X direction
@@ -791,7 +791,7 @@ else
             else
                 AngleEXTEr = EXTEr(1,5)+EXTEr(1,3);
             end
-            if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-17*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+17*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
+            if (AngleTEr>= AngleEXTEr-BetaDev) && ((AngleTEr <= AngleEXTEr+BetaDev)) && (abs(EXTEr(1,6))>= abs(abs(TEr(i,6))-12*abs(Vv))) && (abs(EXTEr(1,6))<= abs(abs(TEr(i,6))+12*abs(Vv))) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
                 M(Mk,1:8) = TEr(i,:);%Our Circule Mother! :D
                 Mk = Mk + 1;
                 TEr(i,:) = [];
@@ -810,7 +810,7 @@ else
             OX = round(mean(M(:,8)));
             Cr(numel(Cr(:,1))+1,1) = MY;
             Cr(numel(Cr(:,1)),2) = MX; %Estimation of En, X direction
-            Cr(numel(Cr(:,1)),3) = MR;
+            Cr(numel(Cr(:,1)),3) = MR+5;
             Cr(numel(Cr(:,1)),4) =Trs+2; %Trust Low
             angleC = 0;
             mC = (MY-OY)/-(MX-OX);
@@ -831,8 +831,8 @@ end
 
 %% normal circles
 %-----------Circuling En
-PIN = 80; %In percentage
-BetaDev = 12;
+PIN = 68; %In percentage
+BetaDev = 23;
 TEn = En;
 TEnM = En;
 if (C == 0)
@@ -884,7 +884,7 @@ else
                     MY = round(mean(M(:,1))); %center of Y max(A)
                     MX = round(mean(M(:,2))); %center of X max(A)
                     R1 = (((M(:,1)-MY).^2)+((M(:,2)-MX).^2)).^(.5);
-                    MR = max(R1(:,1));
+                    MR = max(R1(:,1))+5;
                     if ((countin/(numel(M(:,1)))) > PIN/100)
                         if ((mean(M(:,5))-(BetaDev/5) < C(ci,5)) && (mean(M(:,5))+(BetaDev/5) > C(ci,5))) && (C(ci,6) >= mean(M(:,6))-6*abs(Vv)) &&  (C(ci,6) <= mean(M(:,6))+6*abs(Vv)) %update C!
                             action = 1;
@@ -926,7 +926,7 @@ else
         ci = ci+1;
     end
 end
-%Left Er circle new
+%Left circle new
 u = 1;
 if  TEnM==0
     % pass
@@ -942,7 +942,7 @@ else
             %C=abs(TEn(i,6))
             %D=abs(3*Vv)
             if (TEn(i,5) >= EXTEn(1,5)-BetaDev) && ((TEn(i,5) <= EXTEn(1,5)+BetaDev)) && (abs(TEn(i,6)) < abs(6*Vv)) %kick out wrong velovity jumps and angle level. may velocity be removed && (abs(TEr(i,6)) < abs(3*Vv))
-                M(Mk,1:6)=TEn(i,:);%Our Circule Mother! :D
+                M(Mk,1:6)=TEn(i,:);%Our Circule Mother!  
                 Mk = Mk + 1;
                 TEn(i,:) = [];
                 i = i - 1;
@@ -958,7 +958,7 @@ else
             MR = max(R1(:,1));
             C(numel(C(:,1))+1,1) = MY;
             C(numel(C(:,1)),2) = MX; %Estimation of En, X direction
-            C(numel(C(:,1)),3) = MR;
+            C(numel(C(:,1)),3) = MR+5;
             C(numel(C(:,1)),4) = round((Trcr+Trs)/2); %Trust Low
             mC = (MY-ICY)/-(MX-ICX);
             angleC = calculate_vector_angle( MX, MY, ICX, ICY );
@@ -970,7 +970,7 @@ else
         u = u + 1;
     end
 end
-
+ 
 %% updating psi and lambda
 %----------Psi and lambda
 u = 1;
@@ -987,6 +987,7 @@ else
     while u <= (numel(C(:,1)))
         L1 = 0;
         L2 = 0;
+        if isempty(C)==0
         if C(u,4) >= Trmax
             C(u,4) = Trmax-2;
             psi(numel(psi(:,1))+1,1) = C(u,1);
@@ -994,6 +995,7 @@ else
             psi(numel(psi(:,1)),3) = C(u,3);
             psi(numel(psi(:,1)),4) = 1;
         end
+        if isempty(C)==0
         if ((C(u,1) > (2*ICY)) || (C(u,2) > (2*ICX)) || (C(u,1) < 0) || (C(u,2) < 0)) || (isnan(sum(C(u,:)))==1) || (isinf(sum(C(u,:)))==1)  %Kill more than that :D
             C(u,:) = [];
             u = u - 1;
@@ -1002,6 +1004,7 @@ else
         if (L1==1) && (u==0)
             u = u + 1;
         end
+        if isempty(C)==0
         if C(u,4) < Trcr
             C(u,:)=[];
             u = u - 1;
@@ -1012,10 +1015,15 @@ else
         elseif (L1==1) && (L2==1) %both active make it one
             u = u + 1;
         end
+        if isempty(C)==0
         if C(u,4) > Trcr
             lambda(numel(lambda(:,1))+1,1) = C(u,1);
             lambda(numel(lambda(:,1)),2) = C(u,2);
             lambda(numel(lambda(:,1)),3) = C(u,3);
+        end
+        end
+        end
+        end
         end
         u = u + 1;
     end

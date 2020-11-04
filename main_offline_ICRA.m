@@ -65,8 +65,8 @@ Trcr = 1;  % Circle Expert Critical Trust
 Trmax = 7; % Circle Expert Maximum Trust 7 better
 
 TrsSq = 5;   % Square Expert Trust
-TrcrSq = 3;  % Square Expert Critical Trust
-TrmaxSq = 7; % Square Expert Maximum Trust
+TrcrSq = 2;  % Square Expert Critical Trust
+TrmaxSq = 8; % Square Expert Maximum Trust
 
 
 
@@ -76,10 +76,12 @@ dr1 = dir([drs '/*.png']);  % get all png files in the folder
 f1 = {dr1.name};           % get filenames to cell
 
 %mkdir('./results')          % dir for saving results
-ShiftIM=70; %70 800; 200 start
+ShiftIM=1729+145; %145 
 Kts=ShiftIM; %sensor counter
 % loop for each image
-fcr=1;
+fcr=1730; % Frame nnumber in Image
+ffr=1730; % Image number folder
+Size=zeros(fcr);
 for c = 1:length(f1)
    tic
 c=c+ShiftIM; %390 800;
@@ -90,7 +92,7 @@ c=c+ShiftIM; %390 800;
 
     % convert image into greyscale
     if b_config_plot_on
-    figure(c)
+    figure(fcr)
     end
     if length(size(i)) == 3
         im = double(i(:,:,2));
@@ -98,7 +100,7 @@ c=c+ShiftIM; %390 800;
         im = double(i);
     end
 
-   c9 = fast9(im, 144, 1);      % run fast9 edge detection
+   c9 = fast9(im, 137.33, 1);      % Data1 127.33 137.33
  %c9 = detectFASTFeatures(i,'MinContrast',.58); %58 Less than 58 result in many landmarks Hard to reco
 %    c9 = c9.Location;
 
@@ -126,12 +128,12 @@ if b_config_plot_on
 end
 
     c9 = [c9(:,2),c9(:,1)];     % swap x and y columns
-%     if c == 1
-%         Size(c,1) = numel(c9(:,1));
-%     else
-%         Size(c,1) = numel(c9(:,1))+Size(c-1,1);
-%     end
-%     Size(c,6) = numel(c9(:,1));
+    if fcr == 1
+        Size(fcr,1) = numel(c9(:,1));
+    else
+        Size(fcr,1) = numel(c9(:,1))+Size(fcr-1,1);
+    end
+    Size(fcr,6) = numel(c9(:,1));
     Edge = c9;
     
   %%  
@@ -171,7 +173,7 @@ pitch1=ins(Kts,14).pitch;
 height1=ins(Kts,8).down;
 else
 Av = abs((ins(Kts,10).velocity_north-Velk1));
-Vv = abs( ins(Kts,10).velocity_north);
+Vv = abs( ins(Kts,10).velocity_north) 
 deltay = (180/pi)*(abs(ins(Kts,15).yaw-yawk1))/1+5
 deltax =(180/pi)*(abs(ins(Kts,13).roll-rollk1))/1+5
 DAngy= (ins(Kts,15).yaw-yawk1) % No Rotational difference data (straight motion) in default
@@ -191,7 +193,7 @@ end
 Fcount=1;   
  %% Kinematic Rotation of Location/Angles Parameters
     %The locations, angles and origins are updated
-    if (abs(DAngy)<.0014) && (abs(DAngx)<.0014) && (abs(DAngz)<.0014)% No angular rotation along x and y axes
+    if (abs(DAngy)<.0015) && (abs(DAngx)<.0015) && (abs(DAngz)<.0015)% No angular rotation along x and y axes
     
     else
         if En == 0
@@ -387,22 +389,22 @@ Fcount=1;
 %% Square Expert
     [S, psi] = Square(S, C, Cr, delta, Vv, Dv, psi);
 
-%     % Square() add square here
-%     Size(c,2) = numel(En(:,1));
-%     Size(c,3) = numel(Er(:,1));
-%     Size(c,4) = numel(C(:,1));
-%     Size(c,5) = numel(Cr(:,1));
-%     Size(c,6) = numel(S(:,1));
+    % Square() add square here
+    Size(fcr,2) = numel(En(:,1));
+    Size(fcr,3) = numel(Er(:,1));
+    Size(fcr,4) = numel(C(:,1));
+    Size(fcr,5) = numel(Cr(:,1));
+    Size(fcr,6) = numel(S(:,1));
   %  Size(c,9) = toc;
-%     if Fcount<6 % 5 Frame Sum
-%         Ptemp(Fcount)= numel(c9(:,1));
-%         Size(c,7) = sum(Ptemp);
-%         Fcount=Fcount+1;
-%     else
-%         Fcount=1;
-%         Ptemp(Fcount)= numel(c9(:,1));
-%         Size(c,7) = sum(Ptemp);
-%     end
+    if Fcount<6 % 5 Frame Sum
+        Ptemp(Fcount)= numel(c9(:,1));
+        Size(fcr,7) = sum(Ptemp);
+        Fcount=Fcount+1;
+    else
+        Fcount=1;
+        Ptemp(Fcount)= numel(c9(:,1));
+        Size(fcr,7) = sum(Ptemp);
+    end
     %***************************************************! Add step k
     %velocity to C and S and Subtract the vel. of k-1*!
     %delta
@@ -449,15 +451,15 @@ Fcount=1;
         for i = 1:1:(numel(S(:,1)))
             subplot(2,2,4)
             hold on
-            TempYPositive= S(i,1)+S(i,3); %
-            TempYNegaitive=S(i,1)-S(i,3); %
-            TempXPositive=S(i,2)+S(i,4); %
-            TempXNegaitive=S(i,2)-S(i,4); %
+            TempYPositive= S(i,1)+S(i,4);  
+            TempYNegaitive=S(i,1)-S(i,4);  
+            TempXPositive=S(i,2)+S(i,3); %
+            TempXNegaitive=S(i,2)-S(i,3); %
             %plot(X_o,Y_o,'- *b','MarkerSize', 18,'LineWidth' , 2.5)
-            plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'m','LineWidth' , 2)
-            plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'m','LineWidth' , 2)
-            plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'m','LineWidth' , 2)
-            plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'m','LineWidth' , 2)
+            plot([TempXPositive TempXPositive],[TempYNegaitive TempYPositive],'m','LineWidth' , 1.3)
+            plot([TempXNegaitive TempXPositive],[TempYPositive TempYPositive],'m','LineWidth' , 1.3)
+            plot([TempXNegaitive TempXNegaitive],[TempYNegaitive TempYPositive],'m','LineWidth' , 1.3)
+            plot([TempXNegaitive TempXPositive],[TempYNegaitive TempYNegaitive],'m','LineWidth' , 1.3)
             %ploti = plot(xunit, yunit,'r');%Plot the boys :v
             xlim([1 SCREEN_X])
             ylim([1 SCREEN_Y])
@@ -509,13 +511,16 @@ Fcount=1;
     set(gcf, 'Position',  [100, 100, 1920, 1080])
     set(gcf, 'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(2)*3.3, pos(3)*1.3])
 drawnow
-    fig_filename = ['./results/fig', num2str(c),'.png'];
+    fig_filename = ['./results/fig', num2str(ffr),'.png'];
     saveas(gca, fig_filename);
     close all
     % %--------------------
+    % Plot of Rebels layers
+    %Crop_Image(ICX,ICY,frame,im / max(im(:)),Cr,S,fcr);
   end
   %  toc
   fcr=fcr+1;
+  ffr=ffr+1;
 end
 
 clear figure
