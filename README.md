@@ -9,7 +9,12 @@ Compared with other related filters in the literature, the proposed LCS filter (
 
 ## Autonomous Car Example
 
-The code of the autonomous car example in the evaluation can be found in the `autonomous_car_example folder`.
+The code of the autonomous car example in the evaluation can be found in the `autonomous_car_example` folder.
+
+The dataset we used is Oxford RoboCar dataset and to be more specific, we used the following two datasets:
+
+- Day: https://robotcar-dataset.robots.ox.ac.uk/datasets/2015-08-17-13-30-19/
+- Night: https://robotcar-dataset.robots.ox.ac.uk/datasets/2014-12-17-18-18-43/
 
 You can find the demonstration videos of the autonomous car example in the following link:
 
