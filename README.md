@@ -7,6 +7,19 @@ Compared with other related filters in the literature, the proposed LCS filter (
 
 ![](results/LCS_demo.gif)
 
+## Autonomous Car Example
+
+The code of the autonomous car example in the evaluation can be found in the `autonomous_car_example folder`.
+
+You can find the demonstration videos of the autonomous car example in the following link:
+
+https://drive.google.com/drive/folders/1iwPiapS100yQHR1NgSOOHTOxFetvqOsA
+
+The two videos are:
+
+- RAS_NG_D.mp4: the night scenario
+- RAS_DH_D.mp4: the day scenario
+
 ## Usage
 
 To use the code, run the script `main_offline.m` from the MATLAB command line. This will run the filter with some example pictures in offline mode. 
