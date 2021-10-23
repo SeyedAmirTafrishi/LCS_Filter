@@ -9,7 +9,6 @@ Compared with other related filters in the literature, the proposed LCS filter (
 
 ## Autonomous Car Example
 
-![](https://www.youtube.com/watch?v=hh6B4aF7jDI)
 
 The code of the autonomous car example in the evaluation can be found in the `autonomous_car_example` folder.
 
