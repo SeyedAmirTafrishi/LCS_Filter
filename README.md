@@ -7,8 +7,10 @@ Compared with other related filters in the literature, the proposed LCS filter (
 
 ![](results/LCS_demo.gif)
 
-## Autonomous Car Example
+A video of this work can be found at: https://www.youtube.com/watch?v=hh6B4aF7jDI
 
+
+## Autonomous Car Example
 
 The code of the autonomous car example in the evaluation can be found in the `autonomous_car_example` folder.
 
@@ -52,5 +54,5 @@ This project depends on the *fast9* edge detection algorithm, which is developed
 
 ##  Publications
 
-- Tafrishi, S.A., Xiaotian, D., Kandjani, V.E., 2020. [Line-Circle-Square (LCS): A Multilayered Geometric Filter for Edge-Based Detection](https://arxiv.org/pdf/2008.09315.pdf). arXiv:2008.09315. 
+- Tafrishi, S.A., Xiaotian, D., Kandjani, V.E., 2021. Line-Circle-Square (LCS): A Multilayered Geometric Filter for Edge-Based Detection. Robotics and Autonomous Systems (RAS).
 - Tafrishi, S.A. and Kandjani, V.E., 2017, October. [Line-Circle: A Geometric Filter for Single Camera Edge-Based Object Detection](https://ieeexplore.ieee.org/abstract/document/8466193). In *2017 5th RSI International Conference on Robotics and Mechatronics (ICRoM)* (pp. 588-594). 
